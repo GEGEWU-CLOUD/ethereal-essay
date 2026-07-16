@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>冰雪随笔 · 江畔何人初见雪、江雪何年初映人</title>
+    <link id="dynamicFavicon" rel="icon" type="image/webp" href="https://gegewu-cloud.github.io/img/zznnlogo.webp">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #e8f0f8;
+            --bg-card: #ffffff;
+            --text-primary: #1a2740;
+            --text-secondary: #4a6080;
+            --border-light: #d8e4f0;
+            --tag-bg: #e0ecf6;
+            --tag-text: #3a5070;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --desc-bg: #f4f8fc;
+            --desc-border: #6b9bd2;
+            /* 内容区透明度（1=完全不透明，越低越透明） */
+            --main-alpha: 0.92;
+            --btn-outline: #5b8cc9;
+            --btn-primary-bg: #1a2740;
+            --btn-primary-text: white;
+            --modal-bg: white;
+            --shadow: 0 4px 12px rgba(100,140,180,0.08);
+            --sync-panel-bg: white;
+            --search-bg: #f0f5fa;
+            --sidebar-bg: #f8fafd;
+            --sidebar-width: 240px;
+            --navbar-height: 64px;
+            /* 渐变色变量 - 冰雪主题 */
+            --grad-brand: linear-gradient(135deg, #88b8e8, #a78bfa);
+            --grad-accent: linear-gradient(135deg, #6b9bd2, #8b9dc3);
+            --grad-primary: linear-gradient(135deg, #2c4a7c, #5b6abf);
+            --grad-card: linear-gradient(145deg, #ffffff, #f4f8fc);
+            --grad-sidebar-active: linear-gradient(90deg, rgba(107,155,210,0.15), rgba(139,157,195,0.05));
+            --grad-toggle: linear-gradient(135deg, #88b8e8, #a78bfa);
+        }
+
+        body.dark-mode {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-light: #334155;
+            --tag-bg: #334155;
+            --tag-text: #cbd5e1;
+            --code-bg: #020617;
+            --code-text: #cbd5e6;
+            --desc-bg: #1e293b;
+            --desc-border: #60a5fa;
+            --main-alpha: 0.92;
+            --btn-outline: #60a5fa;
+            --btn-primary-bg: #60a5fa;
+            --btn-primary-text: #0f172a;
+            --modal-bg: #1e293b;
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            --sync-panel-bg: #1e293b;
+            --search-bg: #334155;
+            --sidebar-bg: #1e293b;
+            /* 渐变色变量(暗色) */
+            --grad-brand: linear-gradient(135deg, #818cf8, #a78bfa);
+            --grad-accent: linear-gradient(135deg, #60a5fa, #818cf8);
+            --grad-primary: linear-gradient(135deg, #60a5fa, #a78bfa);
+            --grad-card: linear-gradient(145deg, #1e293b, #1a2332);
+            --grad-sidebar-active: linear-gradient(90deg, rgba(96,165,250,0.18), rgba(129,140,248,0.06));
+            --grad-toggle: linear-gradient(135deg, #818cf8, #c084fc);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(160deg, #e3edf7 0%, #eef4f9 30%, #f2f6fb 60%, #e8f0f8 100%);
+            background-attachment: fixed;
+            font-family: 'Segoe UI', 'SF Pro Text', 'Inter', system-ui, sans-serif;
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.2s ease;
+            min-height: 100vh;
+        }
+        body.dark-mode {
+            background: var(--bg-primary);
+        }
+
+        /* ==================== TOP NAVBAR ==================== */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--navbar-height);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            gap: 1.2rem;
+            transition: background 0.3s ease;
+        }
+        body.dark-mode .top-nav { box-shadow: 0 1px 8px rgba(0,0,0,0.25); }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: var(--grad-brand);
+            border-radius: 28px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .nav-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .nav-logo span { font-size: 1.5rem; }
+        .nav-brand-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b, #6b9bd2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            white-space: nowrap;
+        }
+        body.dark-mode .nav-brand-text {
+            background: linear-gradient(135deg, #e2e8f0, #a5b4fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .nav-brand-btns { display: flex; gap: 4px; }
+        .nav-brand-btns button {
+            background: var(--tag-bg);
+            border: none;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+        .nav-brand-btns button:hover { background: var(--btn-outline); color: white; }
+
+        .nav-search {
+            width: 220px;
+            flex-shrink: 1;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+            background: var(--search-bg);
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            border: 1px solid var(--border-light);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .nav-search:focus-within {
+            border-color: #6b9bd2;
+            box-shadow: 0 0 0 3px rgba(107,155,210,0.12);
+        }
+        .nav-search span { flex-shrink: 0; margin-right: 6px; }
+        .nav-search input {
+            border: none; background: transparent; padding: 0.6rem 0; width: 100%;
+            outline: none; color: var(--text-primary); font-size: 0.9rem;
+        }
+        .nav-search input::placeholder { color: var(--text-secondary); }
+
+        .nav-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+            flex-wrap: nowrap;
+            margin-left: auto;
+        }
+
+        /* sidebar toggle (mobile) */
+        .sidebar-toggle {
+            display: none;
+            background: var(--tag-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.4rem 0.6rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--navbar-height));
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-light);
+            overflow-y: auto;
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, background 0.3s ease;
+            padding-bottom: 1rem;
+        }
+        .sidebar-header {
+            padding: 1.2rem 1.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: var(--grad-brand);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            flex-shrink: 0;
+        }
+        .category-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 0.6rem;
+        }
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 0.6rem 1rem;
+            margin: 2px 0;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            text-align: left;
+            transition: all 0.15s ease;
+            border-left: 3px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .category-item:hover { background: var(--tag-bg); }
+        .category-item.active {
+            background: var(--grad-sidebar-active);
+            border-left: 3px solid #6b9bd2;
+            color: #5b8cc9;
+            font-weight: 600;
+        }
+        body.dark-mode .category-item.active {
+            background: var(--grad-sidebar-active);
+            border-left: 3px solid #818cf8;
+            color: #60a5fa;
+        }
+        .category-item .cat-icon { font-size: 1rem; flex-shrink: 0; }
+        .category-item .cat-count {
+            margin-left: auto;
+            font-size: 0.7rem;
+            background: var(--tag-bg);
+            padding: 0.1rem 0.5rem;
+            border-radius: 20px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+        .category-item.active .cat-count {
+            background: var(--grad-accent);
+            color: white;
+        }
+        body.dark-mode .category-item.active .cat-count {
+            background: var(--grad-accent);
+            color: #0f172a;
+        }
+
+        /* 分类操作按钮 */
+        .category-item-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .category-item-wrapper .category-item {
+            flex: 1;
+            min-width: 0;
+        }
+        .cat-more-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            padding: 0 0.2rem;
+            line-height: 1;
+            border-radius: 4px;
+            flex-shrink: 0;
+            opacity: 0.5;
+            transition: opacity 0.15s;
+            margin-right: 4px;
+        }
+        .category-item-wrapper:hover .cat-more-btn { display: block; }
+        .cat-more-btn:hover { opacity: 1; background: var(--border-light); }
+
+        /* 图标选择器 */
+        .icon-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .icon-picker button {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background: var(--tag-bg);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .icon-picker button:hover { border-color: #6b9bd2; background: rgba(107,155,210,0.08); transform: scale(1.1); }
+        .icon-picker button.selected { border-color: #6b9bd2; background: linear-gradient(135deg, rgba(107,155,210,0.12), rgba(120,165,215,0.08)); box-shadow: 0 2px 8px rgba(107,155,210,0.2); }
+
+        /* 分类操作弹出菜单 */
+        .cat-action-menu {
+            display: none;
+            position: fixed;
+            background: var(--modal-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 300;
+            min-width: 130px;
+            overflow: hidden;
+            padding: 0.3rem 0;
+        }
+        .cat-action-menu.show { display: block; }
+        .cat-action-menu button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 0.55rem 1rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            text-align: left;
+            transition: background 0.12s;
+        }
+        .cat-action-menu button:hover { background: var(--tag-bg); }
+        .cat-action-menu button.danger { color: #ef4444; }
+        .cat-action-menu button.danger:hover { background: #fef2f2; }
+        body.dark-mode .cat-action-menu button.danger:hover { background: #3b1a1a; }
+
+        .sidebar-add-cat {
+            margin: 0.6rem 1rem;
+            padding: 0.55rem 1rem;
+            border: dashed 1.5px var(--text-secondary);
+            border-radius: 10px;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .sidebar-add-cat:hover { border-color: #6b9bd2; color: #6b9bd2; background: linear-gradient(135deg, rgba(107,155,210,0.04), rgba(120,165,215,0.02)); }
+
+        .sidebar-sync-header {
+            margin: 0.5rem 0.8rem 0;
+            padding: 0.55rem 0.8rem;
+            background: var(--tag-bg);
+            border-radius: 10px;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: 0.2s;
+            user-select: none;
+        }
+        .sidebar-sync-header:hover { background: var(--border-light); }
+        .sidebar-sync-header .sync-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .sidebar-sync-header .sync-dot.online { background: #10b981; }
+        .sidebar-sync-header .sync-dot.offline { background: #ef4444; }
+        .sidebar-sync-header .sync-dot.config { background: #f59e0b; }
+        .sidebar-sync-header .sync-arrow { margin-left: auto; transition: transform 0.2s; font-size: 0.6rem; }
+        .sidebar-sync-header.open .sync-arrow { transform: rotate(90deg); }
+
+        /* Gist 右侧滑出面板 */
+        .gist-drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 500;
+        }
+        .gist-drawer-overlay.show { display: block; }
+        .gist-drawer {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 400px;
+            max-width: 90vw;
+            height: 100vh;
+            background: var(--modal-bg);
+            border-left: 1px solid var(--border-light);
+            box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+            z-index: 501;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .gist-drawer.open { right: 0; }
+        .gist-drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .gist-drawer-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0 0.3rem;
+            line-height: 1;
+        }
+        .gist-drawer-close:hover { color: #ef4444; }
+        .gist-drawer-body {
+            padding: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .gist-drawer-body label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .gist-drawer-body input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            background: var(--search-bg);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .gist-drawer-body .btn {
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 8px;
+            padding: 0.65rem;
+            font-size: 0.85rem;
+        }
+
+        /* sidebar overlay backdrop (mobile) */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            width: 100%;
+            height: calc(100vh - var(--navbar-height));
+            background: rgba(0,0,0,0.4);
+            z-index: 85;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 1.5rem 1.5rem 2rem;
+            min-height: calc(100vh - var(--navbar-height));
+            transition: margin-left 0.3s ease;
+        }
+
+        /* ==================== SYNC PANEL (collapsible bar) ==================== */
+        /* ==================== COMMANDS GRID ==================== */
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+            gap: 1.3rem;
+            margin-bottom: 2rem;
+        }
+        .command-card {
+            background: rgba(255,255,255, var(--main-alpha));
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .command-card, .command-desc, .example, .empty-state { text-shadow: var(--text-shadow, none); }
+        .command-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(107,155,210,0.1), 0 4px 8px rgba(0,0,0,0.04); }
+        body.dark-mode .command-card { background: rgba(30,41,59, var(--main-alpha)); }
+        body.dark-mode .command-desc { background: rgba(30,41,59, var(--main-alpha)); }
+        body.dark-mode .example { background: rgba(51,65,85, var(--main-alpha)); }
+        body.dark-mode .command-card:hover { box-shadow: 0 12px 28px rgba(120,165,215,0.15), 0 4px 8px rgba(0,0,0,0.3); }
+        .card-header { padding: 0.9rem 1.1rem 0.6rem; display: flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid var(--border-light); gap: 0.5rem; position: relative; }
+        .card-header::after { content: ''; position: absolute; bottom: -1px; left: 5%; width: 90%; height: 2px; background: var(--grad-accent); border-radius: 1px; opacity: 0.4; }
+        body.dark-mode .card-header::after { opacity: 0.6; }
+        .command-title { font-family: monospace; font-weight: 700; background: var(--tag-bg); padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.78rem; color: var(--text-primary); word-break: break-all; max-width: 65%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .category-tag { font-size: 0.68rem; background: linear-gradient(135deg, #e3edf7, #dce8f4); padding: 0.2rem 0.7rem; border-radius: 20px; color: #4a6fa5; font-weight: 500; }
+        body.dark-mode .category-tag { background: linear-gradient(135deg, #312e81, #3730a3); color: #c7d2fe; }
+        .command-body { padding: 0.9rem 1.1rem; flex: 1; display: flex; flex-direction: column; }
+        .command-desc {
+            background: rgba(248,250,252, var(--main-alpha));
+            padding: 0.6rem 0.8rem;
+            border-radius: 14px;
+            border-left: 3px solid #6b9bd2;
+            font-size: 0.82rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+            word-break: break-word;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            max-height: 90px;
+            overflow-y: auto;
+        }
+        .code-wrapper {
+            margin: 0.4rem 0;
+            border-radius: 14px;
+            background: var(--code-bg);
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0.7rem;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .code-lang { font-size: 0.68rem; color: var(--text-secondary); font-family: monospace; }
+        .toggle-code-btn {
+            background: var(--grad-toggle);
+            border: none;
+            color: white;
+            font-size: 0.68rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .toggle-code-btn:hover { opacity: 0.85; transform: scale(1.05); }
+        .code-block {
+            padding: 0.7rem;
+            position: relative;
+            overflow-x: auto;
+            transition: max-height 0.3s ease;
+        }
+        .code-block.collapsed { max-height: 130px; overflow-y: hidden; }
+        .code-block.expanded { max-height: 500px; overflow-y: auto; }
+        .code-block pre { margin: 0; padding: 0; background: transparent; font-family: monospace; font-size: 0.7rem; line-height: 1.5; white-space: pre; }
+        .code-block code { font-family: inherit; background: transparent; color: var(--code-text); white-space: pre; }
+        .copy-btn {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: linear-gradient(135deg, #475569, #334155);
+            border: none;
+            color: white;
+            font-size: 0.68rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 16px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: linear-gradient(135deg, #10b981, #059669); transform: scale(1.05); }
+        .example {
+            margin-top: 0.7rem;
+            font-size: 0.73rem;
+            background: rgba(226,232,240, var(--main-alpha));
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            word-break: break-word;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            max-height: 85px;
+            overflow-y: auto;
+        }
+        .example strong { color: var(--text-primary); display: inline-block; margin-bottom: 4px; }
+
+        /* ==================== MODALS (unchanged) ==================== */
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .fullscreen-content {
+            width: 96%; max-width: 1400px;
+            margin: 1rem auto;
+            background: var(--bg-card);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+            display: flex; flex-direction: column;
+            max-height: calc(100vh - 2rem);
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fullscreen-header {
+            padding: 1.1rem 1.8rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 1rem;
+            background: var(--bg-card);
+            flex-shrink: 0;
+        }
+        .fullscreen-title {
+            font-size: 1.2rem; font-weight: 700; font-family: monospace;
+            background: var(--tag-bg); padding: 0.3rem 1rem; border-radius: 30px; word-break: break-word;
+        }
+        .fullscreen-cat { background: var(--tag-bg); padding: 0.3rem 1rem; border-radius: 30px; font-size: 0.85rem; }
+        .fullscreen-close { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-secondary); padding: 0 0.5rem; line-height: 1; }
+        .fullscreen-close:hover { color: #ef4444; }
+        .fullscreen-body { padding: 1.5rem 1.8rem; flex: 1; overflow-y: auto; max-height: calc(100vh - 180px); }
+        .fullscreen-section { margin-bottom: 1.8rem; }
+        .fullscreen-section h4 { font-size: 1rem; margin-bottom: 0.7rem; color: #6b9bd2; border-left: 3px solid #6b9bd2; padding-left: 0.8rem; }
+        body.dark-mode .fullscreen-section h4 { color: #a5b4fc; border-left-color: #818cf8; }
+        .fullscreen-desc { background: var(--desc-bg); padding: 1rem 1.2rem; border-radius: 18px; line-height: 1.6; white-space: pre-wrap; font-size: 0.92rem; border-left: 3px solid #6b9bd2; }
+        body.dark-mode .fullscreen-desc { border-left-color: #818cf8; }
+        .fullscreen-code-wrapper { border-radius: 18px; background: var(--code-bg); overflow: hidden; }
+        .fullscreen-code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-bottom: 1px solid var(--border-light); }
+        .fullscreen-toggle-btn { background: var(--grad-toggle); border: none; color: white; font-size: 0.75rem; padding: 0.3rem 1rem; border-radius: 20px; cursor: pointer; transition: opacity 0.2s; }
+        .fullscreen-toggle-btn:hover { opacity: 0.85; }
+        .fullscreen-code-block.collapsed { max-height: 250px; overflow-y: hidden; }
+        .fullscreen-code-block.expanded { max-height: none !important; overflow-y: visible !important; }
+        .fullscreen-code-block pre { margin: 0; font-family: 'JetBrains Mono', monospace, 'SF Mono'; font-size: 0.88rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+        .fullscreen-code-block code { font-family: inherit; }
+        .fullscreen-example { background: var(--tag-bg); padding: 1rem 1.2rem; border-radius: 18px; white-space: pre-wrap; font-size: 0.88rem; line-height: 1.5; }
+        .fullscreen-actions { padding: 1rem 1.8rem 1.3rem; display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--border-light); flex-shrink: 0; background: var(--bg-card); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: var(--modal-bg); max-width: 800px; width: 90%; border-radius: 28px; padding: 1.6rem; border: 1px solid var(--border-light); }
+        .form-group { margin-bottom: 0.9rem; }
+        .form-group label { display: block; font-size: 0.78rem; margin-bottom: 5px; color: var(--text-secondary); }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 0.6rem 0.8rem; border-radius: 16px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card); color: var(--text-primary);
+            font-family: monospace; font-size: 0.82rem;
+        }
+        .inline-row { display: flex; gap: 8px; align-items: center; }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.3rem; }
+
+        /* ==================== SHARED BUTTONS ==================== */
+        .btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 0.45rem 1rem;
+            border-radius: 24px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-primary);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn:hover { background: var(--tag-bg); }
+        .btn-primary { background: var(--grad-primary); border-color: transparent; color: white; }
+        body.dark-mode .btn-primary { color: #0f172a; }
+        .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(107,155,210,0.3); }
+        .btn-outline { border-color: var(--btn-outline); color: var(--btn-outline); }
+        .btn-outline:hover { background: var(--btn-outline); color: white; }
+        .btn-sm { padding: 0.25rem 0.7rem; font-size: 0.72rem; border-radius: 16px; }
+        .theme-toggle {
+            background: var(--tag-bg);
+            border: 1px solid var(--border-light);
+            padding: 0.45rem 0.9rem;
+            border-radius: 24px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover { background: linear-gradient(135deg, #e2e8f0, #ddd6fe); }
+        body.dark-mode .theme-toggle:hover { background: linear-gradient(135deg, #334155, #312e81); }
+        .export-dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0; top: 110%;
+            background: var(--modal-bg);
+            min-width: 160px;
+            box-shadow: var(--shadow);
+            border-radius: 16px;
+            z-index: 200;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+        }
+        .dropdown-content a { display: flex; align-items: center; gap: 8px; padding: 0.6rem 1rem; text-decoration: none; color: var(--text-primary); font-size: 0.82rem; cursor: pointer; }
+        .dropdown-content a:hover { background: var(--tag-bg); }
+        .export-dropdown:hover .dropdown-content { display: block; }
+
+        /* ==================== MISC ==================== */
+        .empty-state { text-align: center; padding: 3rem; background: rgba(255,255,255, var(--main-alpha)); border-radius: 28px; color: var(--text-secondary); }
+        body.dark-mode .empty-state { background: rgba(30,41,59, var(--main-alpha)); }
+.badge { background: var(--tag-bg); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; }
+        footer { text-align: center; margin-top: 2rem; font-size: 0.73rem; color: var(--text-secondary); padding: 0.5rem; }
+        .copy-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 20px; border-radius: 30px; font-size: 0.85rem; z-index: 2000; animation: fadeOut 1.5s ease forwards; pointer-events: none; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
+        @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+
+        /* 背景设置弹出面板 */
+        .bg-settings-popover {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background: var(--modal-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+            z-index: 250;
+            padding: 1.2rem;
+            min-width: 300px;
+        }
+        .bg-settings-popover.show { display: block; }
+        .bg-settings-popover label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .bg-settings-popover input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(59,130,246,0.8) var(--pct, 75%));
+            outline: none;
+            margin: 4px 0 12px;
+        }
+        body.dark-mode .bg-settings-popover input[type="range"] {
+            background: linear-gradient(90deg, rgba(96,165,250,0.3) 0%, rgba(129,140,248,0.9) var(--pct, 75%));
+        }
+        .bg-settings-popover input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #6b9bd2;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(107,155,210,0.3);
+        }
+        .bg-settings-popover input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        .bg-settings-popover .opacity-value {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #6b9bd2;
+            margin-bottom: 10px;
+        }
+        body.dark-mode .bg-settings-popover .opacity-value { color: #a5b4fc; }
+        .bg-settings-popover input[type="text"] {
+            width: 100%;
+            padding: 0.5rem 0.8rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-light);
+            background: var(--search-bg);
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        .bg-settings-row { display: flex; gap: 8px; }
+        .bg-settings-row .btn { flex: 1; justify-content: center; font-size: 0.75rem; }
+        .bg-settings-wrapper { position: relative; display: inline-block; }
+
+        /* live2d cat */
+        #live2d-widget {
+            position: fixed !important;
+            bottom: 0 !important;
+            right: 0 !important;
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1024px) {
+            .command-title { font-size: 0.78rem; }
+        }
+        @media (max-width: 768px) {
+            .sidebar-toggle { display: block; }
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .nav-brand-text { display: none; }
+            .nav-brand-btns { display: none; }
+            .nav-search { width: 140px; min-width: 100px; }
+            .nav-actions .btn span.label-text { display: none; }
+            .nav-actions .btn { padding: 0.45rem 0.6rem; }
+            .nav-actions { gap: 4px; }
+        }
+        @media (max-width: 480px) {
+            .top-nav { padding: 0 0.6rem; gap: 0.5rem; }
+            .nav-search { min-width: 120px; }
+            .nav-search input { font-size: 0.8rem; }
+            .fullscreen-header { padding: 0.8rem; }
+            .fullscreen-body { padding: 0.8rem; }
+            .fullscreen-actions { padding: 0.8rem; }
+            .fullscreen-code-block pre { font-size: 0.72rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 背景图片层 -->
+<div id="bgImageLayer" style="position:fixed;inset:0;z-index:-3;background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;display:none;"></div>
+
+
+<!-- 白天模式：雪花飘落 -->
+<div><canvas id="snow" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;pointer-events:none"></canvas></div>
+
+<!-- 特效开关按钮组（猫咪旁边） -->
+<div id="effectBtns" style="position:fixed;bottom:8px;right:15px;z-index:10000;display:flex;flex-direction:row;gap:6px;">
+    <button id="snowToggleBtn" title="雪花" style="width:30px;height:30px;border-radius:50%;border:1px solid #d8e4f0;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.85);box-shadow:0 2px 6px rgba(0,0,0,0.08);transition:0.2s;">❄</button>
+    <button id="bubbleToggleBtn" title="气泡" style="width:30px;height:30px;border-radius:50%;border:1px solid #d8e4f0;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:rgba(200,210,220,0.6);box-shadow:0 2px 6px rgba(0,0,0,0.08);transition:0.2s;">🫧</button>
+    <button id="sakuraToggleBtn" title="花瓣" style="width:30px;height:30px;border-radius:50%;border:1px solid #d8e4f0;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:rgba(200,210,220,0.6);box-shadow:0 2px 6px rgba(0,0,0,0.08);transition:0.2s;">🌸</button>
+</div>
+
+<!-- ==================== TOP NAVBAR ==================== -->
+<nav class="top-nav">
+    <div class="nav-brand">
+        <div class="nav-logo" id="customLogoDisplay">
+            <img src="https://gegewu-cloud.github.io/img/zznnlogo.webp" alt="logo">
+        </div>
+        <span class="nav-brand-text" id="brandText" title="双击编辑名称">冰雪随笔</span>
+        <div class="nav-brand-btns">
+            <button id="customBrandBtn" title="修改名称">✎</button>
+            <button id="customLogoBtn" title="自定义Logo">🖼</button>
+            <button id="customFaviconBtn" title="更换标签页图标">🔖</button>
+        </div>
+    </div>
+
+    <div class="nav-actions">
+        <div class="nav-search">
+            <span><i class="bi bi-search"></i></span>
+            <input type="text" id="searchInput" placeholder="搜索命令...">
+        </div>
+        <button class="btn btn-outline btn-sm" id="uploadToGistNavBtn" title="上传到 Gist"><i class="bi bi-cloud-upload"></i> <span class="label-text">上传</span></button>
+        <button class="btn btn-outline btn-sm" id="downloadFromGistNavBtn" title="从 Gist 拉取"><i class="bi bi-cloud-download"></i> <span class="label-text">拉取</span></button>
+        <span style="color:var(--border-light);margin:0 2px;">|</span>
+        <div class="bg-settings-wrapper">
+            <button class="theme-toggle" id="bgImageBtn" title="背景图片与透明度设置"><i class="bi bi-image"></i></button>
+            <div class="bg-settings-popover" id="bgSettingsPopover">
+                <label>🎚️ 内容透明度 <span id="bgOpacityLabel">92%</span></label>
+                <input type="range" id="bgOpacitySlider" min="10" max="100" value="92" step="1">
+                <div class="opacity-value" id="bgOpacityValue">92%</div>
+                <label>🖼️ 图片URL</label>
+                <input type="text" id="bgUrlInput" placeholder="输入图片URL或留空清除">
+                <div class="bg-settings-row">
+                    <button class="btn btn-sm" id="bgApplyBtn">✅ 应用</button>
+                    <button class="btn btn-sm" id="bgClearBtn" style="border-color:#ef4444;color:#ef4444;">🗑️ 清除</button>
+                </div>
+            </div>
+        </div>
+        <button class="theme-toggle" id="themeToggleBtn"><i class="bi bi-moon-fill"></i></button>
+        <button class="btn btn-primary" id="openAddBtn"><i class="bi bi-plus-lg"></i> <span class="label-text">新增</span></button>
+        <div class="export-dropdown">
+            <button class="btn btn-outline"><i class="bi bi-download"></i> <span class="label-text">导出</span></button>
+            <div class="dropdown-content">
+                <a id="exportJsonBtn"><i class="bi bi-filetype-json"></i> JSON</a>
+                <a id="exportMarkdownBtn"><i class="bi bi-markdown"></i> Markdown</a>
+                <a id="exportCsvBtn"><i class="bi bi-file-earmark-spreadsheet"></i> CSV</a>
+                <a id="exportTxtBtn"><i class="bi bi-file-earmark-text"></i> 纯文本</a>
+            </div>
+        </div>
+        <button class="btn btn-outline" id="importBtn"><i class="bi bi-upload"></i> <span class="label-text">导入</span></button>
+    </div>
+
+    <button class="sidebar-toggle" id="sidebarToggle" title="菜单">☰</button>
+</nav>
+
+<!-- ==================== SIDEBAR OVERLAY (mobile) ==================== -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== CATEGORY ACTION MENU ==================== -->
+<div class="cat-action-menu" id="catActionMenu">
+    <button id="catRenameBtn">✏️ 重命名分类</button>
+    <button id="catDeleteBtn" class="danger">🗑️ 删除分类</button>
+</div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+    <!-- Gist 同步入口 -->
+    <div class="sidebar-sync-header" id="sidebarSyncToggle" title="点击打开 GitHub Gist 同步设置">
+        <span class="sync-dot" id="sidebarSyncDot"></span>
+        <span id="sidebarSyncLabel">☁️ Gist 未配置</span>
+    </div>
+
+    <div class="sidebar-header">📁 分类筛选</div>
+    <div class="category-list" id="categoryFilter"></div>
+    <button class="sidebar-add-cat" id="globalAddCategoryBtn">➕ 新建分类</button>
+</aside>
+
+<!-- ==================== GIST DRAWER (右侧滑出) ==================== -->
+<div class="gist-drawer-overlay" id="gistDrawerOverlay"></div>
+<div class="gist-drawer" id="gistDrawer">
+    <div class="gist-drawer-header">
+        <span><i class="bi bi-cloud"></i> GitHub Gist 同步</span>
+        <button class="gist-drawer-close" id="gistDrawerClose">&times;</button>
+    </div>
+    <div class="gist-drawer-body">
+        <label>GitHub Token</label>
+        <input type="text" id="gistTokenInput" placeholder="需要 gist 权限">
+        <label>Gist ID（可选，留空新建）</label>
+        <input type="text" id="gistIdInput" placeholder="留空则自动创建">
+        <button id="saveGistConfigBtn" class="btn btn-outline"><i class="bi bi-check-lg"></i> 保存配置</button>
+        <button id="uploadToGistDrawerBtn" class="btn btn-primary"><i class="bi bi-cloud-upload"></i> 上传到 Gist</button>
+        <button id="downloadFromGistDrawerBtn" class="btn btn-outline"><i class="bi bi-cloud-download"></i> 从 Gist 拉取</button>
+    </div>
+</div>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<main class="main-content">
+    <div id="commandsContainer" class="commands-grid"></div>
+    <footer>💡 提示：在任意命令卡片上<span style="background:#334155; padding:2px 8px; border-radius:20px;">右键</span>可全屏浏览 | 代码块可展开/收起</footer>
+</main>
+
+<!-- ==================== FULLSCREEN MODAL ==================== -->
+<div id="fullscreenModal" class="fullscreen-modal">
+    <div class="fullscreen-content">
+        <div class="fullscreen-header">
+            <span class="fullscreen-title" id="fsTitle"></span>
+            <span class="fullscreen-cat" id="fsCategory"></span>
+            <button class="fullscreen-close" id="fsCloseBtn">&times;</button>
+        </div>
+        <div class="fullscreen-body" id="fsBody"></div>
+        <div class="fullscreen-actions">
+            <button class="btn btn-outline" id="fsCopyBtn">复制</button>
+            <button class="btn btn-primary" id="fsEditBtn">编辑</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== COMMAND FORM MODAL ==================== -->
+<div id="commandModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">📌 命令</h3>
+        <form id="commandForm">
+            <div class="form-group"><label>命令内容 *</label><textarea id="cmdName" rows="8" required></textarea></div>
+            <div class="form-group"><label>代码语言 (语法高亮)</label>
+                <select id="cmdLang">
+                    <option value="bash">Bash (默认)</option>
+                    <option value="python">Python</option><option value="cpp">C++</option>
+                    <option value="javascript">JavaScript</option><option value="typescript">TypeScript</option>
+                    <option value="yaml">YAML</option><option value="json">JSON</option>
+                    <option value="go">Go</option><option value="rust">Rust</option>
+                    <option value="java">Java</option><option value="csharp">C#</option>
+                    <option value="php">PHP</option><option value="sql">SQL</option>
+                    <option value="html">HTML</option><option value="css">CSS</option>
+                    <option value="plaintext">纯文本</option>
+                </select>
+            </div>
+            <div class="form-group"><label>分类</label>
+                <div class="inline-row">
+                    <select id="cmdCategory"></select>
+                    <button type="button" id="quickAddCategoryBtn" class="btn btn-sm">➕ 新建</button>
+                </div>
+            </div>
+            <div class="form-group"><label>描述</label><textarea id="cmdDesc" rows="2"></textarea></div>
+            <div class="form-group"><label>示例/备注</label><textarea id="cmdExample" rows="3"></textarea></div>
+            <input type="hidden" id="editId">
+            <div class="modal-buttons">
+                <button type="button" class="btn" id="closeModalBtn">取消</button>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==================== NEW CATEGORY MODAL ==================== -->
+<div id="newCategoryModal" class="modal">
+    <div class="modal-content" style="max-width:380px;">
+        <h3>🏷️ 新建分类</h3>
+        <div class="form-group"><label>分类名称</label><input type="text" id="newCategoryName" placeholder="例如: Python, 运维"></div>
+        <div class="form-group"><label>图标</label><div class="icon-picker" id="newCatIconPicker"></div></div>
+        <input type="hidden" id="newCatIcon" value="">
+        <div class="modal-buttons">
+            <button class="btn" id="cancelNewCatBtn">取消</button>
+            <button class="btn btn-primary" id="confirmNewCatBtn">创建</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== EDIT CATEGORY MODAL ==================== -->
+<div id="editCategoryModal" class="modal">
+    <div class="modal-content" style="max-width:420px;">
+        <h3>✏️ 编辑分类</h3>
+        <div class="form-group"><label>分类名称</label><input type="text" id="editCatName" placeholder="分类名称"></div>
+        <div class="form-group"><label>图标</label><div class="icon-picker" id="editCatIconPicker"></div></div>
+        <input type="hidden" id="editCatOldName" value="">
+        <input type="hidden" id="editCatIcon" value="">
+        <div class="modal-buttons">
+            <button class="btn" id="cancelEditCatBtn">取消</button>
+            <button class="btn btn-primary" id="confirmEditCatBtn">保存</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/jquery@latest/dist/jquery.min.js,gh/weilining/jsdelivr/jquery/circlemagic/circlemagic.min.js,gh/weilining/jsdelivr@latest/jquery/circlemagic/butterflycirclemagic.js"></script>
+<script>
+    // 移动设备检测（移动端不启用特效以免卡顿）
+    const isMobile = (/phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone/i).test(navigator.userAgent);
+</script>
+<script src="js/snow.min.js"></script>
+<script src="js/sakura.js"></script>
+<script>
+    // ==================== 猫咪初始化 ====================
+    function initLive2DCat() {
+        if (typeof L2Dwidget !== 'undefined') {
+            try {
+                L2Dwidget.init({
+                    model: { jsonPath: "https://unpkg.com/live2d-widget-model-hijiki@1.0.5/assets/hijiki.model.json", scale: 1 },
+                    display: { position: "right", width: 150, height: 300, vOffset: -20, hOffset: 0 },
+                    mobile: { show: true, scale: 0.6 },
+                    react: { opacityDefault: 0.85 }
+                });
+            } catch(e) { console.warn(e); }
+        } else { setTimeout(initLive2DCat, 500); }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLive2DCat);
+    else initLive2DCat();
+
+    // ==================== 代码高亮 ====================
+    function highlightCode(code, lang = 'bash') {
+        if (!code) return '';
+        const trimmedLang = (lang || 'bash').toLowerCase();
+        try {
+            if (trimmedLang && hljs.getLanguage(trimmedLang)) {
+                return hljs.highlight(code, { language: trimmedLang }).value;
+            } else {
+                let detected = 'plaintext';
+                if (code.includes('version:') && code.includes('services:')) detected = 'yaml';
+                else if (code.includes('docker') || code.includes('kubectl')) detected = 'bash';
+                return hljs.highlight(code, { language: detected }).value;
+            }
+        } catch(e) { return escapeHtml(code); }
+    }
+
+    function normalizeCommand(cmd) {
+        if (!cmd.codeLang) cmd.codeLang = 'bash';
+        if (!cmd.category) cmd.category = '其他';
+        if (!cmd.description) cmd.description = '';
+        if (!cmd.example) cmd.example = '';
+        return cmd;
+    }
+
+    // ==================== Gist 同步 ====================
+    let gistToken = localStorage.getItem('gist_token') || '';
+    let gistId = localStorage.getItem('gist_id') || '';
+
+    function updateSyncStatus() {
+        const dot = document.getElementById('sidebarSyncDot');
+        const label = document.getElementById('sidebarSyncLabel');
+        if (dot && label) {
+            dot.className = 'sync-dot';
+            if (gistToken && gistId) { dot.classList.add('online'); label.innerText = '☁️ Gist 已同步'; }
+            else if (gistToken) { dot.classList.add('config'); label.innerText = '☁️ Gist 待关联'; }
+            else { dot.classList.add('offline'); label.innerText = '☁️ Gist 未配置'; }
+        }
+    }
+
+    async function uploadToGist() {
+        if(!gistToken) { alert('请先输入 GitHub Token 并点击"保存配置"'); return; }
+        const commandsData = await getAll();
+        const content = JSON.stringify(commandsData, null, 2);
+        const files = { 'command_master_db.json': { content: content } };
+        try {
+            let url = 'https://api.github.com/gists';
+            let method = 'POST';
+            let body = { description: 'Command DB', public: false, files: files };
+            if(gistId) { url = `https://api.github.com/gists/${gistId}`; method = 'PATCH'; body = { files: files }; }
+            const response = await fetch(url, { method: method, headers: { 'Authorization': `token ${gistToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify(body) });
+            if(response.ok) {
+                const data = await response.json();
+                if(!gistId) { gistId = data.id; localStorage.setItem('gist_id', gistId); document.getElementById('gistIdInput').value = gistId; updateSyncStatus(); }
+                alert('✅ 上传成功！');
+            } else { alert('❌ 上传失败: ' + response.status); }
+        } catch(e) { alert('网络错误: ' + e.message); }
+    }
+
+    async function downloadFromGist() {
+        if(!gistToken || !gistId) { alert('请先配置 Token 和 Gist ID'); return; }
+        try {
+            const response = await fetch(`https://api.github.com/gists/${gistId}`, { headers: { 'Authorization': `token ${gistToken}`, 'Accept': 'application/vnd.github.v3+json' } });
+            if(response.ok) {
+                const data = await response.json();
+                const fileContent = data.files['command_master_db.json']?.content;
+                if(fileContent) {
+                    const remoteCommands = JSON.parse(fileContent);
+                    if(Array.isArray(remoteCommands) && remoteCommands.length > 0) {
+                        if(confirm(`拉取到 ${remoteCommands.length} 条命令，是否覆盖本地数据？`)) {
+                            await bulkImport(remoteCommands.map(c => normalizeCommand(c)));
+                            await refresh();
+                            alert('✅ 同步成功！');
+                        }
+                    } else { alert('Gist中没有有效的命令数据'); }
+                } else { alert('Gist中未找到 command_master_db.json 文件'); }
+            } else { alert('❌ 拉取失败: ' + response.status); }
+        } catch(e) { alert('网络错误: ' + e.message); }
+    }
+
+    function saveGistConfig() {
+        const tokenInput = document.getElementById('gistTokenInput');
+        const idInput = document.getElementById('gistIdInput');
+        if (tokenInput) {
+            const newToken = tokenInput.value.trim();
+            if (newToken) { gistToken = newToken; localStorage.setItem('gist_token', gistToken); }
+        }
+        if (idInput) {
+            const newId = idInput.value.trim();
+            if (newId) { gistId = newId; localStorage.setItem('gist_id', gistId); }
+        }
+        updateSyncStatus();
+        alert('配置已保存');
+    }
+
+    // ==================== Favicon 自定义 ====================
+    function setFavicon(type, value) {
+        const faviconLink = document.getElementById('dynamicFavicon');
+        let faviconUrl = '';
+        if (type === 'emoji') {
+            const emoji = value || '🐾';
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#6b9bd2"/><text x="50" y="72" font-size="52" text-anchor="middle" fill="white" font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif">${emoji}</text></svg>`;
+            faviconUrl = 'data:image/svg+xml,' + encodeURIComponent(svg);
+        } else if (type === 'image' && value) { faviconUrl = value; }
+        else if (type === 'text' && value) {
+            const shortText = value.substring(0, 2);
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#6b9bd2" rx="20"/><text x="50" y="68" font-size="44" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold">${shortText}</text></svg>`;
+            faviconUrl = 'data:image/svg+xml,' + encodeURIComponent(svg);
+        }
+        if (faviconUrl) { faviconLink.href = faviconUrl; localStorage.setItem('favicon_type', type); localStorage.setItem('favicon_value', value); }
+    }
+    function customizeFavicon() {
+        const currentType = localStorage.getItem('favicon_type') || 'image';
+        const currentVal = localStorage.getItem('favicon_value') || DEFAULT_LOGO_URL;
+        const type = prompt('标签页图标类型:\n1. emoji\n2. image\n3. text', currentType);
+        if (!type) return;
+        let newValue = '';
+        if (type === 'image') { newValue = prompt('图片URL:', currentVal); if (newValue) setFavicon('image', newValue); }
+        else if (type === 'text') { newValue = prompt('简短文字(1-2字符):', currentVal === DEFAULT_LOGO_URL ? '喵' : currentVal); if (newValue) setFavicon('text', newValue); }
+        else { newValue = prompt('Emoji:', currentVal === DEFAULT_LOGO_URL ? '🐾' : currentVal); if (newValue) setFavicon('emoji', newValue); }
+    }
+    function loadSavedFavicon() {
+        const savedType = localStorage.getItem('favicon_type');
+        const savedVal = localStorage.getItem('favicon_value');
+        // 无自定义设置 → 保持 HTML 默认图片不动
+        if (!savedType) return;
+        setFavicon(savedType, savedVal);
+    }
+
+    const DEFAULT_LOGO_URL = 'https://gegewu-cloud.github.io/img/zznnlogo.webp';
+    // 清理旧的猫爪默认值
+    (function migrateOldDefaults() {
+        if (localStorage.getItem('custom_logo_value') === '🐾') {
+            localStorage.removeItem('custom_logo_type');
+            localStorage.removeItem('custom_logo_value');
+        }
+        if (localStorage.getItem('favicon_value') === '🐾') {
+            localStorage.removeItem('favicon_type');
+            localStorage.removeItem('favicon_value');
+        }
+        // 清理旧emoji分类图标
+        try {
+            const old = JSON.parse(localStorage.getItem('cat_icons') || '{}');
+            const hasOld = Object.values(old).some(v => !String(v).startsWith('bi-'));
+            if (hasOld) localStorage.removeItem('cat_icons');
+        } catch(e) {}
+    })();
+    function initCustomLogo() {
+        const savedLogoType = localStorage.getItem('custom_logo_type');
+        const savedLogoValue = localStorage.getItem('custom_logo_value');
+        // 没有自定义设置 → 保持 HTML 默认图片不动
+        if (!savedLogoType) return;
+        // 有自定义设置 → 应用
+        const container = document.getElementById('customLogoDisplay');
+        if(!container) return;
+        container.innerHTML = '';
+        if(savedLogoType === 'image' && savedLogoValue && savedLogoValue.trim() !== '') {
+            const img = document.createElement('img'); img.src = savedLogoValue; img.alt = "logo"; container.appendChild(img);
+        } else {
+            const span = document.createElement('span'); span.innerText = savedLogoValue || '🐾'; span.style.fontSize = "1.5rem"; container.appendChild(span);
+        }
+    }
+    // ==================== 品牌名称自定义 ====================
+    function initBrandText() {
+        const saved = localStorage.getItem('brand_text');
+        if (saved) {
+            document.getElementById('brandText').innerText = saved;
+            document.title = saved + ' · 江畔何人初见雪、江雪何年初映人';
+        }
+    }
+    function customizeBrandText() {
+        const current = localStorage.getItem('brand_text') || '冰雪随笔';
+        const input = prompt('修改品牌名称：', current);
+        if (input && input.trim()) {
+            localStorage.setItem('brand_text', input.trim());
+            document.getElementById('brandText').innerText = input.trim();
+            document.title = input.trim() + ' · 江畔何人初见雪、江雪何年初映人';
+        }
+    }
+
+    function showLogoCustomizer() {
+        const currentType = localStorage.getItem('custom_logo_type') || 'image';
+        const currentVal = localStorage.getItem('custom_logo_value') || DEFAULT_LOGO_URL;
+        const type = prompt('页面Logo类型 (emoji / 图片 / 文字):', currentType);
+        if(!type) return;
+        let newValue = '';
+        if(type === 'image') { newValue = prompt('图片URL:', currentVal); }
+        else if(type === 'text') { newValue = prompt('简短文字:', currentVal === '🐾' ? '喵' : currentVal); }
+        else { newValue = prompt('Emoji:', currentVal); }
+        if(newValue === null) return;
+        localStorage.setItem('custom_logo_type', type);
+        localStorage.setItem('custom_logo_value', newValue);
+        initCustomLogo();
+    }
+
+    // ==================== IndexedDB ====================
+    const DB_NAME = 'CommandMasterDB', STORE_NAME = 'commands';
+    let db = null, commands = [];
+
+    function openDB() { return new Promise((res, rej) => { const r = indexedDB.open(DB_NAME, 5); r.onerror = () => rej(r.error); r.onsuccess = () => { db = r.result; res(db); }; r.onupgradeneeded = e => { if(!e.target.result.objectStoreNames.contains(STORE_NAME)) e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id' }); }; }); }
+    async function getAll() { if(!db) await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readonly'); const req = tx.objectStore(STORE_NAME).getAll(); req.onsuccess = () => res((req.result || []).map(normalizeCommand)); req.onerror = () => rej(req.error); }); }
+    async function saveCmd(cmd) { if(!db) await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const req = tx.objectStore(STORE_NAME).put(cmd); req.onsuccess = () => res(); req.onerror = () => rej(req.error); }); }
+    async function delCmd(id) { if(!db) await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const req = tx.objectStore(STORE_NAME).delete(id); req.onsuccess = () => res(); req.onerror = () => rej(req.error); }); }
+    async function bulkImport(cmds) { if(!db) await openDB(); const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); await store.clear(); for(const c of cmds) store.put(normalizeCommand(c)); return new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; }); }
+
+    const DEFAULT = [
+        { id: "1", name: "version: '3'\nservices:\n  minio:\n    image: minio/minio:latest\n    ports:\n      - \"9000:9000\"", category: "Docker", description: "MinIO 对象存储配置", example: "docker-compose up -d", codeLang: "yaml" },
+        { id: "2", name: "git log --oneline --graph --all", category: "Git", description: "图形化查看提交历史", example: "按 q 退出", codeLang: "bash" },
+        { id: "3", name: "docker ps -a --format 'table {{.Names}}\\t{{.Status}}'", category: "Docker", description: "格式化容器列表", example: "", codeLang: "bash" },
+        { id: "4", name: "curl -X GET 'https://api.github.com/repos/user/repo'", category: "网络", description: "GitHub API请求", example: "", codeLang: "bash" },
+        { id: "5", name: "kubectl get pods -n default -o wide", category: "K8s", description: "查看Pod详情", example: "", codeLang: "bash" }
+    ];
+
+    let allCats = new Set(), curCat = "全部", curSearch = "";
+    function refreshCats() { allCats.clear(); commands.forEach(c => { if(c.category) allCats.add(c.category); }); if(allCats.size === 0) ["Git","Docker","网络","K8s"].forEach(c => allCats.add(c)); }
+    function getCatList() { return Array.from(allCats).sort(); }
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
+
+    async function refresh() { commands = await getAll(); sortAndRender(); }
+    async function commit(cmd) { await saveCmd(cmd); await refresh(); }
+    async function remove(id) { await delCmd(id); await refresh(); }
+
+    function filterCmds() { return commands.filter(c => { if(curCat !== "全部" && c.category !== curCat) return false; if(!curSearch.trim()) return true; const s = curSearch.toLowerCase(); return c.name.toLowerCase().includes(s) || c.description.toLowerCase().includes(s) || (c.example && c.example.toLowerCase().includes(s)); }); }
+
+    // Count commands per category for sidebar badges
+    function getCatCounts() {
+        const counts = {};
+        commands.forEach(c => {
+            const cat = c.category || '其他';
+            counts[cat] = (counts[cat] || 0) + 1;
+        });
+        return counts;
+    }
+
+    async function copyText(txt) { await navigator.clipboard.writeText(txt); const t = document.createElement('div'); t.className = 'copy-toast'; t.innerText = '✅ 已复制'; document.body.appendChild(t); setTimeout(() => t.remove(), 1500); }
+
+    function showFullscreen(cmd) {
+        currentFsCommand = cmd;
+        document.getElementById('fsTitle').innerText = cmd.name.split('\n')[0].substring(0,80);
+        document.getElementById('fsCategory').innerText = cmd.category;
+        const highlighted = highlightCode(cmd.name, cmd.codeLang);
+        const descHtml = `<div class="fullscreen-section"><h4>📝 描述</h4><div class="fullscreen-desc">${escapeHtml(cmd.description)}</div></div>`;
+        const codeHtml = `<div class="fullscreen-section"><h4>💻 命令内容 (${cmd.codeLang})</h4><div class="fullscreen-code-wrapper"><div class="fullscreen-code-header"><span class="code-lang">📄 代码</span><button class="fullscreen-toggle-btn" id="fsToggleCodeBtn">▼ 展开</button></div><div id="fs-code-block" class="fullscreen-code-block collapsed"><pre><code class="hljs">${highlighted}</code></pre></div></div></div>`;
+        const exampleHtml = cmd.example ? `<div class="fullscreen-section"><h4>💡 示例</h4><div class="fullscreen-example">${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div></div>` : '';
+        document.getElementById('fsBody').innerHTML = descHtml + codeHtml + exampleHtml;
+        document.getElementById('fullscreenModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        const btn = document.getElementById('fsToggleCodeBtn');
+        const block = document.getElementById('fs-code-block');
+        if(btn && block) btn.onclick = () => {
+            if(block.classList.contains('collapsed')) {
+                block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '▲ 收起';
+            } else {
+                block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '▼ 展开';
+            }
+        };
+        document.querySelectorAll('#fsBody pre code').forEach(b => hljs.highlightElement(b));
+    }
+
+    function closeFullscreen() {
+        document.getElementById('fullscreenModal').style.display = 'none';
+        document.body.style.overflow = '';
+        currentFsCommand = null;
+        // 重置按钮状态
+        document.getElementById('fsCopyBtn').style.display = '';
+        document.getElementById('fsEditBtn').innerText = '编辑';
+        document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
+    }
+
+    let currentFsCommand = null;
+
+    function renderCards() {
+        const filtered = filterCmds();
+        const container = document.getElementById('commandsContainer');
+        if(filtered.length === 0) { container.innerHTML = '<div class="empty-state">暂无命令，点击新增添加第一条</div>'; return; }
+        container.innerHTML = filtered.map(cmd => {
+            const highlighted = highlightCode(cmd.name, cmd.codeLang);
+            const shortTitle = cmd.name.split('\n')[0].substring(0,50);
+            return `<div class="command-card" data-cmd-id="${cmd.id}">
+                <div class="card-header"><span class="command-title">${escapeHtml(shortTitle)}</span><span class="category-tag">${escapeHtml(cmd.category)}</span></div>
+                <div class="command-body">
+                    <div class="command-desc">${escapeHtml(cmd.description)}</div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span class="code-lang">${cmd.codeLang}</span><button class="toggle-code-btn" data-target="code-${cmd.id}">展开</button></div>
+                        <div id="code-${cmd.id}" class="code-block collapsed" data-raw="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">
+                            <pre><code class="hljs">${highlighted}</code></pre>
+                            <button class="copy-btn" data-cmd="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">复制</button>
+                        </div>
+                    </div>
+                    ${cmd.example ? `<div class="example"><strong>示例：</strong><br>${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div>` : ''}
+                    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.62rem; color: var(--text-secondary);">右键全屏浏览</span>
+                        <div><button class="edit-cmd-btn btn btn-sm" data-id="${cmd.id}">编辑</button>
+                        <button class="delete-cmd-btn btn btn-sm" data-id="${cmd.id}" style="border-color:#ef4444; color:#ef4444;">删除</button></div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+
+        document.querySelectorAll('.toggle-code-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '收起'; } else { block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
+        document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); let raw = btn.dataset.cmd; if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>'); await copyText(raw); } }));
+        document.querySelectorAll('.command-card').forEach(card => card.addEventListener('contextmenu', async e => { e.preventDefault(); const id = card.querySelector('.edit-cmd-btn')?.dataset.id; if(id) { const cmd = commands.find(c => c.id === id); if(cmd) showFullscreen(cmd); } return false; }));
+        document.querySelectorAll('.edit-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { const id = btn.dataset.id; const c = commands.find(cmd => cmd.id === id); if(c) openEdit(c); e.stopPropagation(); }));
+        document.querySelectorAll('.delete-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { if(confirm('永久删除？')) { await remove(btn.dataset.id); refreshCats(); renderCatFilter(); updateCatSelect(); } e.stopPropagation(); }));
+    }
+
+    function renderCatFilter() {
+        const cats = getCatList();
+        const counts = getCatCounts();
+        const total = commands.length;
+        const div = document.getElementById('categoryFilter');
+        let html = `<button class="category-item ${curCat==='全部'?'active':''}" data-cat="全部">
+            <span class="cat-icon"><i class="bi bi-grid"></i></span><span>全部</span><span class="cat-count">${total}</span>
+        </button>`;
+        const icons = ICON_LIST;
+        cats.forEach((c, i) => {
+            const count = counts[c] || 0;
+            const icon = getCatIcon(c, i);
+            html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}">
+                <button class="category-item ${curCat===c?'active':''}" data-cat="${escapeHtml(c)}">
+                    <span class="cat-icon"><i class="bi ${escapeHtml(icon)}"></i></span><span class="cat-name-text">${escapeHtml(c)}</span><span class="cat-count">${count}</span>
+                </button>
+                <button class="cat-more-btn" data-cat="${escapeHtml(c)}" title="更多操作">⋮</button>
+            </div>`;
+        });
+        div.innerHTML = html;
+
+        // Click on category item to filter
+        document.querySelectorAll('.category-item').forEach(btn => btn.addEventListener('click', e => {
+            curCat = btn.dataset.cat;
+            renderCatFilter();
+            renderCards();
+            if (window.innerWidth <= 768) closeSidebar();
+            hideCatMenu();
+        }));
+
+        // Click on ⋮ button to show action menu
+        document.querySelectorAll('.cat-more-btn').forEach(btn => btn.addEventListener('click', e => {
+            e.stopPropagation();
+            e.preventDefault();
+            const catName = btn.dataset.cat;
+            showCatMenu(btn, catName);
+        }));
+    }
+
+    function updateCatSelect() {
+        const sel = document.getElementById('cmdCategory');
+        const cats = getCatList();
+        sel.innerHTML = cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+        if(cats.length === 0) sel.innerHTML = '<option>其他</option>';
+    }
+
+    async function sortAndRender() { refreshCats(); renderCatFilter(); updateCatSelect(); renderCards(); }
+
+    function openEdit(cmd) {
+        updateCatSelect();
+        document.getElementById('cmdName').value = cmd.name;
+        document.getElementById('cmdCategory').value = cmd.category;
+        document.getElementById('cmdDesc').value = cmd.description;
+        document.getElementById('cmdExample').value = cmd.example || '';
+        document.getElementById('editId').value = cmd.id;
+        const langSelect = document.getElementById('cmdLang');
+        if(langSelect) langSelect.value = cmd.codeLang || 'bash';
+        // 使用全屏模式编辑
+        showFullscreenEdit(cmd);
+    }
+
+    function showFullscreenEdit(cmd) {
+        currentFsCommand = cmd;
+        document.getElementById('fsTitle').innerText = '编辑: ' + cmd.name.split('\n')[0].substring(0,60);
+        document.getElementById('fsCategory').innerText = cmd.category;
+        const catOpts = getCatList().map(c => `<option value="${escapeHtml(c)}" ${c===cmd.category?'selected':''}>${escapeHtml(c)}</option>`).join('');
+        const body = `
+            <div class="fullscreen-section">
+                <h4>💻 命令内容 (${cmd.codeLang})</h4>
+                <textarea id="fsEditName" style="width:100%;min-height:260px;padding:1rem;border-radius:16px;border:1px solid var(--border-light);background:var(--code-bg);color:var(--code-text);font-family:monospace;font-size:0.85rem;line-height:1.5;resize:vertical;white-space:pre;overflow:auto;">${escapeHtml(cmd.name)}</textarea>
+            </div>
+            <div class="fullscreen-section">
+                <h4>🏷️ 分类 & 语言</h4>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:140px;">
+                        <label style="font-size:0.75rem;color:var(--text-secondary);">分类</label>
+                        <select id="fsEditCategory" style="width:100%;padding:0.5rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);">${catOpts}</select>
+                    </div>
+                    <div style="flex:1;min-width:140px;">
+                        <label style="font-size:0.75rem;color:var(--text-secondary);">代码语言</label>
+                        <select id="fsEditLang" style="width:100%;padding:0.5rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);">
+                            ${['bash','python','cpp','javascript','typescript','yaml','json','go','rust','java','csharp','php','sql','html','css','plaintext'].map(l => `<option value="${l}" ${l===cmd.codeLang?'selected':''}>${l}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="fullscreen-section">
+                <h4>📝 描述</h4>
+                <textarea id="fsEditDesc" rows="2" style="width:100%;padding:0.7rem;border-radius:14px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);font-size:0.88rem;resize:vertical;">${escapeHtml(cmd.description)}</textarea>
+            </div>
+            <div class="fullscreen-section">
+                <h4>💡 示例</h4>
+                <textarea id="fsEditExample" rows="3" style="width:100%;padding:0.7rem;border-radius:14px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);font-size:0.88rem;resize:vertical;">${escapeHtml(cmd.example || '')}</textarea>
+            </div>
+        `;
+        document.getElementById('fsBody').innerHTML = body;
+        document.getElementById('fullscreenModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        // 切换底部按钮
+        document.getElementById('fsCopyBtn').style.display = 'none';
+        document.getElementById('fsEditBtn').innerText = '保存';
+        document.getElementById('fsEditBtn').onclick = saveFullscreenEdit;
+    }
+
+    async function saveFullscreenEdit() {
+        const id = currentFsCommand.id;
+        const name = document.getElementById('fsEditName').value;
+        if (!name.trim()) { showToast('命令不能为空', false); return; }
+        const category = document.getElementById('fsEditCategory').value;
+        const codeLang = document.getElementById('fsEditLang').value;
+        const description = document.getElementById('fsEditDesc').value.trim();
+        const example = document.getElementById('fsEditExample').value.trim();
+        const cmd = { id, name, category, description, example, codeLang };
+        try {
+            await commit(cmd);
+            showToast('保存成功', true);
+            closeFullscreen();
+        } catch(e) {
+            showToast('保存失败: ' + e.message, false);
+        }
+    }
+
+    function showToast(msg, success) {
+        const t = document.createElement('div');
+        t.className = 'copy-toast';
+        t.innerText = (success ? '✓ ' : '✗ ') + msg;
+        t.style.background = success ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)';
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2000);
+    }
+
+    function resetModal() {
+        document.getElementById('cmdName').value = '';
+        updateCatSelect();
+        const def = getCatList()[0] || '其他';
+        document.getElementById('cmdCategory').value = def;
+        document.getElementById('cmdDesc').value = '';
+        document.getElementById('cmdExample').value = '';
+        document.getElementById('editId').value = '';
+        const langSelect = document.getElementById('cmdLang');
+        if(langSelect) langSelect.value = 'bash';
+        document.getElementById('modalTitle').innerText = '📌 新增命令';
+    }
+
+    async function onSave(e) {
+        e.preventDefault();
+        const name = document.getElementById('cmdName').value;
+        if(!name.trim()) return alert('命令不能为空');
+        let cat = document.getElementById('cmdCategory').value;
+        if(!cat) cat = '其他';
+        const codeLang = document.getElementById('cmdLang').value;
+        const id = document.getElementById('editId').value || Date.now().toString(36) + Math.random().toString(36).substr(2,6);
+        const cmd = { id, name, category: cat, description: document.getElementById('cmdDesc').value.trim() || '无描述', example: document.getElementById('cmdExample').value.trim(), codeLang: codeLang || 'bash' };
+        await commit(cmd);
+        document.getElementById('commandModal').style.display = 'none';
+        resetModal();
+    }
+
+    function download(content, filename, mime) { const a = document.createElement('a'); const blob = new Blob([content], { type: mime }); a.href = URL.createObjectURL(blob); a.download = filename; a.click(); URL.revokeObjectURL(a.href); }
+    function exportJSON() { download(JSON.stringify(commands, null, 2), `commands_${Date.now()}.json`, 'application/json'); }
+    function exportMarkdown() { let md = '# 冰雪随笔\n\n'; commands.forEach(c => { md += `## ${c.category}\n\`\`\`${c.codeLang||'bash'}\n${c.name}\n\`\`\`\n描述: ${c.description}\n\n`; }); download(md, `commands.md`, 'text/markdown'); }
+    function exportCSV() { const rows = commands.map(c => `"${c.name.replace(/"/g,'""')}","${c.category}","${c.description.replace(/"/g,'""')}","${c.codeLang||'bash'}"`); download("﻿命令,分类,描述,代码语言\n" + rows.join('\n'), `commands.csv`, 'text/csv'); }
+    function exportTxt() { let txt = ''; commands.forEach(c => { txt += `${c.category}\n${c.name}\n${c.description}\n语言:${c.codeLang||'bash'}\n\n`; }); download(txt, `commands.txt`, 'text/plain'); }
+
+    function setupImport() {
+        const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json';
+        inp.onchange = async e => { const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = async ev => { try { const p = JSON.parse(ev.target.result); if(Array.isArray(p)) { await bulkImport(p.map(c => ({ id: c.id || Date.now()+Math.random(), name: c.name, category: c.category || '其他', description: c.description || '', example: c.example || '', codeLang: c.codeLang || 'bash' }))); await refresh(); alert(`导入成功，共 ${commands.length} 条`); } else throw new Error(); } catch(err) { alert('无效JSON文件'); } }; reader.readAsText(f); };
+        document.getElementById('importBtn').addEventListener('click', () => inp.click());
+    }
+
+    function initTheme() { const saved = localStorage.getItem('theme'); if(saved === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeToggleBtn').innerHTML = '<i class="bi bi-sun-fill"></i>'; } else { document.body.classList.remove('dark-mode'); document.getElementById('themeToggleBtn').innerHTML = '<i class="bi bi-moon-fill"></i>'; } }
+    function toggleTheme() {
+        if(document.body.classList.contains('dark-mode')) {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme','light');
+            document.getElementById('themeToggleBtn').innerHTML = '<i class="bi bi-moon-fill"></i>';
+        } else {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme','dark');
+            document.getElementById('themeToggleBtn').innerHTML = '<i class="bi bi-sun-fill"></i>';
+        }
+        // 主题切换时刷新
+        refreshBgOverlay();
+        if (document.body.classList.contains('has-bg-image')) {
+            const alpha = sliderToAlpha(getStoredOpacity());
+            applyMainAlpha(alpha);
+        }
+        // 切换特效
+        updateEffectsForTheme();
+    }
+
+    // ==================== 特效控制 ====================
+    const effectState = {
+        snow: { enabled: !isMobile, btnId: 'snowToggleBtn', canvasId: 'snow', ctrl: 'snowControl', icon: 'bi-snow', key: 'snow_enabled' },
+        bubble: { enabled: false, btnId: 'bubbleToggleBtn', canvasId: null, ctrl: null, icon: 'bi-droplet', key: 'bubble_enabled' },
+        sakura: { enabled: false, btnId: 'sakuraToggleBtn', canvasId: 'sakura', ctrl: 'sakuraControl', icon: 'bi-flower1', key: 'sakura_enabled' }
+    };
+    function updateEffectBtn(eff) {
+        const btn = document.getElementById(eff.btnId);
+        if (!btn) return;
+        if (eff.enabled) {
+            btn.style.background = 'rgba(255,255,255,0.9)';
+            btn.style.opacity = '1';
+        } else {
+            btn.style.background = 'rgba(180,190,200,0.55)';
+            btn.style.opacity = '0.5';
+        }
+    }
+
+    function toggleEffect(eff) {
+        eff.enabled = !eff.enabled;
+        localStorage.setItem(eff.key, eff.enabled ? '1' : '0');
+        // 控制特效
+        const ctrl = eff.ctrl ? window[eff.ctrl] : null;
+        if (ctrl) {
+            if (eff.enabled) ctrl.start();
+            else ctrl.stop();
+        }
+        // 控制canvas显示
+        if (eff.canvasId) {
+            const canvas = document.getElementById(eff.canvasId);
+            if (canvas) canvas.style.display = eff.enabled ? 'block' : 'none';
+        }
+        // 气泡特效特殊处理
+        if (eff === effectState.bubble) {
+            if (eff.enabled) startBubbles();
+            else stopBubbles();
+        }
+        updateEffectBtn(eff);
+    }
+
+    // 气泡特效
+    let bubbleRunning = false, bubbleTimer = null;
+    function startBubbles() {
+        if (bubbleRunning) return;
+        bubbleRunning = true;
+        if (typeof $ !== 'undefined' && $.fn && $.fn.circlemagic) {
+            try { $('body').circlemagic({ color: ['rgba(173,216,230,0.6)','rgba(135,206,250,0.5)','rgba(176,224,250,0.5)'], radius: [8,30], density: 0.5, speed: [0.15,0.6], zIndex: 99996 }); }
+            catch(e) { startBubbleFallback(); }
+        } else { startBubbleFallback(); }
+    }
+    function stopBubbles() {
+        bubbleRunning = false;
+        if (bubbleTimer) { clearInterval(bubbleTimer); bubbleTimer = null; }
+        var old = document.getElementById('bubbleCanvas');
+        if (old) old.remove();
+    }
+    function startBubbleFallback() {
+        if (!bubbleRunning) return;
+        var c = document.getElementById('bubbleCanvas');
+        if (!c) {
+            c = document.createElement('canvas');
+            c.id = 'bubbleCanvas';
+            c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99996;pointer-events:none';
+            document.body.appendChild(c);
+        }
+        var ctx = c.getContext('2d');
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        var bubbles = [];
+        for (var i = 0; i < 15; i++) {
+            bubbles.push({ x: Math.random()*c.width, y: c.height+Math.random()*200, r: Math.random()*18+6, speed: Math.random()*0.8+0.3, ox: Math.random()*50 });
+        }
+        function frame() {
+            if (!bubbleRunning) { ctx.clearRect(0,0,c.width,c.height); return; }
+            ctx.clearRect(0, 0, c.width, c.height);
+            for (var i = 0; i < bubbles.length; i++) {
+                var b = bubbles[i];
+                ctx.beginPath();
+                ctx.arc(b.x + Math.sin(b.y*0.02)*b.ox, b.y, b.r, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(200,225,245,0.25)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(180,210,240,0.35)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                // 高光
+                ctx.beginPath();
+                ctx.arc(b.x - b.r*0.3, b.y - b.r*0.3, b.r*0.25, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                ctx.fill();
+                b.y -= b.speed;
+                if (b.y < -30) { b.y = c.height + 30; b.x = Math.random()*c.width; }
+            }
+            bubbleTimer = requestAnimationFrame(frame);
+        }
+        frame();
+    }
+
+    function updateEffectsForTheme() {
+        // 所有特效按钮始终显示
+    }
+
+    function initEffects() {
+        // 读取特效开关状态：默认雪花开，其余关
+        Object.values(effectState).forEach(eff => {
+            const saved = localStorage.getItem(eff.key);
+            if (saved !== null) eff.enabled = (saved === '1');
+            if (isMobile) eff.enabled = false; // 移动端全关
+        });
+        // 初始应用状态
+        updateEffectsForTheme();
+        Object.values(effectState).forEach(eff => {
+            const ctrl = eff.ctrl ? window[eff.ctrl] : null;
+            const canvas = eff.canvasId ? document.getElementById(eff.canvasId) : null;
+            if (eff.enabled) {
+                if (ctrl) ctrl.start();
+                if (canvas) canvas.style.display = 'block';
+            } else {
+                if (canvas) canvas.style.display = 'none';
+            }
+            updateEffectBtn(eff);
+            // 绑定按钮
+            const btn = document.getElementById(eff.btnId);
+            if (btn) btn.addEventListener('click', function() { toggleEffect(eff); });
+        });
+        // 气泡默认关
+        if (!effectState.bubble.enabled) stopBubbles();
+    }
+
+    // ==================== BACKGROUND IMAGE ====================
+    const DEFAULT_BG_URL = 'https://onenote.zznnwn.cloudns.biz/api/raw/?path=/Welcome%E9%9B%AA%E5%8D%83%E8%88%9F%E7%9A%84%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/%E7%94%B5%E8%84%91%E5%A3%81%E7%BA%B8%F0%9F%8D%A1/%E9%A3%8E%E6%99%AF/www.todaybing.com.ugPgvukx.jpg';
+
+    // 滑块值(10-95) → CSS alpha(0.10-0.95)，值越大越不透明
+    function sliderToAlpha(val) { return (val / 100).toFixed(2); }
+
+    function getStoredOpacity() {
+        const v = localStorage.getItem('bg_opacity');
+        return v ? parseInt(v) : 92; // 默认92
+    }
+
+    function applyMainAlpha(alpha) {
+        document.documentElement.style.setProperty('--main-alpha', alpha);
+        // 透明度<0.65时自动增强文字对比度
+        const glow = alpha < 0.65 ? (0.65 - alpha) * 1.5 : 0;
+        document.documentElement.style.setProperty('--text-glow', glow);
+        if (glow > 0) {
+            document.documentElement.style.setProperty('--text-shadow', document.body.classList.contains('dark-mode')
+                ? `0 0 ${glow*8}px rgba(255,255,255,${glow})` : `0 0 ${glow*6}px rgba(0,0,0,${glow*0.5})`);
+        } else {
+            document.documentElement.style.setProperty('--text-shadow', 'none');
+        }
+    }
+
+    function applyBgImage(url) {
+        const layer = document.getElementById('bgImageLayer');
+        if (url) {
+            layer.style.backgroundImage = `url('${url}')`;
+            layer.style.display = 'block';
+            document.body.classList.add('has-bg-image');
+            // 让body背景半透，露出图片
+            document.body.style.background = document.body.classList.contains('dark-mode')
+                ? 'rgba(15,23,42,0.85)' : 'rgba(227,237,247,0.7)';
+            const alpha = sliderToAlpha(getStoredOpacity());
+            applyMainAlpha(alpha);
+            document.getElementById('bgImageBtn').innerHTML = '<i class="bi bi-image-fill"></i>';
+            document.getElementById('bgImageBtn').style.background = 'linear-gradient(135deg, #dbeafe, #ede9fe)';
+        } else {
+            layer.style.backgroundImage = '';
+            layer.style.display = 'none';
+            document.body.classList.remove('has-bg-image');
+            document.body.style.background = '';
+            applyMainAlpha(1);
+            document.getElementById('bgImageBtn').innerHTML = '<i class="bi bi-image"></i>';
+            document.getElementById('bgImageBtn').style.background = '';
+        }
+    }
+
+    function refreshBgOverlay() {
+        if (!document.body.classList.contains('has-bg-image')) return;
+        document.body.style.background = document.body.classList.contains('dark-mode')
+            ? 'rgba(15,23,42,0.85)' : 'rgba(227,237,247,0.7)';
+    }
+
+    // 拖拽滑块时实时预览
+    function applyBgImageLive(opacityVal) {
+        if (!document.body.classList.contains('has-bg-image')) return;
+        applyMainAlpha(sliderToAlpha(opacityVal));
+    }
+
+    function setBgImage(url) {
+        if (url) {
+            localStorage.setItem('bg_image_url', url);
+        } else {
+            localStorage.removeItem('bg_image_url');
+        }
+        applyBgImage(url);
+    }
+
+    // ==================== 背景设置弹出面板 ====================
+    function toggleBgPopover() {
+        const popover = document.getElementById('bgSettingsPopover');
+        const isOpen = popover.classList.contains('show');
+        if (isOpen) {
+            closeBgPopover();
+        } else {
+            // 初始化面板数值
+            const currentUrl = localStorage.getItem('bg_image_url');
+            const isDefault = currentUrl === null;
+            document.getElementById('bgUrlInput').value = isDefault ? DEFAULT_BG_URL : (currentUrl || '');
+            const opacity = getStoredOpacity();
+            document.getElementById('bgOpacitySlider').value = opacity;
+            updateOpacityDisplay(opacity);
+            popover.classList.add('show');
+        }
+    }
+
+    function closeBgPopover() {
+        document.getElementById('bgSettingsPopover').classList.remove('show');
+    }
+
+    function updateOpacityDisplay(val) {
+        document.getElementById('bgOpacityValue').innerText = val + '%';
+        document.getElementById('bgOpacityLabel').innerText = '🎚️ 内容透明度 ' + val + '%';
+        const pct = ((val - 10) / 90) * 100;
+        document.getElementById('bgOpacitySlider').style.setProperty('--pct', pct + '%');
+    }
+
+    function applyBgSettings() {
+        const urlInput = document.getElementById('bgUrlInput').value.trim();
+        const opacity = parseInt(document.getElementById('bgOpacitySlider').value);
+
+        // 保存透明度
+        localStorage.setItem('bg_opacity', opacity);
+
+        if (urlInput === '') {
+            // 清除背景
+            localStorage.removeItem('bg_image_url');
+            applyBgImage('');
+        } else {
+            localStorage.setItem('bg_image_url', urlInput);
+            applyBgImage(urlInput);
+        }
+        closeBgPopover();
+    }
+
+    function clearBgSettings() {
+        if (confirm('确定清除背景图片，恢复纯色背景吗？')) {
+            localStorage.removeItem('bg_image_url');
+            localStorage.removeItem('bg_opacity');
+            applyBgImage('');
+            closeBgPopover();
+        }
+    }
+
+    function initBgImage() {
+        const saved = localStorage.getItem('bg_image_url');
+        if (saved === '') {
+            applyBgImage('');
+        } else if (saved) {
+            applyBgImage(saved);
+        } else {
+            applyBgImage(DEFAULT_BG_URL);
+        }
+    }
+
+    let pendingCatCb = null;
+    function openNewCatModal(cb) {
+        pendingCatCb = cb || null;
+        document.getElementById('newCategoryName').value = '';
+        document.getElementById('newCatIcon').value = '';
+        renderIconPicker('newCatIconPicker', 'newCatIcon', ICON_LIST[Math.floor(Math.random() * ICON_LIST.length)]);
+        document.getElementById('newCategoryModal').style.display = 'flex';
+    }
+    function closeNewCatModal() { document.getElementById('newCategoryModal').style.display = 'none'; pendingCatCb = null; }
+    async function createNewCat() {
+        const name = document.getElementById('newCategoryName').value.trim();
+        if(!name) return alert('请输入名称');
+        if(allCats.has(name)) { alert('分类已存在'); closeNewCatModal(); return; }
+        const icon = document.getElementById('newCatIcon').value;
+        if (icon) saveCatIcon(name, icon);
+        allCats.add(name); renderCatFilter(); updateCatSelect();
+        if(pendingCatCb) pendingCatCb(name);
+        else { curCat = name; renderCatFilter(); renderCards(); }
+        closeNewCatModal();
+    }
+
+    // ==================== CATEGORY ICONS ====================
+    const ICON_LIST = [
+        'bi-folder','bi-folder2','bi-folder2-open','bi-folder-symlink',
+        'bi-file-earmark-code','bi-file-earmark-text','bi-filetype-json','bi-filetype-yml',
+        'bi-terminal','bi-code-slash','bi-code-square','bi-braces',
+        'bi-database','bi-database-fill','bi-server','bi-hdd-stack',
+        'bi-cloud','bi-cloud-fill','bi-globe2','bi-box',
+        'bi-gear','bi-gear-fill','bi-wrench','bi-tools',
+        'bi-shield-check','bi-shield-lock','bi-key','bi-lock',
+        'bi-git','bi-github','bi-docker','bi-ubuntu',
+        'bi-cpu','bi-motherboard','bi-memory','bi-ethernet',
+        'bi-link-45deg','bi-plugin','bi-puzzle','bi-grid'
+    ];
+
+    function loadCatIcons() {
+        try { return JSON.parse(localStorage.getItem('cat_icons') || '{}'); }
+        catch(e) { return {}; }
+    }
+    function saveCatIcon(cat, icon) {
+        const map = loadCatIcons();
+        if (icon) map[cat] = icon;
+        else delete map[cat];
+        localStorage.setItem('cat_icons', JSON.stringify(map));
+    }
+    function getCatIcon(cat, index) {
+        const map = loadCatIcons();
+        if (map[cat]) return map[cat];
+        return ICON_LIST[index % ICON_LIST.length];
+    }
+
+    function renderIconPicker(containerId, hiddenInputId, selectedIcon) {
+        const container = document.getElementById(containerId);
+        const hidden = document.getElementById(hiddenInputId);
+        if (!container) return;
+        let html = '';
+        ICON_LIST.forEach(icon => {
+            const sel = icon === selectedIcon ? ' selected' : '';
+            html += `<button class="icon-option${sel}" data-icon="${icon}" type="button"><i class="bi ${icon}"></i></button>`;
+        });
+        container.innerHTML = html;
+        container.querySelectorAll('.icon-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                container.querySelectorAll('.icon-option').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                if (hidden) hidden.value = btn.dataset.icon;
+            });
+        });
+        if (hidden) hidden.value = selectedIcon || '';
+    }
+
+    // ==================== CATEGORY RENAME / DELETE ====================
+    let currentCatMenuTarget = null;
+
+    function showCatMenu(btn, catName) {
+        currentCatMenuTarget = catName;
+        const menu = document.getElementById('catActionMenu');
+        const rect = btn.getBoundingClientRect();
+        menu.style.top = rect.bottom + 4 + 'px';
+        menu.style.left = Math.min(rect.left, window.innerWidth - 150) + 'px';
+        menu.classList.add('show');
+    }
+
+    function hideCatMenu() {
+        const menu = document.getElementById('catActionMenu');
+        menu.classList.remove('show');
+        currentCatMenuTarget = null;
+    }
+
+    // ==================== EDIT CATEGORY MODAL ====================
+    function openEditCatModal(catName) {
+        hideCatMenu();
+        document.getElementById('editCatName').value = catName;
+        document.getElementById('editCatOldName').value = catName;
+        const currentIcon = getCatIcon(catName, 0);
+        document.getElementById('editCatIcon').value = currentIcon;
+        renderIconPicker('editCatIconPicker', 'editCatIcon', currentIcon);
+        document.getElementById('editCategoryModal').style.display = 'flex';
+    }
+    function closeEditCatModal() { document.getElementById('editCategoryModal').style.display = 'none'; }
+
+    async function saveEditCategory() {
+        const oldName = document.getElementById('editCatOldName').value;
+        const newName = document.getElementById('editCatName').value.trim();
+        const newIcon = document.getElementById('editCatIcon').value;
+        if (!newName) return alert('分类名称不能为空');
+        if (newName !== oldName && allCats.has(newName)) return alert('该分类名称已存在');
+        // Save icon
+        saveCatIcon(newName, newIcon);
+        if (newName !== oldName) {
+            // Remove old icon mapping
+            saveCatIcon(oldName, null);
+            // Update all commands
+            const toUpdate = commands.filter(c => c.category === oldName);
+            for (const cmd of toUpdate) { cmd.category = newName; await saveCmd(cmd); }
+            if (curCat === oldName) curCat = newName;
+        }
+        await refresh();
+        closeEditCatModal();
+    }
+
+    async function deleteCategory(catName) {
+        const cmdsInCat = commands.filter(c => c.category === catName);
+        const msg = cmdsInCat.length > 0
+            ? `分类「${catName}」下有 ${cmdsInCat.length} 条命令。\n\n确定要删除此分类吗？\n命令将移至「其他」分类。`
+            : `确定要删除分类「${catName}」吗？`;
+        if (!confirm(msg)) return;
+        // Reassign all commands in this category to 其他
+        for (const cmd of cmdsInCat) {
+            cmd.category = '其他';
+            await saveCmd(cmd);
+        }
+        // If current filter was on deleted category, reset to all
+        if (curCat === catName) curCat = '全部';
+        await refresh();
+        hideCatMenu();
+    }
+
+    // ==================== SIDEBAR MOBILE TOGGLE ====================
+    function openSidebar() {
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('open')) closeSidebar();
+        else openSidebar();
+    }
+
+    // ==================== SYNC PANEL TOGGLE ====================
+    function openGistDrawer() {
+        document.getElementById('gistDrawer').classList.add('open');
+        document.getElementById('gistDrawerOverlay').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeGistDrawer() {
+        document.getElementById('gistDrawer').classList.remove('open');
+        document.getElementById('gistDrawerOverlay').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+    function toggleGistDrawer() {
+        if (document.getElementById('gistDrawer').classList.contains('open')) {
+            closeGistDrawer();
+        } else {
+            openGistDrawer();
+        }
+    }
+
+    async function init() {
+        initTheme();
+        document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+        await openDB();
+        let existing = await getAll();
+        if(existing.length === 0) { await bulkImport(DEFAULT); existing = DEFAULT.map(normalizeCommand); }
+        commands = existing;
+        await refresh();
+        document.getElementById('searchInput').addEventListener('input', e => { curSearch = e.target.value; renderCards(); });
+        document.getElementById('openAddBtn').addEventListener('click', () => { resetModal(); document.getElementById('commandModal').style.display = 'flex'; });
+        document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('commandModal').style.display = 'none'; resetModal(); });
+        document.getElementById('commandForm').addEventListener('submit', onSave);
+        document.getElementById('exportJsonBtn').addEventListener('click', exportJSON);
+        document.getElementById('exportMarkdownBtn').addEventListener('click', exportMarkdown);
+        document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+        document.getElementById('exportTxtBtn').addEventListener('click', exportTxt);
+        window.addEventListener('click', e => { if(e.target === document.getElementById('commandModal')) document.getElementById('commandModal').style.display = 'none'; if(e.target === document.getElementById('newCategoryModal')) closeNewCatModal(); if(e.target === document.getElementById('editCategoryModal')) closeEditCatModal(); if(e.target === document.getElementById('fullscreenModal')) closeFullscreen(); if(!e.target.closest('.cat-more-btn') && !e.target.closest('#catActionMenu')) hideCatMenu(); if(!e.target.closest('.bg-settings-wrapper')) closeBgPopover(); });
+        document.getElementById('fsCloseBtn').addEventListener('click', closeFullscreen);
+        document.getElementById('fsCopyBtn').addEventListener('click', async () => { if(currentFsCommand) await copyText(currentFsCommand.name); });
+        document.getElementById('fsEditBtn').addEventListener('click', () => { if(currentFsCommand) openEdit(currentFsCommand); });
+        setupImport();
+        document.getElementById('quickAddCategoryBtn').addEventListener('click', () => openNewCatModal((newCat) => { updateCatSelect(); document.getElementById('cmdCategory').value = newCat; }));
+        document.getElementById('confirmNewCatBtn').addEventListener('click', createNewCat);
+        document.getElementById('cancelNewCatBtn').addEventListener('click', closeNewCatModal);
+        document.getElementById('saveGistConfigBtn').addEventListener('click', saveGistConfig);
+        document.getElementById('uploadToGistNavBtn').addEventListener('click', uploadToGist);
+        document.getElementById('downloadFromGistNavBtn').addEventListener('click', downloadFromGist);
+        document.getElementById('gistTokenInput').value = gistToken;
+        document.getElementById('gistIdInput').value = gistId;
+        updateSyncStatus();
+
+        // sidebar & mobile
+        document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+        document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+        document.getElementById('sidebarSyncToggle').addEventListener('click', toggleGistDrawer);
+        document.getElementById('gistDrawerClose').addEventListener('click', closeGistDrawer);
+        document.getElementById('gistDrawerOverlay').addEventListener('click', closeGistDrawer);
+        document.getElementById('uploadToGistDrawerBtn').addEventListener('click', uploadToGist);
+        document.getElementById('downloadFromGistDrawerBtn').addEventListener('click', downloadFromGist);
+        document.getElementById('globalAddCategoryBtn').addEventListener('click', () => openNewCatModal(null));
+
+        // close sidebar on pressing Escape
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSidebar(); hideCatMenu(); } });
+
+        // category action menu buttons
+        document.getElementById('catRenameBtn').addEventListener('click', () => {
+            if (currentCatMenuTarget) openEditCatModal(currentCatMenuTarget);
+        });
+        document.getElementById('catDeleteBtn').addEventListener('click', () => {
+            if (currentCatMenuTarget) deleteCategory(currentCatMenuTarget);
+        });
+
+        // edit category modal
+        document.getElementById('confirmEditCatBtn').addEventListener('click', saveEditCategory);
+        document.getElementById('cancelEditCatBtn').addEventListener('click', closeEditCatModal);
+
+        initCustomLogo();
+        initBrandText();
+        loadSavedFavicon();
+        initBgImage();
+        initEffects();
+        document.getElementById('customFaviconBtn').addEventListener('click', customizeFavicon);
+        document.getElementById('customLogoBtn').addEventListener('click', showLogoCustomizer);
+        document.getElementById('customBrandBtn').addEventListener('click', customizeBrandText);
+        document.getElementById('brandText').addEventListener('dblclick', customizeBrandText);
+
+        // 点击页面空白处弹出诗句
+        const POEM_TEXT = '江畔何人初见雪、江雪何年初映人';
+        document.addEventListener('click', e => {
+            if (e.target.closest('button,input,textarea,select,a,.modal,.fullscreen-modal,#catActionMenu,.bg-settings-wrapper,.gist-drawer,.sidebar,.sidebar-overlay')) return;
+            showPoemToast(e.clientX, e.clientY);
+        });
+        function showPoemToast(x, y) {
+            const t = document.createElement('div');
+            t.style.cssText = `position:fixed;left:${x}px;top:${y}px;background:linear-gradient(135deg,rgba(107,155,210,0.92),rgba(140,170,220,0.88));color:#fff;padding:10px 20px;border-radius:24px;font-size:0.92rem;font-weight:500;z-index:3000;pointer-events:none;white-space:nowrap;animation:poemFade 2.5s ease forwards;box-shadow:0 6px 20px rgba(107,155,210,0.3);`;
+            t.innerText = POEM_TEXT;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2600);
+        }
+        const poemStyle = document.createElement('style');
+        poemStyle.textContent = '@keyframes poemFade{0%{opacity:0;transform:translate(-50%,10px) scale(0.9)}15%{opacity:1;transform:translate(-50%,0) scale(1)}70%{opacity:1;transform:translate(-50%,-20px) scale(1)}100%{opacity:0;transform:translate(-50%,-50px) scale(0.8)}}';
+        document.head.appendChild(poemStyle);
+
+        // 背景设置面板
+        document.getElementById('bgImageBtn').addEventListener('click', e => { e.stopPropagation(); toggleBgPopover(); });
+        document.getElementById('bgOpacitySlider').addEventListener('input', e => { updateOpacityDisplay(parseInt(e.target.value)); applyBgImageLive(parseInt(e.target.value)); });
+        document.getElementById('bgApplyBtn').addEventListener('click', applyBgSettings);
+        document.getElementById('bgClearBtn').addEventListener('click', clearBgSettings);
+    }
+
+    init();
+</script>
+</body>
+</html>

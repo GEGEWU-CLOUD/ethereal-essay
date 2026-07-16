@@ -1,15 +1,39 @@
 {
-    "version": 2,
-    "builds": [
+  "rewrites": [
+    {
+      "source": "/((?!css/|js/|favicon\\.ico).*)",
+      "destination": "/ethereal-notev1.2.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/css/(.*)",
+      "headers": [
         {
-            "src": "ethereal.html",
-            "use": "@vercel/static"
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
-    ],
-    "routes": [
+      ]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [
         {
-            "src": "/",
-            "dest": "/ethereal.html"
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
-    ]
+      ]
+    },
+    {
+      "source": "/ethereal-notev1.2.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "cleanUrls": false,
+  "trailingSlash": false
 }

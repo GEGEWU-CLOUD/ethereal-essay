@@ -1,0 +1,113 @@
+/* 星空宇宙特效 - 夜间模式 */
+body.dark-mode .universe-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #090a0f 100%);
+    overflow: hidden;
+}
+
+body.dark-mode .universe-bg .stars {
+    position: absolute;
+    inset: 0;
+}
+
+/* 小星星 */
+body.dark-mode .universe-bg .stars::before {
+    content: '';
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    border-radius: 50%;
+    box-shadow:
+        30vw 15vh #fff, 75vw 8vh #fff, 10vw 70vh #fff, 90vw 35vh #fff,
+        50vw 25vh #fff, 15vw 55vh #fff, 85vw 80vh #fff, 40vw 65vh #fff,
+        65vw 45vh #fff, 20vw 40vh #fff, 55vw 85vh #fff, 95vw 50vh #fff,
+        5vw 90vh #fff, 70vw 10vh #fff, 35vw 75vh #fff, 80vw 60vh #fff,
+        45vw 5vh #fff, 25vw 95vh #fff, 60vw 30vh #fff, 12vw 20vh #fff,
+        78vw 92vh #fff, 3vw 50vh #fff, 88vw 15vh #fff, 48vw 70vh #fff,
+        18vw 45vh #fff, 58vw 55vh #fff, 68vw 22vh #fff, 28vw 82vh #fff,
+        38vw 12vh #fff, 8vw 62vh #fff, 92vw 42vh #fff, 52vw 32vh #fff;
+    animation: twinkle1 4s ease-in-out infinite alternate;
+}
+
+/* 中等星星 */
+body.dark-mode .universe-bg .stars::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    box-shadow:
+        42vw 20vh #dbeafe, 82vw 12vh #e0e7ff, 18vw 60vh #c7d2fe,
+        62vw 40vh #ddd6fe, 8vw 30vh #e0e7ff, 88vw 70vh #c7d2fe,
+        32vw 50vh #dbeafe, 72vw 80vh #ddd6fe, 55vw 15vh #e0e7ff,
+        25vw 72vh #c7d2fe, 95vw 25vh #dbeafe, 45vw 90vh #ddd6fe,
+        78vw 35vh #e0e7ff, 12vw 85vh #c7d2fe, 65vw 58vh #dbeafe;
+    animation: twinkle2 6s ease-in-out infinite alternate;
+}
+
+body.dark-mode .universe-bg .shooting-star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 6px 2px rgba(255,255,255,0.4);
+    animation: shoot 3s linear infinite;
+    opacity: 0;
+}
+body.dark-mode .universe-bg .shooting-star:nth-child(2) { top: 15%; left: 70%; animation-delay: 2s; animation-duration: 4s; }
+body.dark-mode .universe-bg .shooting-star:nth-child(3) { top: 35%; left: 20%; animation-delay: 5s; animation-duration: 3.5s; }
+
+@keyframes twinkle1 {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+@keyframes twinkle2 {
+    0% { opacity: 0.6; }
+    30% { opacity: 0.2; }
+    70% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+@keyframes shoot {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(-25deg);
+    }
+    5% { opacity: 1; }
+    15% {
+        opacity: 0;
+        transform: translate(-300px, 100px) rotate(-25deg);
+    }
+    100% { opacity: 0; }
+}
+
+/* 星云光晕 */
+body.dark-mode .universe-bg .nebula {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.15;
+}
+body.dark-mode .universe-bg .nebula:nth-child(4) {
+    width: 400px; height: 300px;
+    background: radial-gradient(#6366f1, transparent);
+    top: 10%; left: 55%;
+    animation: nebulaMove 8s ease-in-out infinite;
+}
+body.dark-mode .universe-bg .nebula:nth-child(5) {
+    width: 300px; height: 250px;
+    background: radial-gradient(#8b5cf6, transparent);
+    top: 50%; left: 15%;
+    animation: nebulaMove 10s ease-in-out infinite reverse;
+}
+
+@keyframes nebulaMove {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.1); }
+    66% { transform: translate(-20px, 15px) scale(0.9); }
+}
