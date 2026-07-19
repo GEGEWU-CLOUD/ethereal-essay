@@ -905,6 +905,7 @@
             </div>
         </div>
         <button class="theme-toggle" id="themeToggleBtn"><i class="bi bi-moon-fill"></i></button>
+        <button class="btn btn-outline" id="saveBtn" title="保存备份"><i class="bi bi-floppy"></i> <span class="label-text">保存</span></button>
         <button class="btn btn-primary" id="openAddBtn"><i class="bi bi-plus-lg"></i> <span class="label-text">新增</span></button>
         <div class="export-dropdown">
             <button class="btn btn-outline"><i class="bi bi-download"></i> <span class="label-text">导出</span></button>
@@ -1319,6 +1320,9 @@
         document.getElementById('fsBody').innerHTML = descHtml + codeHtml + exampleHtml;
         document.getElementById('fullscreenModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
+        document.getElementById('fsCopyBtn').style.display = '';
+        document.getElementById('fsEditBtn').innerText = '编辑';
+        document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
         const btn = document.getElementById('fsToggleCodeBtn');
         const block = document.getElementById('fs-code-block');
         if(btn && block) btn.onclick = () => {
@@ -2016,6 +2020,7 @@
         await refresh();
         document.getElementById('searchInput').addEventListener('input', e => { curSearch = e.target.value; renderCards(); });
         document.getElementById('openAddBtn').addEventListener('click', () => { resetModal(); document.getElementById('commandModal').style.display = 'flex'; });
+        document.getElementById('saveBtn').addEventListener('click', () => { exportJSON(); showToast('备份已保存', true); });
         document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('commandModal').style.display = 'none'; resetModal(); });
         document.getElementById('commandForm').addEventListener('submit', onSave);
         document.getElementById('exportJsonBtn').addEventListener('click', exportJSON);
@@ -2025,7 +2030,7 @@
         window.addEventListener('click', e => { if(e.target === document.getElementById('commandModal')) document.getElementById('commandModal').style.display = 'none'; if(e.target === document.getElementById('newCategoryModal')) closeNewCatModal(); if(e.target === document.getElementById('editCategoryModal')) closeEditCatModal(); if(e.target === document.getElementById('fullscreenModal')) closeFullscreen(); if(!e.target.closest('.cat-more-btn') && !e.target.closest('#catActionMenu')) hideCatMenu(); if(!e.target.closest('.bg-settings-wrapper')) closeBgPopover(); });
         document.getElementById('fsCloseBtn').addEventListener('click', closeFullscreen);
         document.getElementById('fsCopyBtn').addEventListener('click', async () => { if(currentFsCommand) await copyText(currentFsCommand.name); });
-        document.getElementById('fsEditBtn').addEventListener('click', () => { if(currentFsCommand) openEdit(currentFsCommand); });
+        document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
         setupImport();
         document.getElementById('quickAddCategoryBtn').addEventListener('click', () => openNewCatModal((newCat) => { updateCatSelect(); document.getElementById('cmdCategory').value = newCat; }));
         document.getElementById('confirmNewCatBtn').addEventListener('click', createNewCat);
