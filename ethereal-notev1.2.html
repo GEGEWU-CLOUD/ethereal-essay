@@ -522,7 +522,16 @@
         .command-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(107,155,210,0.1), 0 4px 8px rgba(0,0,0,0.04); }
         body.dark-mode .command-card { background: rgba(30,41,59, var(--main-alpha)); }
         body.dark-mode .command-desc { background: rgba(30,41,59, var(--main-alpha)); }
+        body.dark-mode .command-desc a { color: #60a5fa; }
+        body.dark-mode .command-desc a:hover { color: #93c5fd; }
+        body.dark-mode .command-desc code.inline-code { background: rgba(255,255,255,0.1); }
+        body.dark-mode .command-desc blockquote { color: #94a3b8; border-left-color: #60a5fa; }
+        body.dark-mode .fullscreen-desc a { color: #60a5fa; }
+        body.dark-mode .fullscreen-desc a:hover { color: #93c5fd; }
+        body.dark-mode .fullscreen-desc code.inline-code { background: rgba(255,255,255,0.1); }
+        body.dark-mode .fullscreen-desc blockquote { color: #94a3b8; border-left-color: #60a5fa; }
         body.dark-mode .example { background: rgba(51,65,85, var(--main-alpha)); }
+        body.dark-mode .desc-toggle-header, body.dark-mode .example-toggle-header { background: rgba(96,165,250,0.08); }
         body.dark-mode .command-card:hover { box-shadow: 0 12px 28px rgba(120,165,215,0.15), 0 4px 8px rgba(0,0,0,0.3); }
         .card-header { padding: 0.9rem 1.1rem 0.6rem; display: flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid var(--border-light); gap: 0.5rem; position: relative; }
         .card-header::after { content: ''; position: absolute; bottom: -1px; left: 5%; width: 90%; height: 2px; background: var(--grad-accent); border-radius: 1px; opacity: 0.4; }
@@ -534,16 +543,54 @@
         .command-desc {
             background: rgba(248,250,252, var(--main-alpha));
             padding: 0.6rem 0.8rem;
-            border-radius: 14px;
+            border-radius: 0 0 14px 14px;
             border-left: 3px solid #6b9bd2;
             font-size: 0.82rem;
             margin-bottom: 0.8rem;
             color: var(--text-primary);
             word-break: break-word;
-            white-space: pre-wrap;
             line-height: 1.5;
-            max-height: 90px;
-            overflow-y: auto;
+        }
+        .command-desc:not(.collapsed) { max-height: 200px; overflow-y: auto; }
+        .command-desc ul, .command-desc ol { padding-left: 1.4rem; margin: 0.3rem 0; }
+        .command-desc li { margin-bottom: 0.15rem; }
+        .command-desc strong { font-weight: 700; color: inherit; }
+        .command-desc em { font-style: italic; }
+        .command-desc a { color: #6b9bd2; text-decoration: underline; }
+        .command-desc a:hover { color: #4a7fb5; }
+        .command-desc code.inline-code {
+            background: rgba(15,23,42,0.08);
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            font-size: 0.78rem;
+        }
+        .command-desc pre.md-code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 0.5rem 0.7rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.78rem;
+            margin: 0.4rem 0;
+        }
+        .command-desc pre.md-code-block code { font-family: 'JetBrains Mono', 'SF Mono', monospace; }
+        .command-desc h3, .command-desc h4, .command-desc h5, .command-desc h6 {
+            margin: 0.4rem 0 0.2rem;
+            font-weight: 700;
+            color: inherit;
+        }
+        .command-desc h3 { font-size: 1rem; }
+        .command-desc h4 { font-size: 0.92rem; }
+        .command-desc h5 { font-size: 0.86rem; }
+        .command-desc h6 { font-size: 0.8rem; }
+        .command-desc hr { border: none; border-top: 1px solid var(--border-light); margin: 0.4rem 0; }
+        .command-desc blockquote {
+            border-left: 3px solid #6b9bd2;
+            padding-left: 0.6rem;
+            margin: 0.3rem 0;
+            color: var(--text-secondary);
+            font-style: italic;
         }
         .code-wrapper {
             margin: 0.4rem 0;
@@ -571,6 +618,33 @@
             transition: opacity 0.2s, transform 0.15s;
         }
         .toggle-code-btn:hover { opacity: 0.85; transform: scale(1.05); }
+        .desc-toggle-header, .example-toggle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.35rem 0.7rem;
+            margin-bottom: 0;
+            background: rgba(107,155,210,0.06);
+            border-radius: 10px;
+            cursor: default;
+        }
+        .desc-toggle-header span, .example-toggle-header span {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .toggle-desc-btn, .toggle-example-btn {
+            background: var(--grad-toggle);
+            border: none;
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .toggle-desc-btn:hover, .toggle-example-btn:hover { opacity: 0.85; transform: scale(1.05); }
+        .desc-block.collapsed, .example-block.collapsed { display: none; }
         .code-block {
             padding: 0.7rem;
             position: relative;
@@ -597,18 +671,16 @@
         }
         .copy-btn:hover { background: linear-gradient(135deg, #10b981, #059669); transform: scale(1.05); }
         .example {
-            margin-top: 0.7rem;
             font-size: 0.73rem;
             background: rgba(226,232,240, var(--main-alpha));
             padding: 0.6rem 0.8rem;
-            border-radius: 10px;
+            border-radius: 0 0 10px 10px;
             color: var(--text-secondary);
             word-break: break-word;
             white-space: pre-wrap;
             line-height: 1.5;
-            max-height: 85px;
-            overflow-y: auto;
         }
+        .example:not(.collapsed) { max-height: 200px; overflow-y: auto; margin-top: 0; }
         .example strong { color: var(--text-primary); display: inline-block; margin-bottom: 4px; }
 
         /* ==================== MODALS (unchanged) ==================== */
@@ -657,7 +729,46 @@
         .fullscreen-section { margin-bottom: 1.8rem; }
         .fullscreen-section h4 { font-size: 1rem; margin-bottom: 0.7rem; color: #6b9bd2; border-left: 3px solid #6b9bd2; padding-left: 0.8rem; }
         body.dark-mode .fullscreen-section h4 { color: #a5b4fc; border-left-color: #818cf8; }
-        .fullscreen-desc { background: var(--desc-bg); padding: 1rem 1.2rem; border-radius: 18px; line-height: 1.6; white-space: pre-wrap; font-size: 0.92rem; border-left: 3px solid #6b9bd2; }
+        .fullscreen-desc { background: var(--desc-bg); padding: 1rem 1.2rem; border-radius: 18px; line-height: 1.6; font-size: 0.92rem; border-left: 3px solid #6b9bd2; }
+        .fullscreen-desc ul, .fullscreen-desc ol { padding-left: 1.6rem; margin: 0.4rem 0; }
+        .fullscreen-desc li { margin-bottom: 0.2rem; }
+        .fullscreen-desc strong { font-weight: 700; }
+        .fullscreen-desc em { font-style: italic; }
+        .fullscreen-desc a { color: #6b9bd2; text-decoration: underline; }
+        .fullscreen-desc a:hover { color: #4a7fb5; }
+        .fullscreen-desc code.inline-code {
+            background: rgba(15,23,42,0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .fullscreen-desc pre.md-code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+        }
+        .fullscreen-desc pre.md-code-block code { font-family: 'JetBrains Mono', 'SF Mono', monospace; }
+        .fullscreen-desc h3, .fullscreen-desc h4, .fullscreen-desc h5, .fullscreen-desc h6 {
+            margin: 0.5rem 0 0.25rem;
+            font-weight: 700;
+        }
+        .fullscreen-desc h3 { font-size: 1.15rem; }
+        .fullscreen-desc h4 { font-size: 1.05rem; }
+        .fullscreen-desc h5 { font-size: 0.96rem; }
+        .fullscreen-desc h6 { font-size: 0.88rem; }
+        .fullscreen-desc hr { border: none; border-top: 1px solid var(--border-light); margin: 0.5rem 0; }
+        .fullscreen-desc blockquote {
+            border-left: 3px solid #6b9bd2;
+            padding-left: 0.8rem;
+            margin: 0.4rem 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
         body.dark-mode .fullscreen-desc { border-left-color: #818cf8; }
         .fullscreen-code-wrapper { border-radius: 18px; background: var(--code-bg); overflow: hidden; }
         .fullscreen-code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-bottom: 1px solid var(--border-light); }
@@ -668,6 +779,7 @@
         .fullscreen-code-block pre { margin: 0; font-family: 'JetBrains Mono', monospace, 'SF Mono'; font-size: 0.88rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
         .fullscreen-code-block code { font-family: inherit; }
         .fullscreen-example { background: var(--tag-bg); padding: 1rem 1.2rem; border-radius: 18px; white-space: pre-wrap; font-size: 0.88rem; line-height: 1.5; }
+        .fullscreen-desc.collapsed, .fullscreen-example.collapsed { display: none; }
         .fullscreen-actions { padding: 1rem 1.8rem 1.3rem; display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--border-light); flex-shrink: 0; background: transparent; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
@@ -1291,6 +1403,59 @@
     function getCatList() { return Array.from(allCats).sort(); }
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
 
+    function renderMarkdown(text) {
+        if (!text) return '';
+        // 先转义HTML防止XSS
+        let html = escapeHtml(text);
+        // 保护代码块：提取并替换为占位符
+        const codeBlocks = [];
+        html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (match, lang, code) => {
+            const idx = codeBlocks.length;
+            codeBlocks.push(`<pre class="md-code-block"><code>${code.trim()}</code></pre>`);
+            return `\x00CODEBLOCK${idx}\x00`;
+        });
+        // 行内代码 `code`
+        html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+        // 粗体 **text**
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        // 斜体 *text*
+        html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        // 链接 [text](url)
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        // 标题
+        html = html.replace(/^#### (.+)$/gm, '<h6>$1</h6>');
+        html = html.replace(/^### (.+)$/gm, '<h5>$1</h5>');
+        html = html.replace(/^## (.+)$/gm, '<h4>$1</h4>');
+        html = html.replace(/^# (.+)$/gm, '<h3>$1</h3>');
+        // 有序列表 (分组连续项)
+        html = html.replace(/((?:^\d+\.\s+.+(?:\n|$))+)/gm, (match) => {
+            const items = match.trim().split('\n').map(line =>
+                `<li>${line.replace(/^\d+\.\s+/, '')}</li>`
+            ).join('');
+            return `<ol>${items}</ol>`;
+        });
+        // 无序列表 (分组连续项)
+        html = html.replace(/((?:^[-*]\s+.+(?:\n|$))+)/gm, (match) => {
+            const items = match.trim().split('\n').map(line =>
+                `<li>${line.replace(/^[-*]\s+/, '')}</li>`
+            ).join('');
+            return `<ul>${items}</ul>`;
+        });
+        // 水平线
+        html = html.replace(/^(---|\*\*\*|___)$/gm, '<hr>');
+        // 块引用
+        html = html.replace(/^&gt;\s?(.+)$/gm, '<blockquote>$1</blockquote>');
+        // 换行：非块级元素之间用<br>，保留块级元素
+        // 先将已有的换行转为 <br>，但跳过块级标签前后的换行
+        html = html.replace(/\n/g, '<br>');
+        // 清理块级标签后多余的 <br>
+        html = html.replace(/(<\/?(?:h[3-6]|ul|ol|li|pre|hr|blockquote|div)>)(?:<br>)+/g, '$1');
+        html = html.replace(/(?:<br>)+(<\/?(?:h[3-6]|ul|ol|\/li|pre|hr|blockquote|div)>)/g, '$1');
+        // 恢复代码块
+        html = html.replace(/\x00CODEBLOCK(\d+)\x00/g, (match, idx) => codeBlocks[parseInt(idx)] || '');
+        return html;
+    }
+
     async function refresh() { commands = await getAll(); sortAndRender(); }
     async function commit(cmd) { await saveCmd(cmd); await refresh(); }
     async function remove(id) { await delCmd(id); await refresh(); }
@@ -1314,22 +1479,43 @@
         document.getElementById('fsTitle').innerText = cmd.name.split('\n')[0].substring(0,80);
         document.getElementById('fsCategory').innerText = cmd.category;
         const highlighted = highlightCode(cmd.name, cmd.codeLang);
-        const descHtml = `<div class="fullscreen-section"><h4>📝 描述</h4><div class="fullscreen-desc">${escapeHtml(cmd.description)}</div></div>`;
+        const descHtml = `<div class="fullscreen-section"><h4>📝 描述 <button class="fullscreen-toggle-btn" id="fsToggleDescBtn">▼ 展开</button></h4><div id="fs-desc-block" class="fullscreen-desc collapsed">${renderMarkdown(cmd.description)}</div></div>`;
         const codeHtml = `<div class="fullscreen-section"><h4>💻 命令内容 (${cmd.codeLang})</h4><div class="fullscreen-code-wrapper"><div class="fullscreen-code-header"><span class="code-lang">📄 代码</span><button class="fullscreen-toggle-btn" id="fsToggleCodeBtn">▼ 展开</button></div><div id="fs-code-block" class="fullscreen-code-block collapsed"><pre><code class="hljs">${highlighted}</code></pre></div></div></div>`;
-        const exampleHtml = cmd.example ? `<div class="fullscreen-section"><h4>💡 示例</h4><div class="fullscreen-example">${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div></div>` : '';
+        const exampleHtml = cmd.example ? `<div class="fullscreen-section"><h4>💡 示例 <button class="fullscreen-toggle-btn" id="fsToggleExampleBtn">▼ 展开</button></h4><div id="fs-example-block" class="fullscreen-example collapsed">${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div></div>` : '';
         document.getElementById('fsBody').innerHTML = descHtml + codeHtml + exampleHtml;
         document.getElementById('fullscreenModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
         document.getElementById('fsCopyBtn').style.display = '';
         document.getElementById('fsEditBtn').innerText = '编辑';
         document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
-        const btn = document.getElementById('fsToggleCodeBtn');
-        const block = document.getElementById('fs-code-block');
-        if(btn && block) btn.onclick = () => {
-            if(block.classList.contains('collapsed')) {
-                block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '▲ 收起';
+        // 代码块展开/收起
+        const codeBtn = document.getElementById('fsToggleCodeBtn');
+        const codeBlock = document.getElementById('fs-code-block');
+        if(codeBtn && codeBlock) codeBtn.onclick = () => {
+            if(codeBlock.classList.contains('collapsed')) {
+                codeBlock.classList.remove('collapsed'); codeBlock.classList.add('expanded'); codeBtn.innerText = '▲ 收起';
             } else {
-                block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '▼ 展开';
+                codeBlock.classList.remove('expanded'); codeBlock.classList.add('collapsed'); codeBtn.innerText = '▼ 展开';
+            }
+        };
+        // 描述展开/收起
+        const descBtn = document.getElementById('fsToggleDescBtn');
+        const descBlock = document.getElementById('fs-desc-block');
+        if(descBtn && descBlock) descBtn.onclick = () => {
+            if(descBlock.classList.contains('collapsed')) {
+                descBlock.classList.remove('collapsed'); descBtn.innerText = '▲ 收起';
+            } else {
+                descBlock.classList.add('collapsed'); descBtn.innerText = '▼ 展开';
+            }
+        };
+        // 示例展开/收起
+        const exampleBtn = document.getElementById('fsToggleExampleBtn');
+        const exampleBlock = document.getElementById('fs-example-block');
+        if(exampleBtn && exampleBlock) exampleBtn.onclick = () => {
+            if(exampleBlock.classList.contains('collapsed')) {
+                exampleBlock.classList.remove('collapsed'); exampleBtn.innerText = '▲ 收起';
+            } else {
+                exampleBlock.classList.add('collapsed'); exampleBtn.innerText = '▼ 展开';
             }
         };
         document.querySelectorAll('#fsBody pre code').forEach(b => hljs.highlightElement(b));
@@ -1357,7 +1543,11 @@
             return `<div class="command-card" data-cmd-id="${cmd.id}">
                 <div class="card-header"><span class="command-title">${escapeHtml(shortTitle)}</span><span class="category-tag">${escapeHtml(cmd.category)}</span></div>
                 <div class="command-body">
-                    <div class="command-desc">${escapeHtml(cmd.description)}</div>
+                    <div class="desc-toggle-header">
+                        <span>📝 描述</span>
+                        <button class="toggle-desc-btn" data-target="desc-${cmd.id}">展开</button>
+                    </div>
+                    <div id="desc-${cmd.id}" class="command-desc collapsed">${renderMarkdown(cmd.description)}</div>
                     <div class="code-wrapper">
                         <div class="code-header"><span class="code-lang">${cmd.codeLang}</span><button class="toggle-code-btn" data-target="code-${cmd.id}">展开</button></div>
                         <div id="code-${cmd.id}" class="code-block collapsed" data-raw="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">
@@ -1365,7 +1555,12 @@
                             <button class="copy-btn" data-cmd="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">复制</button>
                         </div>
                     </div>
-                    ${cmd.example ? `<div class="example"><strong>示例：</strong><br>${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div>` : ''}
+                    ${cmd.example ? `
+                    <div class="example-toggle-header">
+                        <span>💡 示例</span>
+                        <button class="toggle-example-btn" data-target="example-${cmd.id}">展开</button>
+                    </div>
+                    <div id="example-${cmd.id}" class="example example-block collapsed">${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div>` : ''}
                     <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
                         <span style="font-size:0.62rem; color: var(--text-secondary);">右键全屏浏览</span>
                         <div><button class="edit-cmd-btn btn btn-sm" data-id="${cmd.id}">编辑</button>
@@ -1376,6 +1571,8 @@
         }).join('');
 
         document.querySelectorAll('.toggle-code-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '收起'; } else { block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
+        document.querySelectorAll('.toggle-desc-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
+        document.querySelectorAll('.toggle-example-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); let raw = btn.dataset.cmd; if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>'); await copyText(raw); } }));
         document.querySelectorAll('.command-card').forEach(card => card.addEventListener('contextmenu', async e => { e.preventDefault(); const id = card.querySelector('.edit-cmd-btn')?.dataset.id; if(id) { const cmd = commands.find(c => c.id === id); if(cmd) showFullscreen(cmd); } return false; }));
         document.querySelectorAll('.edit-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { const id = btn.dataset.id; const c = commands.find(cmd => cmd.id === id); if(c) openEdit(c); e.stopPropagation(); }));
