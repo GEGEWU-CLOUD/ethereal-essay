@@ -568,7 +568,13 @@
         .card-header { padding: 0.9rem 1.1rem 0.6rem; display: flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px solid var(--border-light); gap: 0.5rem; position: relative; }
         .card-header::after { content: ''; position: absolute; bottom: -1px; left: 5%; width: 90%; height: 2px; background: var(--grad-accent); border-radius: 1px; opacity: 0.4; }
         body.dark-mode .card-header::after { opacity: 0.6; }
-        .command-title { font-family: monospace; font-weight: 700; background: var(--tag-bg); padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.78rem; color: var(--text-primary); word-break: break-all; max-width: 65%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .command-title { font-family: monospace; font-weight: 700; background: var(--tag-bg); padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.78rem; color: var(--text-primary); max-width: 65%; overflow: hidden; white-space: nowrap; display: flex; align-items: center; }
+        .command-title-inner { display: inline-block; white-space: nowrap; animation: marquee 6s linear infinite paused; }
+        .command-title.overflow .command-title-inner { animation-play-state: running; }
+        @keyframes marquee {
+            0%, 15% { transform: translateX(0); }
+            85%, 100% { transform: translateX(calc(-100% + 180px)); }
+        }
         .category-tag { font-size: 0.68rem; background: linear-gradient(135deg, #e3edf7, #dce8f4); padding: 0.2rem 0.7rem; border-radius: 20px; color: #4a6fa5; font-weight: 500; }
         body.dark-mode .category-tag { background: linear-gradient(135deg, #312e81, #3730a3); color: #c7d2fe; }
         .command-body { padding: 0.9rem 1.1rem; flex: 1; display: flex; flex-direction: column; }
@@ -1616,8 +1622,8 @@
 
     function openDB() { return new Promise((res, rej) => { const r = indexedDB.open(DB_NAME, 5); r.onerror = () => rej(r.error); r.onsuccess = () => { db = r.result; res(db); }; r.onupgradeneeded = e => { if(!e.target.result.objectStoreNames.contains(STORE_NAME)) e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id' }); }; }); }
     async function getAll() { if(!db) await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readonly'); const req = tx.objectStore(STORE_NAME).getAll(); req.onsuccess = () => res((req.result || []).map(normalizeCommand)); req.onerror = () => rej(req.error); }); }
-    async function saveCmd(cmd) { if(!db) await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const req = tx.objectStore(STORE_NAME).put(cmd); req.onsuccess = () => res(); req.onerror = () => rej(req.error); }); }
-    async function delCmd(id) { if(!db) await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const req = tx.objectStore(STORE_NAME).delete(id); req.onsuccess = () => res(); req.onerror = () => rej(req.error); }); }
+    async function saveCmd(cmd) { if(!db) await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); tx.objectStore(STORE_NAME).put(cmd); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); }
+    async function delCmd(id) { if(!db) await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); tx.objectStore(STORE_NAME).delete(id); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); }
     async function bulkImport(cmds) { if(!db) await openDB(); const tx = db.transaction(STORE_NAME, 'readwrite'); const store = tx.objectStore(STORE_NAME); await store.clear(); for(const c of cmds) store.put(normalizeCommand(c)); return new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; }); }
 
     const DEFAULT = [
@@ -1734,7 +1740,7 @@
 
     function showFullscreen(cmd) {
         currentFsCommand = cmd;
-        document.getElementById('fsTitle').innerText = cmd.name.split('\n')[0].substring(0,80);
+        document.getElementById('fsTitle').innerText = cmd.cardTitle || cmd.name.split('\n')[0].substring(0,80);
         document.getElementById('fsCategory').innerText = cmd.category;
         const highlighted = highlightCode(cmd.name, cmd.codeLang);
         const descHtml = `<div class="fullscreen-section"><h4>📝 描述 <button class="fullscreen-toggle-btn" id="fsToggleDescBtn">▼ 展开</button></h4><div id="fs-desc-block" class="fullscreen-desc collapsed">${renderMarkdown(cmd.description)}</div></div>`;
@@ -1824,7 +1830,7 @@
                 ? ('<span class="code-block-title">' + escapeHtml(cmd.codeTitle) + '</span><span class="code-lang-badge">' + cmd.codeLang + '</span>')
                 : ('<span class="code-lang">' + cmd.codeLang + '</span>');
             return `<div class="command-card" data-cmd-id="${cmd.id}">
-                <div class="card-header"><span class="command-title">${escapeHtml(cardTitle)}</span><span class="category-tag">${escapeHtml(cmd.category)}</span></div>
+                <div class="card-header"><span class="command-title"><span class="command-title-inner">${escapeHtml(cardTitle)}</span></span><span class="category-tag">${escapeHtml(cmd.category)}</span></div>
                 <div class="command-body">
                     <div class="desc-toggle-header">
                         <span>📝 描述</span>
@@ -1865,6 +1871,7 @@
             </div>`;
         }).join('');
 
+        document.querySelectorAll('.command-title').forEach(el => { const inner = el.querySelector('.command-title-inner'); if(inner && inner.scrollWidth > el.clientWidth) el.classList.add('overflow'); });
         document.querySelectorAll('.toggle-code-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '收起'; } else { block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.toggle-desc-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.toggle-example-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
@@ -1937,7 +1944,7 @@
 
     function showFullscreenEdit(cmd) {
         currentFsCommand = cmd;
-        document.getElementById('fsTitle').innerText = '编辑: ' + cmd.name.split('\n')[0].substring(0,60);
+        document.getElementById('fsTitle').innerText = '编辑: ' + (cmd.cardTitle || cmd.name.split('\n')[0].substring(0,60));
         document.getElementById('fsCategory').innerText = cmd.category;
         const catOpts = getCatList().map(c => `<option value="${escapeHtml(c)}" ${c===cmd.category?'selected':''}>${escapeHtml(c)}</option>`).join('');
         const body = `
