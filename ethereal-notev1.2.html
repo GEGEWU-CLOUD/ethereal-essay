@@ -212,22 +212,47 @@
             transition: transform 0.3s ease, background 0.3s ease;
             padding-bottom: 1rem;
         }
+        /* 侧边栏拖动柄 */
+        .sidebar-resize-handle {
+            position: absolute;
+            top: 0;
+            right: -3px;
+            width: 8px;
+            height: 100%;
+            cursor: col-resize;
+            z-index: 10;
+            transition: background 0.15s;
+        }
+        .sidebar-resize-handle:hover,
+        .sidebar-resize-handle.dragging {
+            background: rgba(107,155,210,0.45);
+        }
+        body.dark-mode .sidebar-resize-handle:hover,
+        body.dark-mode .sidebar-resize-handle.dragging {
+            background: rgba(96,165,250,0.5);
+        }
+        }
         .sidebar-header {
-            padding: 1.2rem 1.2rem 0.6rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            background: var(--grad-brand);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
+            padding: 1rem 1rem 0.7rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
             flex-shrink: 0;
+            border-bottom: 1px solid var(--border-light);
+            margin: 0 0 0.4rem;
         }
         .category-list {
             flex: 1;
             overflow-y: auto;
             padding: 0 0.6rem;
+        }
+        .sticky-all-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            padding: 2px 0;
+            background: var(--sidebar-bg);
+            transition: background 0.3s ease;
         }
         .category-item {
             display: flex;
@@ -502,6 +527,13 @@
 
         /* ==================== SYNC PANEL (collapsible bar) ==================== */
         /* ==================== COMMANDS GRID ==================== */
+        .content-header {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 0 0 0.8rem;
+            margin-bottom: 0.5rem;
+        }
         .commands-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
@@ -575,6 +607,43 @@
             margin: 0.4rem 0;
         }
         .command-desc pre.md-code-block code { font-family: 'JetBrains Mono', 'SF Mono', monospace; }
+        /* 描述中的代码框（可折叠） */
+        .md-code-wrapper {
+            margin: 0.5rem 0;
+            border-radius: 12px;
+            background: var(--code-bg);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+        }
+        .md-code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.3rem 0.6rem;
+            background: rgba(255,255,255,0.06);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .md-toggle-btn {
+            background: var(--grad-toggle);
+            border: none;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .md-toggle-btn:hover { opacity: 0.85; }
+        .md-code-body {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .md-code-body.collapsed { max-height: 7.5rem; }
+        .md-code-body:not(.collapsed) { max-height: 600px; overflow-y: auto; }
+        .md-code-body pre.md-code-block {
+            margin: 0;
+            border-radius: 0;
+        }
         .command-desc h3, .command-desc h4, .command-desc h5, .command-desc h6 {
             margin: 0.4rem 0 0.2rem;
             font-weight: 700;
@@ -592,6 +661,29 @@
             color: var(--text-secondary);
             font-style: italic;
         }
+        .command-desc table.md-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.4rem 0;
+            font-size: 0.78rem;
+        }
+        .command-desc table.md-table th,
+        .command-desc table.md-table td {
+            border: 1px solid var(--border-light);
+            padding: 0.4rem 0.6rem;
+            text-align: left;
+        }
+        .command-desc table.md-table th {
+            background: var(--tag-bg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .command-desc table.md-table td {
+            background: rgba(255,255,255,0.3);
+        }
+        body.dark-mode .command-desc table.md-table td {
+            background: rgba(0,0,0,0.2);
+        }
         .code-wrapper {
             margin: 0.4rem 0;
             border-radius: 14px;
@@ -607,6 +699,31 @@
             border-bottom: 1px solid var(--border-light);
         }
         .code-lang { font-size: 0.68rem; color: var(--text-secondary); font-family: monospace; }
+        .code-block-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2c4a7c, #5b6abf);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-family: 'Segoe UI', 'SF Pro Text', system-ui, sans-serif;
+            margin-right: 6px;
+        }
+        body.dark-mode .code-block-title {
+            background: linear-gradient(135deg, #93c5fd, #a5b4fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .code-lang-badge {
+            font-size: 0.6rem;
+            background: var(--tag-bg);
+            color: var(--text-secondary);
+            padding: 0.1rem 0.4rem;
+            border-radius: 8px;
+            font-family: monospace;
+            vertical-align: middle;
+        }
         .toggle-code-btn {
             background: var(--grad-toggle);
             border: none;
@@ -655,21 +772,63 @@
         .code-block.expanded { max-height: 500px; overflow-y: auto; }
         .code-block pre { margin: 0; padding: 0; background: transparent; font-family: monospace; font-size: 0.7rem; line-height: 1.5; white-space: pre; }
         .code-block code { font-family: inherit; background: transparent; color: var(--code-text); white-space: pre; }
-        .copy-btn {
-            position: absolute;
-            bottom: 6px;
-            right: 6px;
-            background: linear-gradient(135deg, #475569, #334155);
-            border: none;
-            color: white;
-            font-size: 0.68rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 16px;
-            cursor: pointer;
-            z-index: 10;
+        /* 额外代码块标签 */
+        .extra-code-label {
+            display: inline-block;
+            font-size: 0.6rem;
+            background: linear-gradient(135deg, #818cf8, #a78bfa);
+            color: #fff;
+            padding: 0.1rem 0.45rem;
+            border-radius: 10px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        /* 动态代码块表单项 */
+        .code-block-item {
+            background: var(--desc-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 0.6rem;
+            margin-bottom: 8px;
             transition: all 0.2s;
         }
-        .copy-btn:hover { background: linear-gradient(135deg, #10b981, #059669); transform: scale(1.05); }
+        .code-block-item:hover { border-color: #6b9bd2; }
+        .code-block-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .cb-remove-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            transition: all 0.15s;
+            line-height: 1;
+        }
+        .cb-remove-btn:hover { color: #ef4444; background: rgba(239,68,68,0.08); }
+        .cb-lang-select { min-width: 90px; }
+        body.dark-mode .code-block-item { background: rgba(30,41,59,0.6); }
+        body.dark-mode .code-block-item:hover { border-color: #60a5fa; }
+        body.dark-mode .code-lang-badge { background: #334155; }
+        body.dark-mode .cb-remove-btn:hover { color: #f87171; background: rgba(248,113,113,0.12); }
+        .copy-btn {
+            background: rgba(71,85,105,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #cbd5e1;
+            font-size: 0.68rem;
+            padding: 0.15rem 0.55rem;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .copy-btn:hover { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border-color: transparent; }
         .example {
             font-size: 0.73rem;
             background: rgba(226,232,240, var(--main-alpha));
@@ -753,6 +912,42 @@
             margin: 0.5rem 0;
         }
         .fullscreen-desc pre.md-code-block code { font-family: 'JetBrains Mono', 'SF Mono', monospace; }
+        .fullscreen-desc .md-code-wrapper {
+            margin: 0.6rem 0;
+            border-radius: 14px;
+            background: var(--code-bg);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+        }
+        .fullscreen-desc .md-code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255,255,255,0.06);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .fullscreen-desc .md-toggle-btn {
+            background: var(--grad-toggle);
+            border: none;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .fullscreen-desc .md-toggle-btn:hover { opacity: 0.85; }
+        .fullscreen-desc .md-code-body {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .fullscreen-desc .md-code-body.collapsed { max-height: 9rem; }
+        .fullscreen-desc .md-code-body:not(.collapsed) { max-height: 800px; overflow-y: auto; }
+        .fullscreen-desc .md-code-body pre.md-code-block {
+            margin: 0;
+            border-radius: 0;
+        }
         .fullscreen-desc h3, .fullscreen-desc h4, .fullscreen-desc h5, .fullscreen-desc h6 {
             margin: 0.5rem 0 0.25rem;
             font-weight: 700;
@@ -770,6 +965,28 @@
             font-style: italic;
         }
         body.dark-mode .fullscreen-desc { border-left-color: #818cf8; }
+        .fullscreen-desc table.md-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.5rem 0;
+            font-size: 0.85rem;
+        }
+        .fullscreen-desc table.md-table th,
+        .fullscreen-desc table.md-table td {
+            border: 1px solid var(--border-light);
+            padding: 0.45rem 0.7rem;
+            text-align: left;
+        }
+        .fullscreen-desc table.md-table th {
+            background: var(--tag-bg);
+            font-weight: 600;
+        }
+        .fullscreen-desc table.md-table td {
+            background: rgba(255,255,255,0.3);
+        }
+        body.dark-mode .fullscreen-desc table.md-table td {
+            background: rgba(0,0,0,0.2);
+        }
         .fullscreen-code-wrapper { border-radius: 18px; background: var(--code-bg); overflow: hidden; }
         .fullscreen-code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-bottom: 1px solid var(--border-light); }
         .fullscreen-toggle-btn { background: var(--grad-toggle); border: none; color: white; font-size: 0.75rem; padding: 0.3rem 1rem; border-radius: 20px; cursor: pointer; transition: opacity 0.2s; }
@@ -856,7 +1073,7 @@
         body.dark-mode .empty-state { background: rgba(30,41,59, var(--main-alpha)); }
 .badge { background: var(--tag-bg); padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; }
         footer { text-align: center; margin-top: 2rem; font-size: 0.73rem; color: var(--text-secondary); padding: 0.5rem; }
-        .copy-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 20px; border-radius: 30px; font-size: 0.85rem; z-index: 2000; animation: fadeOut 1.5s ease forwards; pointer-events: none; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
+        .copy-toast { position: fixed; top: 20px; right: 24px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 8px 20px; border-radius: 30px; font-size: 0.85rem; z-index: 2000; animation: fadeOut 1.5s ease forwards; pointer-events: none; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
         @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
 
         /* 背景设置弹出面板 */
@@ -1045,13 +1262,13 @@
 
 <!-- ==================== SIDEBAR ==================== -->
 <aside class="sidebar" id="sidebar">
+    <div class="sidebar-resize-handle" id="sidebarResizeHandle"></div>
     <!-- Gist 同步入口 -->
     <div class="sidebar-sync-header" id="sidebarSyncToggle" title="点击打开 GitHub Gist 同步设置">
         <span class="sync-dot" id="sidebarSyncDot"></span>
         <span id="sidebarSyncLabel">☁️ Gist 未配置</span>
     </div>
 
-    <div class="sidebar-header">📁 分类筛选</div>
     <div class="category-list" id="categoryFilter"></div>
     <button class="sidebar-add-cat" id="globalAddCategoryBtn">➕ 新建分类</button>
 </aside>
@@ -1076,6 +1293,7 @@
 
 <!-- ==================== MAIN CONTENT ==================== -->
 <main class="main-content">
+    <div class="content-header" id="contentHeader"></div>
     <div id="commandsContainer" class="commands-grid"></div>
     <footer>💡 提示：在任意命令卡片上<span style="background:#334155; padding:2px 8px; border-radius:20px;">右键</span>可全屏浏览 | 代码块可展开/收起</footer>
 </main>
@@ -1102,6 +1320,8 @@
         <h3 id="modalTitle">📌 命令</h3>
         <form id="commandForm">
             <div class="form-group"><label>命令内容 *</label><textarea id="cmdName" rows="8" required></textarea></div>
+            <div class="form-group"><label>卡片标题</label><input type="text" id="cmdCardTitle" placeholder="留空则默认显示代码第一行" style="width:100%;padding:0.5rem 0.8rem;border-radius:16px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-primary);font-size:0.82rem;"></div>
+            <div class="form-group"><label>脚本名称</label><input type="text" id="cmdCodeTitle" placeholder="可选，显示在代码框头部" style="width:100%;padding:0.5rem 0.8rem;border-radius:16px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-primary);font-size:0.82rem;"></div>
             <div class="form-group"><label>代码语言 (语法高亮)</label>
                 <select id="cmdLang">
                     <option value="bash">Bash (默认)</option>
@@ -1114,6 +1334,11 @@
                     <option value="html">HTML</option><option value="css">CSS</option>
                     <option value="plaintext">纯文本</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label>额外代码块 <span style="font-weight:400;color:var(--text-secondary);">（可选，多个脚本时使用）</span></label>
+                <div id="extraCodeBlocksContainer"></div>
+                <button type="button" id="addCodeBlockBtn" class="btn btn-sm" style="margin-top:6px;">➕ 添加代码块</button>
             </div>
             <div class="form-group"><label>分类</label>
                 <div class="inline-row">
@@ -1207,6 +1432,11 @@
         if (!cmd.category) cmd.category = '其他';
         if (!cmd.description) cmd.description = '';
         if (!cmd.example) cmd.example = '';
+        if (!cmd.codeBlocks) cmd.codeBlocks = [];
+        if (!cmd.codeTitle) cmd.codeTitle = '';
+        if (!cmd.cardTitle) cmd.cardTitle = '';
+        // Normalize each code block
+        cmd.codeBlocks = cmd.codeBlocks.map(b => ({ name: b.name || '', codeLang: b.codeLang || 'bash', title: b.title || '' }));
         return cmd;
     }
 
@@ -1411,7 +1641,9 @@
         const codeBlocks = [];
         html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (match, lang, code) => {
             const idx = codeBlocks.length;
-            codeBlocks.push(`<pre class="md-code-block"><code>${code.trim()}</code></pre>`);
+            const langLabel = (lang || 'code').trim();
+            // code 内容已经被外层 escapeHtml 转义过，无需再次转义
+            codeBlocks.push(`<div class="md-code-wrapper"><div class="md-code-header"><span class="code-lang">${langLabel}</span><button class="toggle-code-btn md-toggle-btn" onclick="var b=this.parentElement.nextElementSibling;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.innerText='▲ 收起'}else{b.classList.add('collapsed');this.innerText='▼ 展开'}">▼ 展开</button></div><div class="md-code-body collapsed"><pre class="md-code-block"><code>${code.trim()}</code></pre></div></div>`);
             return `\x00CODEBLOCK${idx}\x00`;
         });
         // 行内代码 `code`
@@ -1441,6 +1673,32 @@
             ).join('');
             return `<ul>${items}</ul>`;
         });
+        // 表格 (必须在换行转换前处理)
+        html = html.replace(/((?:^\|.+\|\s*$[\n\r]*)+)/gm, (match) => {
+            const lines = match.trim().split(/\n/).filter(l => l.trim().startsWith('|') && l.trim().endsWith('|'));
+            if (lines.length < 2) return match;
+            const parseRow = (row) => row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+            const headerCells = parseRow(lines[0]);
+            const sepCells = parseRow(lines[1]);
+            const isSep = sepCells.every(c => /^:?-{3,}:?$/.test(c));
+            if (!isSep) return match;
+            const aligns = sepCells.map(c => {
+                if (c.startsWith(':') && c.endsWith(':')) return 'center';
+                if (c.endsWith(':')) return 'right';
+                return 'left';
+            });
+            let tableHtml = '<table class="md-table"><thead><tr>';
+            headerCells.forEach((cell, i) => { tableHtml += `<th style="text-align:${aligns[i] || 'left'}">${cell}</th>`; });
+            tableHtml += '</tr></thead><tbody>';
+            for (let i = 2; i < lines.length; i++) {
+                const cells = parseRow(lines[i]);
+                tableHtml += '<tr>';
+                cells.forEach((cell, j) => { tableHtml += `<td style="text-align:${aligns[j] || 'left'}">${cell}</td>`; });
+                tableHtml += '</tr>';
+            }
+            tableHtml += '</tbody></table>';
+            return tableHtml;
+        });
         // 水平线
         html = html.replace(/^(---|\*\*\*|___)$/gm, '<hr>');
         // 块引用
@@ -1449,8 +1707,8 @@
         // 先将已有的换行转为 <br>，但跳过块级标签前后的换行
         html = html.replace(/\n/g, '<br>');
         // 清理块级标签后多余的 <br>
-        html = html.replace(/(<\/?(?:h[3-6]|ul|ol|li|pre|hr|blockquote|div)>)(?:<br>)+/g, '$1');
-        html = html.replace(/(?:<br>)+(<\/?(?:h[3-6]|ul|ol|\/li|pre|hr|blockquote|div)>)/g, '$1');
+        html = html.replace(/(<\/?(?:h[3-6]|ul|ol|li|pre|hr|blockquote|div|table|thead|tbody|tr|th|td)>)(?:<br>)+/g, '$1');
+        html = html.replace(/(?:<br>)+(<\/?(?:h[3-6]|ul|ol|\/li|pre|hr|blockquote|div|table|thead|tbody|tr|th|td)>)/g, '$1');
         // 恢复代码块
         html = html.replace(/\x00CODEBLOCK(\d+)\x00/g, (match, idx) => codeBlocks[parseInt(idx)] || '');
         return html;
@@ -1460,7 +1718,7 @@
     async function commit(cmd) { await saveCmd(cmd); await refresh(); }
     async function remove(id) { await delCmd(id); await refresh(); }
 
-    function filterCmds() { return commands.filter(c => { if(curCat !== "全部" && c.category !== curCat) return false; if(!curSearch.trim()) return true; const s = curSearch.toLowerCase(); return c.name.toLowerCase().includes(s) || c.description.toLowerCase().includes(s) || (c.example && c.example.toLowerCase().includes(s)); }); }
+    function filterCmds() { return commands.filter(c => { if(curCat !== "全部" && c.category !== curCat) return false; if(!curSearch.trim()) return true; const s = curSearch.toLowerCase(); if (c.name.toLowerCase().includes(s) || c.description.toLowerCase().includes(s) || (c.example && c.example.toLowerCase().includes(s))) return true; return (c.codeBlocks || []).some(b => b.name && b.name.toLowerCase().includes(s)); }); }
 
     // Count commands per category for sidebar badges
     function getCatCounts() {
@@ -1480,9 +1738,14 @@
         document.getElementById('fsCategory').innerText = cmd.category;
         const highlighted = highlightCode(cmd.name, cmd.codeLang);
         const descHtml = `<div class="fullscreen-section"><h4>📝 描述 <button class="fullscreen-toggle-btn" id="fsToggleDescBtn">▼ 展开</button></h4><div id="fs-desc-block" class="fullscreen-desc collapsed">${renderMarkdown(cmd.description)}</div></div>`;
-        const codeHtml = `<div class="fullscreen-section"><h4>💻 命令内容 (${cmd.codeLang})</h4><div class="fullscreen-code-wrapper"><div class="fullscreen-code-header"><span class="code-lang">📄 代码</span><button class="fullscreen-toggle-btn" id="fsToggleCodeBtn">▼ 展开</button></div><div id="fs-code-block" class="fullscreen-code-block collapsed"><pre><code class="hljs">${highlighted}</code></pre></div></div></div>`;
+        const codeHtml = `<div class="fullscreen-section"><h4>💻 ${cmd.codeTitle ? escapeHtml(cmd.codeTitle) + ' (' + cmd.codeLang + ')' : '命令内容 (' + cmd.codeLang + ')'}</h4><div class="fullscreen-code-wrapper"><div class="fullscreen-code-header"><span class="code-lang">📄 代码</span><button class="copy-btn fs-copy-btn" data-raw="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">复制</button><button class="fullscreen-toggle-btn" id="fsToggleCodeBtn">▼ 展开</button></div><div id="fs-code-block" class="fullscreen-code-block collapsed"><pre><code class="hljs">${highlighted}</code></pre></div></div></div>`;
+        const extraCodeHtml = (cmd.codeBlocks || []).map((block, idx) => {
+            const blockHighlighted = highlightCode(block.name, block.codeLang);
+            const blockLabel = block.title || ('代码块 ' + (idx + 2));
+            return `<div class="fullscreen-section"><h4>💻 ${escapeHtml(blockLabel)} (${block.codeLang || 'bash'})</h4><div class="fullscreen-code-wrapper"><div class="fullscreen-code-header"><span class="code-lang">📄 代码</span><button class="copy-btn fs-copy-btn" data-raw="${escapeHtml(block.name).replace(/"/g,'&quot;')}">复制</button><button class="fullscreen-toggle-btn" id="fsToggleCodeBtn${idx}">▼ 展开</button></div><div id="fs-code-block-${idx}" class="fullscreen-code-block collapsed"><pre><code class="hljs">${blockHighlighted}</code></pre></div></div></div>`;
+        }).join('');
         const exampleHtml = cmd.example ? `<div class="fullscreen-section"><h4>💡 示例 <button class="fullscreen-toggle-btn" id="fsToggleExampleBtn">▼ 展开</button></h4><div id="fs-example-block" class="fullscreen-example collapsed">${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div></div>` : '';
-        document.getElementById('fsBody').innerHTML = descHtml + codeHtml + exampleHtml;
+        document.getElementById('fsBody').innerHTML = descHtml + codeHtml + extraCodeHtml + exampleHtml;
         document.getElementById('fullscreenModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
         document.getElementById('fsCopyBtn').style.display = '';
@@ -1518,7 +1781,20 @@
                 exampleBlock.classList.add('collapsed'); exampleBtn.innerText = '▼ 展开';
             }
         };
+        // 额外代码块展开/收起
+        (cmd.codeBlocks || []).forEach((block, idx) => {
+            const extraCodeBtn = document.getElementById('fsToggleCodeBtn' + idx);
+            const extraCodeBlock = document.getElementById('fs-code-block-' + idx);
+            if (extraCodeBtn && extraCodeBlock) extraCodeBtn.onclick = () => {
+                if (extraCodeBlock.classList.contains('collapsed')) {
+                    extraCodeBlock.classList.remove('collapsed'); extraCodeBlock.classList.add('expanded'); extraCodeBtn.innerText = '▲ 收起';
+                } else {
+                    extraCodeBlock.classList.remove('expanded'); extraCodeBlock.classList.add('collapsed'); extraCodeBtn.innerText = '▼ 展开';
+                }
+            };
+        });
         document.querySelectorAll('#fsBody pre code').forEach(b => hljs.highlightElement(b));
+        document.querySelectorAll('#fsBody .copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); let raw = btn.dataset.raw; if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"'); await copyText(raw); } }));
     }
 
     function closeFullscreen() {
@@ -1536,12 +1812,19 @@
     function renderCards() {
         const filtered = filterCmds();
         const container = document.getElementById('commandsContainer');
+        const header = document.getElementById('contentHeader');
+        header.textContent = curCat !== '全部' ? curCat : '';
         if(filtered.length === 0) { container.innerHTML = '<div class="empty-state">暂无命令，点击新增添加第一条</div>'; return; }
         container.innerHTML = filtered.map(cmd => {
             const highlighted = highlightCode(cmd.name, cmd.codeLang);
             const shortTitle = cmd.name.split('\n')[0].substring(0,50);
+            const cardTitle = cmd.cardTitle || shortTitle;
+            // 预计算主代码块头部 HTML，避免嵌套模板字符串
+            const primaryHeaderHtml = cmd.codeTitle
+                ? ('<span class="code-block-title">' + escapeHtml(cmd.codeTitle) + '</span><span class="code-lang-badge">' + cmd.codeLang + '</span>')
+                : ('<span class="code-lang">' + cmd.codeLang + '</span>');
             return `<div class="command-card" data-cmd-id="${cmd.id}">
-                <div class="card-header"><span class="command-title">${escapeHtml(shortTitle)}</span><span class="category-tag">${escapeHtml(cmd.category)}</span></div>
+                <div class="card-header"><span class="command-title">${escapeHtml(cardTitle)}</span><span class="category-tag">${escapeHtml(cmd.category)}</span></div>
                 <div class="command-body">
                     <div class="desc-toggle-header">
                         <span>📝 描述</span>
@@ -1549,12 +1832,24 @@
                     </div>
                     <div id="desc-${cmd.id}" class="command-desc collapsed">${renderMarkdown(cmd.description)}</div>
                     <div class="code-wrapper">
-                        <div class="code-header"><span class="code-lang">${cmd.codeLang}</span><button class="toggle-code-btn" data-target="code-${cmd.id}">展开</button></div>
+                        <div class="code-header">${primaryHeaderHtml}<button class="copy-btn" data-target="code-${cmd.id}">复制</button><button class="toggle-code-btn" data-target="code-${cmd.id}">展开</button></div>
                         <div id="code-${cmd.id}" class="code-block collapsed" data-raw="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">
                             <pre><code class="hljs">${highlighted}</code></pre>
-                            <button class="copy-btn" data-cmd="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">复制</button>
                         </div>
                     </div>
+                    ${(cmd.codeBlocks || []).map((block, idx) => {
+                        const blockHighlighted = highlightCode(block.name, block.codeLang);
+                        const blockTitle = block.title || '';
+                        const blockHeaderHtml = blockTitle
+                            ? ('<span class="code-block-title">' + escapeHtml(blockTitle) + '</span><span class="code-lang-badge">' + escapeHtml(block.codeLang || 'bash') + '</span>')
+                            : ('<span class="code-lang">' + escapeHtml(block.codeLang || 'bash') + '<span class="extra-code-label">代码块' + (idx + 2) + '</span></span>');
+                        return `<div class="code-wrapper">
+                            <div class="code-header">${blockHeaderHtml}<button class="copy-btn" data-target="code-${cmd.id}-${idx}">复制</button><button class="toggle-code-btn" data-target="code-${cmd.id}-${idx}">展开</button></div>
+                            <div id="code-${cmd.id}-${idx}" class="code-block collapsed" data-raw="${escapeHtml(block.name).replace(/"/g,'&quot;')}">
+                                <pre><code class="hljs">${blockHighlighted}</code></pre>
+                            </div>
+                        </div>`;
+                    }).join('')}
                     ${cmd.example ? `
                     <div class="example-toggle-header">
                         <span>💡 示例</span>
@@ -1573,7 +1868,7 @@
         document.querySelectorAll('.toggle-code-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '收起'; } else { block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.toggle-desc-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.toggle-example-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
-        document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); let raw = btn.dataset.cmd; if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>'); await copyText(raw); } }));
+        document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); const target = document.getElementById(btn.dataset.target); if(target) { let raw = target.dataset.raw; if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"'); await copyText(raw); } } }));
         document.querySelectorAll('.command-card').forEach(card => card.addEventListener('contextmenu', async e => { e.preventDefault(); const id = card.querySelector('.edit-cmd-btn')?.dataset.id; if(id) { const cmd = commands.find(c => c.id === id); if(cmd) showFullscreen(cmd); } return false; }));
         document.querySelectorAll('.edit-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { const id = btn.dataset.id; const c = commands.find(cmd => cmd.id === id); if(c) openEdit(c); e.stopPropagation(); }));
         document.querySelectorAll('.delete-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { if(confirm('永久删除？')) { await remove(btn.dataset.id); refreshCats(); renderCatFilter(); updateCatSelect(); } e.stopPropagation(); }));
@@ -1584,9 +1879,9 @@
         const counts = getCatCounts();
         const total = commands.length;
         const div = document.getElementById('categoryFilter');
-        let html = `<button class="category-item ${curCat==='全部'?'active':''}" data-cat="全部">
+        let html = `<div class="sticky-all-wrapper"><button class="category-item ${curCat==='全部'?'active':''}" data-cat="全部">
             <span class="cat-icon"><i class="bi bi-grid"></i></span><span>全部</span><span class="cat-count">${total}</span>
-        </button>`;
+        </button></div>`;
         const icons = ICON_LIST;
         cats.forEach((c, i) => {
             const count = counts[c] || 0;
@@ -1647,7 +1942,12 @@
         const catOpts = getCatList().map(c => `<option value="${escapeHtml(c)}" ${c===cmd.category?'selected':''}>${escapeHtml(c)}</option>`).join('');
         const body = `
             <div class="fullscreen-section">
+                <h4>📌 卡片标题</h4>
+                <input type="text" id="fsEditCardTitle" placeholder="留空则默认显示代码第一行" value="${escapeHtml(cmd.cardTitle || '')}" style="width:100%;padding:0.5rem 0.7rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);font-size:0.85rem;">
+            </div>
+            <div class="fullscreen-section">
                 <h4>💻 命令内容 (${cmd.codeLang})</h4>
+                <input type="text" id="fsEditCodeTitle" placeholder="脚本名称（可选，显示在代码框头部）" value="${escapeHtml(cmd.codeTitle || '')}" style="width:100%;padding:0.45rem 0.7rem;margin-bottom:8px;border-radius:10px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);font-size:0.82rem;">
                 <textarea id="fsEditName" style="width:100%;min-height:260px;padding:1rem;border-radius:16px;border:1px solid var(--border-light);background:var(--code-bg);color:var(--code-text);font-family:monospace;font-size:0.85rem;line-height:1.5;resize:vertical;white-space:pre;overflow:auto;">${escapeHtml(cmd.name)}</textarea>
             </div>
             <div class="fullscreen-section">
@@ -1673,8 +1973,18 @@
                 <h4>💡 示例</h4>
                 <textarea id="fsEditExample" rows="3" style="width:100%;padding:0.7rem;border-radius:14px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);font-size:0.88rem;resize:vertical;">${escapeHtml(cmd.example || '')}</textarea>
             </div>
+            <div class="fullscreen-section">
+                <h4>📦 额外代码块 <span style="font-weight:400;font-size:0.78rem;color:var(--text-secondary);">（可选）</span></h4>
+                <div id="fsExtraCodeBlocksContainer"></div>
+                <button type="button" id="fsAddCodeBlockBtn" class="btn btn-sm" style="margin-top:6px;">➕ 添加代码块</button>
+            </div>
         `;
         document.getElementById('fsBody').innerHTML = body;
+        // Populate extra code blocks
+        populateCodeBlocksFromCmd('fsExtraCodeBlocksContainer', cmd.codeBlocks || []);
+        document.getElementById('fsAddCodeBlockBtn').addEventListener('click', () => {
+            document.getElementById('fsExtraCodeBlocksContainer').appendChild(createCodeBlockItem());
+        });
         document.getElementById('fullscreenModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
         // 切换底部按钮
@@ -1689,9 +1999,12 @@
         if (!name.trim()) { showToast('命令不能为空', false); return; }
         const category = document.getElementById('fsEditCategory').value;
         const codeLang = document.getElementById('fsEditLang').value;
+        const cardTitle = document.getElementById('fsEditCardTitle').value.trim();
+        const codeTitle = document.getElementById('fsEditCodeTitle').value.trim();
         const description = document.getElementById('fsEditDesc').value.trim();
         const example = document.getElementById('fsEditExample').value.trim();
-        const cmd = { id, name, category, description, example, codeLang };
+        const codeBlocks = collectFormCodeBlocks('fsExtraCodeBlocksContainer');
+        const cmd = { id, name, category, description, example, codeLang, cardTitle, codeTitle, codeBlocks };
         try {
             await commit(cmd);
             showToast('保存成功', true);
@@ -1720,7 +2033,60 @@
         document.getElementById('editId').value = '';
         const langSelect = document.getElementById('cmdLang');
         if(langSelect) langSelect.value = 'bash';
+        const codeTitleInput = document.getElementById('cmdCodeTitle');
+        if(codeTitleInput) codeTitleInput.value = '';
+        const cardTitleInput = document.getElementById('cmdCardTitle');
+        if(cardTitleInput) cardTitleInput.value = '';
         document.getElementById('modalTitle').innerText = '📌 新增命令';
+        // Clear extra code blocks
+        const extraContainer = document.getElementById('extraCodeBlocksContainer');
+        if (extraContainer) extraContainer.innerHTML = '';
+    }
+
+    // ==================== DYNAMIC CODE BLOCK MANAGEMENT ====================
+    function createCodeBlockItem(lang = 'bash', code = '', title = '') {
+        const idx = Date.now().toString(36) + Math.random().toString(36).substr(2,4);
+        const div = document.createElement('div');
+        div.className = 'code-block-item';
+        div.dataset.blockId = idx;
+        const langOptions = ['bash','python','cpp','javascript','typescript','yaml','json','go','rust','java','csharp','php','sql','html','css','plaintext'].map(l => `<option value="${l}" ${l===lang?'selected':''}>${l}</option>`).join('');
+        div.innerHTML = `
+            <input class="cb-title-input" type="text" placeholder="脚本名称（可选）" value="${escapeHtml(title)}" style="width:100%;padding:0.3rem 0.5rem;margin-bottom:6px;border-radius:8px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);font-size:0.75rem;">
+            <div class="code-block-item-header">
+                <select class="cb-lang-select" style="padding:0.3rem 0.5rem;border-radius:10px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);font-size:0.75rem;">${langOptions}</select>
+                <button type="button" class="cb-remove-btn" title="移除此代码块" onclick="this.closest('.code-block-item').remove()">✕</button>
+            </div>
+            <textarea class="cb-textarea" rows="4" style="width:100%;padding:0.6rem;border-radius:12px;border:1px solid var(--border-light);background:var(--code-bg);color:var(--code-text);font-family:monospace;font-size:0.78rem;line-height:1.5;resize:vertical;white-space:pre;overflow:auto;" placeholder="输入代码内容...">${escapeHtml(code)}</textarea>
+        `;
+        return div;
+    }
+
+    function collectFormCodeBlocks(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return [];
+        const items = container.querySelectorAll('.code-block-item');
+        const blocks = [];
+        items.forEach(item => {
+            const langSelect = item.querySelector('.cb-lang-select');
+            const textarea = item.querySelector('.cb-textarea');
+            const titleInput = item.querySelector('.cb-title-input');
+            const code = textarea ? textarea.value.trim() : '';
+            if (code) {
+                blocks.push({ name: code, codeLang: langSelect ? langSelect.value : 'bash', title: titleInput ? titleInput.value.trim() : '' });
+            }
+        });
+        return blocks;
+    }
+
+    function populateCodeBlocksFromCmd(containerId, codeBlocks) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        if (codeBlocks && codeBlocks.length > 0) {
+            codeBlocks.forEach(b => {
+                container.appendChild(createCodeBlockItem(b.codeLang || 'bash', b.name || '', b.title || ''));
+            });
+        }
     }
 
     async function onSave(e) {
@@ -1730,8 +2096,11 @@
         let cat = document.getElementById('cmdCategory').value;
         if(!cat) cat = '其他';
         const codeLang = document.getElementById('cmdLang').value;
+        const cardTitle = document.getElementById('cmdCardTitle').value.trim();
+        const codeTitle = document.getElementById('cmdCodeTitle').value.trim();
         const id = document.getElementById('editId').value || Date.now().toString(36) + Math.random().toString(36).substr(2,6);
-        const cmd = { id, name, category: cat, description: document.getElementById('cmdDesc').value.trim() || '无描述', example: document.getElementById('cmdExample').value.trim(), codeLang: codeLang || 'bash' };
+        const codeBlocks = collectFormCodeBlocks('extraCodeBlocksContainer');
+        const cmd = { id, name, category: cat, description: document.getElementById('cmdDesc').value.trim() || '无描述', example: document.getElementById('cmdExample').value.trim(), codeLang: codeLang || 'bash', cardTitle, codeTitle, codeBlocks };
         await commit(cmd);
         document.getElementById('commandModal').style.display = 'none';
         resetModal();
@@ -1739,9 +2108,9 @@
 
     function download(content, filename, mime) { const a = document.createElement('a'); const blob = new Blob([content], { type: mime }); a.href = URL.createObjectURL(blob); a.download = filename; a.click(); URL.revokeObjectURL(a.href); }
     function exportJSON() { download(JSON.stringify(commands, null, 2), `commands_${Date.now()}.json`, 'application/json'); }
-    function exportMarkdown() { let md = '# 冰雪随笔\n\n'; commands.forEach(c => { md += `## ${c.category}\n\`\`\`${c.codeLang||'bash'}\n${c.name}\n\`\`\`\n描述: ${c.description}\n\n`; }); download(md, `commands.md`, 'text/markdown'); }
+    function exportMarkdown() { let md = '# 冰雪随笔\n\n'; commands.forEach(c => { md += `## ${c.category}\n\`\`\`${c.codeLang||'bash'}\n${c.name}\n\`\`\`\n描述: ${c.description}\n`; (c.codeBlocks || []).forEach((b, i) => { md += `\`\`\`${b.codeLang||'bash'}\n${b.name}\n\`\`\`\n`; }); md += '\n'; }); download(md, `commands.md`, 'text/markdown'); }
     function exportCSV() { const rows = commands.map(c => `"${c.name.replace(/"/g,'""')}","${c.category}","${c.description.replace(/"/g,'""')}","${c.codeLang||'bash'}"`); download("﻿命令,分类,描述,代码语言\n" + rows.join('\n'), `commands.csv`, 'text/csv'); }
-    function exportTxt() { let txt = ''; commands.forEach(c => { txt += `${c.category}\n${c.name}\n${c.description}\n语言:${c.codeLang||'bash'}\n\n`; }); download(txt, `commands.txt`, 'text/plain'); }
+    function exportTxt() { let txt = ''; commands.forEach(c => { txt += `${c.category}\n${c.name}\n${c.description}\n语言:${c.codeLang||'bash'}\n`; (c.codeBlocks || []).forEach((b, i) => { txt += `--- 代码块${i+2} (${b.codeLang||'bash'}) ---\n${b.name}\n`; }); txt += '\n'; }); download(txt, `commands.txt`, 'text/plain'); }
 
     function setupImport() {
         const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json';
@@ -2188,6 +2557,47 @@
         else openSidebar();
     }
 
+    // ==================== SIDEBAR RESIZE ====================
+    function initSidebarResize() {
+        const sidebar = document.getElementById('sidebar');
+        const handle = document.getElementById('sidebarResizeHandle');
+        const mainContent = document.querySelector('.main-content');
+        if (!sidebar || !handle) return;
+        let isDragging = false, startX, startWidth;
+        const MIN_W = 180, MAX_W = 500;
+        // 恢复保存的宽度
+        const savedW = localStorage.getItem('sidebar_width');
+        if (savedW) {
+            const w = Math.max(MIN_W, Math.min(MAX_W, parseInt(savedW)));
+            document.documentElement.style.setProperty('--sidebar-width', w + 'px');
+        }
+        handle.addEventListener('mousedown', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            isDragging = true;
+            startX = e.clientX;
+            startWidth = sidebar.offsetWidth;
+            handle.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+        document.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            const delta = e.clientX - startX;
+            const newW = Math.max(MIN_W, Math.min(MAX_W, startWidth + delta));
+            document.documentElement.style.setProperty('--sidebar-width', newW + 'px');
+        });
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            handle.classList.remove('dragging');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            const w = sidebar.offsetWidth;
+            localStorage.setItem('sidebar_width', w);
+        });
+    }
+
     // ==================== SYNC PANEL TOGGLE ====================
     function openGistDrawer() {
         document.getElementById('gistDrawer').classList.add('open');
@@ -2230,6 +2640,9 @@
         document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
         setupImport();
         document.getElementById('quickAddCategoryBtn').addEventListener('click', () => openNewCatModal((newCat) => { updateCatSelect(); document.getElementById('cmdCategory').value = newCat; }));
+        document.getElementById('addCodeBlockBtn').addEventListener('click', () => {
+            document.getElementById('extraCodeBlocksContainer').appendChild(createCodeBlockItem());
+        });
         document.getElementById('confirmNewCatBtn').addEventListener('click', createNewCat);
         document.getElementById('cancelNewCatBtn').addEventListener('click', closeNewCatModal);
         document.getElementById('saveGistConfigBtn').addEventListener('click', saveGistConfig);
@@ -2269,6 +2682,7 @@
         loadSavedFavicon();
         initBgImage();
         initEffects();
+        initSidebarResize();
         document.getElementById('customFaviconBtn').addEventListener('click', customizeFavicon);
         document.getElementById('customLogoBtn').addEventListener('click', showLogoCustomizer);
         document.getElementById('customBrandBtn').addEventListener('click', customizeBrandText);
