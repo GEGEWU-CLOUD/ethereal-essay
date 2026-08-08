@@ -629,6 +629,8 @@
             background: rgba(255,255,255,0.06);
             border-bottom: 1px solid var(--border-light);
         }
+        .md-code-header-actions { display: flex; align-items: center; gap: 0.35rem; }
+        .md-code-header .copy-btn { margin-left: 0; }
         .md-toggle-btn {
             background: var(--grad-toggle);
             border: none;
@@ -933,6 +935,8 @@
             background: rgba(255,255,255,0.06);
             border-bottom: 1px solid var(--border-light);
         }
+        .fullscreen-desc .md-code-header-actions { display: flex; align-items: center; gap: 0.4rem; }
+        .fullscreen-desc .md-code-header .copy-btn { margin-left: 0; }
         .fullscreen-desc .md-toggle-btn {
             background: var(--grad-toggle);
             border: none;
@@ -1649,7 +1653,7 @@
             const idx = codeBlocks.length;
             const langLabel = (lang || 'code').trim();
             // code 内容已经被外层 escapeHtml 转义过，无需再次转义
-            codeBlocks.push(`<div class="md-code-wrapper"><div class="md-code-header"><span class="code-lang">${langLabel}</span><button class="toggle-code-btn md-toggle-btn" onclick="var b=this.parentElement.nextElementSibling;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.innerText='▲ 收起'}else{b.classList.add('collapsed');this.innerText='▼ 展开'}">▼ 展开</button></div><div class="md-code-body collapsed"><pre class="md-code-block"><code>${code.trim()}</code></pre></div></div>`);
+            codeBlocks.push(`<div class="md-code-wrapper"><div class="md-code-header"><span class="code-lang">${langLabel}</span><div class="md-code-header-actions"><button class="copy-btn" data-raw="${code.trim().replace(/"/g,'&quot;')}">📋 复制</button><button class="toggle-code-btn md-toggle-btn" onclick="var b=this.parentElement.parentElement.nextElementSibling;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.innerText='▲ 收起'}else{b.classList.add('collapsed');this.innerText='▼ 展开'}">▼ 展开</button></div></div><div class="md-code-body collapsed"><pre class="md-code-block"><code>${code.trim()}</code></pre></div></div>`);
             return `\x00CODEBLOCK${idx}\x00`;
         });
         // 行内代码 `code`
@@ -1875,7 +1879,7 @@
         document.querySelectorAll('.toggle-code-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '收起'; } else { block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.toggle-desc-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.toggle-example-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
-        document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); const target = document.getElementById(btn.dataset.target); if(target) { let raw = target.dataset.raw; if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"'); await copyText(raw); } } }));
+        document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); let raw; const target = document.getElementById(btn.dataset.target); if(target) { raw = target.dataset.raw; } else if(btn.dataset.raw) { raw = btn.dataset.raw; } if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"'); await copyText(raw); } }));
         document.querySelectorAll('.command-card').forEach(card => card.addEventListener('contextmenu', async e => { e.preventDefault(); const id = card.querySelector('.edit-cmd-btn')?.dataset.id; if(id) { const cmd = commands.find(c => c.id === id); if(cmd) showFullscreen(cmd); } return false; }));
         document.querySelectorAll('.edit-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { const id = btn.dataset.id; const c = commands.find(cmd => cmd.id === id); if(c) openEdit(c); e.stopPropagation(); }));
         document.querySelectorAll('.delete-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { if(confirm('永久删除？')) { await remove(btn.dataset.id); refreshCats(); renderCatFilter(); updateCatSelect(); } e.stopPropagation(); }));
