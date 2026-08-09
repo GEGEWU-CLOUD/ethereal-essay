@@ -645,9 +645,51 @@
         .md-code-body {
             overflow: hidden;
             transition: max-height 0.3s ease;
+            position: relative;
         }
         .md-code-body.collapsed { max-height: 7.5rem; }
         .md-code-body:not(.collapsed) { max-height: 600px; overflow-y: auto; }
+        /* 代码块底部猫爪展开/收起 */
+        .md-code-expand-hint {
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            font-size: 1.1rem;
+            user-select: none;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            z-index: 1;
+            opacity: 0.7;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+        }
+        .md-code-expand-hint:hover {
+            transform: translateX(-50%) scale(1.25);
+            opacity: 1;
+            filter: drop-shadow(0 2px 6px rgba(107,155,210,0.35));
+        }
+        /* 折叠状态：渐变遮罩暗示下方有隐藏内容 */
+        .md-code-body.collapsed::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: linear-gradient(to bottom, transparent 0%, var(--code-bg) 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* 展开状态：猫爪更低调 */
+        .md-code-body:not(.collapsed) .md-code-expand-hint {
+            opacity: 0.4;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+        }
+        .md-code-body:not(.collapsed) .md-code-expand-hint:hover {
+            opacity: 1;
+            transform: translateX(-50%) scale(1.25);
+            filter: drop-shadow(0 2px 6px rgba(107,155,210,0.35));
+        }
         .md-code-body pre.md-code-block {
             margin: 0;
             border-radius: 0;
@@ -954,6 +996,9 @@
         }
         .fullscreen-desc .md-code-body.collapsed { max-height: 9rem; }
         .fullscreen-desc .md-code-body:not(.collapsed) { max-height: 800px; overflow-y: auto; }
+        .fullscreen-desc .md-code-expand-hint {
+            font-size: 1.3rem;
+        }
         .fullscreen-desc .md-code-body pre.md-code-block {
             margin: 0;
             border-radius: 0;
@@ -1188,6 +1233,142 @@
             .fullscreen-body { padding: 0.8rem; }
             .fullscreen-actions { padding: 0.8rem; }
             .fullscreen-code-block pre { font-size: 0.72rem; }
+        }
+
+        /* ========== 目录 (TOC) 样式 ========== */
+        .md-toc-wrapper {
+            background: var(--tag-bg);
+            border-radius: 14px;
+            padding: 0.6rem 0.8rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid var(--border-light);
+        }
+        .md-toc-header {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .md-toc-arrow { font-size: 0.65rem; transition: transform 0.2s; }
+        .md-toc-list { list-style: none; padding: 0; margin: 0; }
+        .md-toc-item { padding: 0.15rem 0; }
+        .md-toc-item a {
+            color: #6b9bd2;
+            text-decoration: none;
+            font-size: 0.78rem;
+            display: block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            transition: background 0.15s, color 0.15s;
+            border-left: 2px solid transparent;
+        }
+        .md-toc-item a:hover {
+            background: rgba(107,155,210,0.1);
+            color: #4a7fb5;
+            border-left-color: #6b9bd2;
+        }
+        body.dark-mode .md-toc-item a { color: #60a5fa; }
+        body.dark-mode .md-toc-item a:hover {
+            background: rgba(96,165,250,0.12);
+            color: #93c5fd;
+            border-left-color: #60a5fa;
+        }
+        /* 确保标题在被目录跳转时不会被顶部导航栏遮挡 */
+        .command-desc h3, .command-desc h4, .command-desc h5, .command-desc h6,
+        .fullscreen-desc h3, .fullscreen-desc h4, .fullscreen-desc h5, .fullscreen-desc h6 {
+            scroll-margin-top: 80px;
+        }
+
+        /* ========== 全屏布局：左侧内容 + 右侧目录侧边栏 ========== */
+        .fullscreen-layout {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+        }
+        .fullscreen-main {
+            flex: 1;
+            min-width: 0;
+            padding-right: 1.5rem;
+        }
+        .fullscreen-toc-sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 1rem;
+            border-left: 1px solid var(--border-light);
+            padding-left: 1.2rem;
+        }
+        .fullscreen-toc-inner {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding-top: 0.5rem;
+        }
+        .fullscreen-toc-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.6rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #6b9bd2;
+        }
+        body.dark-mode .fullscreen-toc-title {
+            border-bottom-color: #818cf8;
+        }
+        /* 侧边栏中的 TOC 微调 */
+        .fullscreen-toc-sidebar .md-toc-wrapper {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 0;
+        }
+        .fullscreen-toc-sidebar .md-toc-header {
+            display: none;
+        }
+        .fullscreen-toc-sidebar .md-toc-list {
+            display: block !important;
+            max-height: none;
+        }
+        .fullscreen-toc-sidebar .md-toc-item a {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+        /* 当前激活的 TOC 项高亮 */
+        .fullscreen-toc-sidebar .md-toc-item a.toc-active {
+            background: rgba(107,155,210,0.15);
+            color: #5b8cc9;
+            border-left-color: #6b9bd2;
+            font-weight: 600;
+        }
+        body.dark-mode .fullscreen-toc-sidebar .md-toc-item a.toc-active {
+            background: rgba(96,165,250,0.18);
+            color: #818cf8;
+            border-left-color: #818cf8;
+        }
+        /* 响应式：窄屏时目录移到底部 */
+        @media (max-width: 900px) {
+            .fullscreen-layout {
+                flex-direction: column;
+            }
+            .fullscreen-main {
+                padding-right: 0;
+            }
+            .fullscreen-toc-sidebar {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid var(--border-light);
+                padding-left: 0;
+                padding-top: 1rem;
+                margin-top: 1rem;
+                max-height: 200px;
+            }
         }
     </style>
 </head>
@@ -1643,17 +1824,32 @@
     function getCatList() { return Array.from(allCats).sort(); }
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
 
-    function renderMarkdown(text) {
+    function renderMarkdown(text, showToc = true, prefix = '') {
         if (!text) return '';
         // 先转义HTML防止XSS
         let html = escapeHtml(text);
+        // ============ 构建目录 (TOC) ============
+        const tocItems = [];
+        const headingRegex = /^(#{1,4})\s+(.+)$/gm;
+        let m;
+        while ((m = headingRegex.exec(escapeHtml(text))) !== null) {
+            const level = m[1].length;
+            // 清理标题中的 markdown 格式标记，使目录文字干净
+            let title = m[2];
+            title = title.replace(/`([^`]+)`/g, '$1');        // 行内代码
+            title = title.replace(/\*\*([^*]+)\*\*/g, '$1');  // 粗体
+            title = title.replace(/\*([^*]+)\*/g, '$1');      // 斜体
+            title = title.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); // 链接
+            const id = prefix + 'md-h-' + tocItems.length;
+            tocItems.push({ level, title, id });
+        }
         // 保护代码块：提取并替换为占位符
         const codeBlocks = [];
         html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (match, lang, code) => {
             const idx = codeBlocks.length;
             const langLabel = (lang || 'code').trim();
             // code 内容已经被外层 escapeHtml 转义过，无需再次转义
-            codeBlocks.push(`<div class="md-code-wrapper"><div class="md-code-header"><span class="code-lang">${langLabel}</span><div class="md-code-header-actions"><button class="copy-btn" data-raw="${code.trim().replace(/"/g,'&quot;')}">📋 复制</button><button class="toggle-code-btn md-toggle-btn" onclick="var b=this.parentElement.parentElement.nextElementSibling;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.innerText='▲ 收起'}else{b.classList.add('collapsed');this.innerText='▼ 展开'}">▼ 展开</button></div></div><div class="md-code-body collapsed"><pre class="md-code-block"><code>${code.trim()}</code></pre></div></div>`);
+            codeBlocks.push(`<div class="md-code-wrapper"><div class="md-code-header"><span class="code-lang">${langLabel}</span><div class="md-code-header-actions"><button class="copy-btn" data-raw="${code.trim().replace(/"/g,'&quot;')}">📋 复制</button><button class="toggle-code-btn md-toggle-btn" onclick="var b=this.parentElement.parentElement.nextElementSibling;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.innerText='▲ 收起'}else{b.classList.add('collapsed');this.innerText='▼ 展开'}">▼ 展开</button></div></div><div class="md-code-body collapsed"><pre class="md-code-block"><code>${code.trim()}</code></pre><div class="md-code-expand-hint" onclick="var b=this.parentElement;var btn=b.previousElementSibling?b.previousElementSibling.querySelector('.md-toggle-btn'):null;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.title='点击收起';if(btn)btn.innerText='▲ 收起'}else{b.classList.add('collapsed');this.title='点击展开全部';if(btn)btn.innerText='▼ 展开'}" title="点击展开全部">🐾</div></div></div>`);
             return `\x00CODEBLOCK${idx}\x00`;
         });
         // 行内代码 `code`
@@ -1664,11 +1860,15 @@
         html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
         // 链接 [text](url)
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-        // 标题
-        html = html.replace(/^#### (.+)$/gm, '<h6>$1</h6>');
-        html = html.replace(/^### (.+)$/gm, '<h5>$1</h5>');
-        html = html.replace(/^## (.+)$/gm, '<h4>$1</h4>');
-        html = html.replace(/^# (.+)$/gm, '<h3>$1</h3>');
+        // 标题 (带锚点ID，用于目录跳转)
+        let headingIdx = 0;
+        html = html.replace(/^(#{1,4})\s+(.+)$/gm, (match, hashes, content) => {
+            const level = hashes.length;
+            const tag = 'h' + (level + 2); // #→h3, ##→h4, ###→h5, ####→h6
+            const id = tocItems[headingIdx] ? tocItems[headingIdx].id : prefix + 'md-h-' + headingIdx;
+            headingIdx++;
+            return `<${tag} id="${id}">${content}</${tag}>`;
+        });
         // 有序列表 (分组连续项)
         html = html.replace(/((?:^\d+\.\s+.+(?:\n|$))+)/gm, (match) => {
             const items = match.trim().split('\n').map(line =>
@@ -1721,7 +1921,17 @@
         html = html.replace(/(?:<br>)+(<\/?(?:h[3-6]|ul|ol|\/li|pre|hr|blockquote|div|table|thead|tbody|tr|th|td)>)/g, '$1');
         // 恢复代码块
         html = html.replace(/\x00CODEBLOCK(\d+)\x00/g, (match, idx) => codeBlocks[parseInt(idx)] || '');
-        return html;
+        // ============ 生成TOC HTML（≥2个标题 且 showToc=true 时显示）============
+        let tocHtml = '';
+        if (tocItems.length >= 2 && showToc) {
+            tocHtml = `<!--TOC--><div class="md-toc-wrapper"><div class="md-toc-header" onclick="var l=this.nextElementSibling;var a=this.querySelector('.md-toc-arrow');if(l.style.display==='none'){l.style.display='block';a.textContent='▼'}else{l.style.display='none';a.textContent='▶'}"><span class="md-toc-arrow">▼</span> 📑 目录</div><ul class="md-toc-list" style="display:block">`;
+            tocItems.forEach(item => {
+                const indent = Math.max(0, (item.level - 1)) * 14;
+                tocHtml += `<li class="md-toc-item" style="padding-left:${indent}px"><a href="javascript:void(0)" onclick="var el=document.getElementById('${item.id}');if(el){el.scrollIntoView({behavior:'smooth',block:'start'})}">${item.title}</a></li>`;
+            });
+            tocHtml += '</ul></div><!--/TOC-->';
+        }
+        return tocHtml + html;
     }
 
     async function refresh() { commands = await getAll(); sortAndRender(); }
@@ -1747,7 +1957,16 @@
         document.getElementById('fsTitle').innerText = cmd.cardTitle || cmd.name.split('\n')[0].substring(0,80);
         document.getElementById('fsCategory').innerText = cmd.category;
         const highlighted = highlightCode(cmd.name, cmd.codeLang);
-        const descHtml = `<div class="fullscreen-section"><h4>📝 描述 <button class="fullscreen-toggle-btn" id="fsToggleDescBtn">▼ 展开</button></h4><div id="fs-desc-block" class="fullscreen-desc collapsed">${renderMarkdown(cmd.description)}</div></div>`;
+        const renderedDesc = renderMarkdown(cmd.description, true, 'fs-');
+        // 提取目录 HTML（用 <!--TOC-->...<!--/TOC--> 标记包裹）
+        let tocHtml = '';
+        let descContent = renderedDesc;
+        const tocMatch = renderedDesc.match(/<!--TOC-->([\s\S]*?)<!--\/TOC-->/);
+        if (tocMatch) {
+            tocHtml = tocMatch[1];
+            descContent = renderedDesc.replace(/<!--TOC-->[\s\S]*?<!--\/TOC-->/g, '');
+        }
+        const descHtml = `<div class="fullscreen-section"><h4>📝 描述 <button class="fullscreen-toggle-btn" id="fsToggleDescBtn">▼ 展开</button></h4><div id="fs-desc-block" class="fullscreen-desc collapsed">${descContent}</div></div>`;
         const codeHtml = `<div class="fullscreen-section"><h4>💻 ${cmd.codeTitle ? escapeHtml(cmd.codeTitle) + ' (' + cmd.codeLang + ')' : '命令内容 (' + cmd.codeLang + ')'}</h4><div class="fullscreen-code-wrapper"><div class="fullscreen-code-header"><span class="code-lang">📄 代码</span><button class="copy-btn fs-copy-btn" data-raw="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">复制</button><button class="fullscreen-toggle-btn" id="fsToggleCodeBtn">▼ 展开</button></div><div id="fs-code-block" class="fullscreen-code-block collapsed"><pre><code class="hljs">${highlighted}</code></pre></div></div></div>`;
         const extraCodeHtml = (cmd.codeBlocks || []).map((block, idx) => {
             const blockHighlighted = highlightCode(block.name, block.codeLang);
@@ -1755,7 +1974,8 @@
             return `<div class="fullscreen-section"><h4>💻 ${escapeHtml(blockLabel)} (${block.codeLang || 'bash'})</h4><div class="fullscreen-code-wrapper"><div class="fullscreen-code-header"><span class="code-lang">📄 代码</span><button class="copy-btn fs-copy-btn" data-raw="${escapeHtml(block.name).replace(/"/g,'&quot;')}">复制</button><button class="fullscreen-toggle-btn" id="fsToggleCodeBtn${idx}">▼ 展开</button></div><div id="fs-code-block-${idx}" class="fullscreen-code-block collapsed"><pre><code class="hljs">${blockHighlighted}</code></pre></div></div></div>`;
         }).join('');
         const exampleHtml = cmd.example ? `<div class="fullscreen-section"><h4>💡 示例 <button class="fullscreen-toggle-btn" id="fsToggleExampleBtn">▼ 展开</button></h4><div id="fs-example-block" class="fullscreen-example collapsed">${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div></div>` : '';
-        document.getElementById('fsBody').innerHTML = descHtml + codeHtml + extraCodeHtml + exampleHtml;
+        const tocSidebar = tocHtml ? `<aside class="fullscreen-toc-sidebar"><div class="fullscreen-toc-title">📑 目录</div><div class="fullscreen-toc-inner">${tocHtml}</div></aside>` : '';
+        document.getElementById('fsBody').innerHTML = `<div class="fullscreen-layout"><div class="fullscreen-main">${descHtml + codeHtml + extraCodeHtml + exampleHtml}</div>${tocSidebar}</div>`;
         document.getElementById('fullscreenModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
         document.getElementById('fsCopyBtn').style.display = '';
@@ -1840,7 +2060,7 @@
                         <span>📝 描述</span>
                         <button class="toggle-desc-btn" data-target="desc-${cmd.id}">展开</button>
                     </div>
-                    <div id="desc-${cmd.id}" class="command-desc collapsed">${renderMarkdown(cmd.description)}</div>
+                    <div id="desc-${cmd.id}" class="command-desc collapsed">${renderMarkdown(cmd.description, false, 'card-')}</div>
                     <div class="code-wrapper">
                         <div class="code-header">${primaryHeaderHtml}<button class="copy-btn" data-target="code-${cmd.id}">复制</button><button class="toggle-code-btn" data-target="code-${cmd.id}">展开</button></div>
                         <div id="code-${cmd.id}" class="code-block collapsed" data-raw="${escapeHtml(cmd.name).replace(/"/g,'&quot;')}">
