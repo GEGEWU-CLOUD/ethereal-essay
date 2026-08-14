@@ -1201,11 +1201,11 @@
             font-family: monospace;
             vertical-align: middle;
         }
-        /* 代码块展开按钮：收起态浅绿，展开态黄色 */
+        /* 代码块展开按钮：收起态深绿，展开态黄色 */
         .toggle-code-btn {
-            background: linear-gradient(135deg, #a7f3d0, #6ee7b7);
+            background: linear-gradient(135deg, #10b981, #059669);
             border: none;
-            color: #065f46;
+            color: #fff;
             font-size: 0.68rem;
             padding: 0.2rem 0.6rem;
             border-radius: 16px;
@@ -1555,11 +1555,11 @@
         }
         /* ==================== 顶部按钮配色（仅上传/拉取保留颜色） ==================== */
         #uploadToGistNavBtn {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            border-color: transparent; color: #047857;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: transparent; color: #fff;
             box-shadow: 0 2px 8px rgba(16,185,129,0.18);
         }
-        #uploadToGistNavBtn:hover { background: linear-gradient(135deg, #a7f3d0, #6ee7b7); color: #065f46; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.28); }
+        #uploadToGistNavBtn:hover { background: linear-gradient(135deg, #059669, #047857); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.28); }
 
         #downloadFromGistNavBtn {
             background: linear-gradient(135deg, #dbeafe, #bae6fd);
@@ -1892,6 +1892,10 @@
     </div>
 
     <div class="nav-actions">
+        <div class="nav-search" id="navSearch">
+            <span><i class="bi bi-search"></i></span>
+            <input type="text" id="searchInput" placeholder="搜索命令...">
+        </div>
         <button class="theme-toggle" id="viewToggleBtn" title="列表视图"><i class="bi bi-list-ul"></i></button>
         <button class="theme-toggle" id="scrollLockBtn" title="锁定滚动：保持在内容区"><i class="bi bi-pin-angle" id="scrollLockIcon"></i></button>
         <button class="btn btn-outline btn-sm" id="uploadToGistNavBtn" title="上传到 Gist"><i class="bi bi-cloud-upload"></i> <span class="label-text">上传</span></button>
@@ -1938,11 +1942,6 @@
             </div>
         </div>
         <button class="btn btn-outline" id="importBtn"><i class="bi bi-upload"></i> <span class="label-text">导入</span></button>
-    </div>
-
-    <div class="nav-search" id="navSearch">
-        <span><i class="bi bi-search"></i></span>
-        <input type="text" id="searchInput" placeholder="搜索命令...">
     </div>
 
     <button class="sidebar-toggle" id="sidebarToggle" title="菜单">☰</button>
@@ -4006,19 +4005,32 @@
         const scrollLockBtn = document.getElementById('scrollLockBtn');
         const scrollLockIcon = document.getElementById('scrollLockIcon');
         let scrollLock = false;
+        let scrollLockAnimating = false;
+        let scrollLockAnimTimer = null;
         function updateScrollLockBtn() {
             if (!scrollLockBtn) return;
             scrollLockBtn.classList.toggle('active', scrollLock);
             scrollLockBtn.title = scrollLock ? '已锁定滚动：松开可返回首屏' : '锁定滚动：保持在内容区';
             if (scrollLockIcon) scrollLockIcon.className = scrollLock ? 'bi bi-pin-angle-fill' : 'bi bi-pin-angle';
         }
+        // 硬性兜底：无论何种滚动来源（滚轮、触控板惯性、键盘、拖动滚动条），
+        // 只要滚进了首屏区域，立即拉回内容区顶部，避免“滑上去又弹回”的抖动。
+        function enforceScrollLock() {
+            if (!scrollLock || scrollLockAnimating) return;
+            if (window.scrollY < window.innerHeight) {
+                window.scrollTo(0, window.innerHeight);
+            }
+        }
         if (scrollLockBtn) {
             scrollLockBtn.addEventListener('click', () => {
                 scrollLock = !scrollLock;
                 updateScrollLockBtn();
-                // 开启锁定时若仍在首屏，先滚动到内容区
+                // 开启锁定时若仍在首屏，先滚动到内容区（平滑过渡期间暂停兜底，避免被拉回）
                 if (scrollLock && window.scrollY < window.innerHeight) {
+                    scrollLockAnimating = true;
                     window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+                    clearTimeout(scrollLockAnimTimer);
+                    scrollLockAnimTimer = setTimeout(() => { scrollLockAnimating = false; }, 700);
                 }
                 showToast(scrollLock ? '已锁定滚动：内容区固定' : '已解锁滚动', true);
             });
@@ -4034,6 +4046,8 @@
                 window.scrollTo(0, window.innerHeight);
             }
         }, { passive: false });
+        // 兜底监听：任何越界滚动都会被立即纠正回内容区
+        window.addEventListener('scroll', enforceScrollLock, { passive: true });
         await openDB();
         let existing = await getAll();
         if(existing.length === 0) { await bulkImport(DEFAULT); existing = DEFAULT.map(normalizeCommand); }
