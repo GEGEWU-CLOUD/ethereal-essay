@@ -40,6 +40,8 @@
             --grad-card: linear-gradient(145deg, #ffffff, #f4f8fc);
             --grad-sidebar-active: linear-gradient(90deg, rgba(107,155,210,0.15), rgba(139,157,195,0.05));
             --grad-toggle: linear-gradient(135deg, #88b8e8, #a78bfa);
+            /* 柔和渐变底 - 用于 logo 区、gist 设置、目录搜索框、全部 等 */
+            --soft-tint: linear-gradient(135deg, rgba(136,184,232,0.18), rgba(167,139,250,0.16));
         }
 
         body.dark-mode {
@@ -70,6 +72,7 @@
             --grad-card: linear-gradient(145deg, #1e293b, #1a2332);
             --grad-sidebar-active: linear-gradient(90deg, rgba(96,165,250,0.18), rgba(129,140,248,0.06));
             --grad-toggle: linear-gradient(135deg, #818cf8, #c084fc);
+            --soft-tint: linear-gradient(135deg, rgba(129,140,248,0.18), rgba(192,132,252,0.14));
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -91,6 +94,7 @@
             top: 0;
             z-index: 100;
             height: var(--navbar-height);
+            margin-left: var(--sidebar-width);
             background: var(--bg-card);
             border-bottom: 1px solid var(--border-light);
             box-shadow: 0 2px 16px rgba(0,0,0,0.06);
@@ -98,7 +102,7 @@
             align-items: center;
             padding: 0 1.5rem;
             gap: 1.2rem;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, margin-left 0.3s ease;
         }
         body.dark-mode .top-nav { box-shadow: 0 1px 8px rgba(0,0,0,0.25); }
 
@@ -151,6 +155,14 @@
         }
         .nav-brand-btns button:hover { background: var(--btn-outline); color: white; }
 
+        /* logo 区移入侧边栏顶部 */
+        .sidebar .nav-brand {
+            margin: 0.6rem 0.8rem 0.3rem;
+            padding: 0.55rem 0.7rem;
+            border-radius: 12px;
+            flex-wrap: wrap;
+        }
+
         .nav-search {
             width: 220px;
             flex-shrink: 1;
@@ -199,14 +211,14 @@
         /* ==================== SIDEBAR ==================== */
         .sidebar {
             position: fixed;
-            top: var(--navbar-height);
+            top: 0;
             left: 0;
             width: var(--sidebar-width);
-            height: calc(100vh - var(--navbar-height));
+            height: 100vh;
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border-light);
             overflow-y: auto;
-            z-index: 90;
+            z-index: 120;
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease, background 0.3s ease;
@@ -274,7 +286,15 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .category-item:hover { background: var(--tag-bg); }
+        .category-item:hover {
+            background: linear-gradient(90deg, rgba(107,155,210,0.14), rgba(107,155,210,0.03));
+            border-left: 3px solid #6b9bd2;
+            transform: translateX(4px);
+        }
+        body.dark-mode .category-item:hover {
+            background: linear-gradient(90deg, rgba(129,140,248,0.16), rgba(129,140,248,0.04));
+            border-left: 3px solid #818cf8;
+        }
         .category-item.active {
             background: var(--grad-sidebar-active);
             border-left: 3px solid #6b9bd2;
@@ -406,28 +426,135 @@
 
         .sidebar-sync-header {
             margin: 0.5rem 0.8rem 0;
-            padding: 0.55rem 0.8rem;
+            padding: 0.5rem 0.7rem;
             background: var(--tag-bg);
             border-radius: 10px;
             font-size: 0.72rem;
             color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
             flex-shrink: 0;
             transition: 0.2s;
             user-select: none;
+            border-left: 3px solid transparent;
         }
         .sidebar-sync-header:hover { background: var(--border-light); }
-        .sidebar-sync-header .sync-dot {
-            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        .sidebar-sync-header .sync-icon {
+            width: 24px; height: 24px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; color: #fff; flex-shrink: 0;
         }
-        .sidebar-sync-header .sync-dot.online { background: #10b981; }
-        .sidebar-sync-header .sync-dot.offline { background: #ef4444; }
-        .sidebar-sync-header .sync-dot.config { background: #f59e0b; }
-        .sidebar-sync-header .sync-arrow { margin-left: auto; transition: transform 0.2s; font-size: 0.6rem; }
+        .sidebar-sync-header .sync-text {
+            flex: 1; min-width: 0; font-weight: 800; font-size: 0.88rem;
+            letter-spacing: 1px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .sidebar-sync-header .sync-arrow {
+            margin-left: auto; transition: transform 0.2s; font-size: 0.7rem;
+            opacity: 0.7; flex-shrink: 0;
+        }
         .sidebar-sync-header.open .sync-arrow { transform: rotate(90deg); }
+
+        /* 已同步 - 绿色 */
+        .sidebar-sync-header.status-online { border-left-color: #10b981; }
+        .sidebar-sync-header.status-online .sync-icon { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 2px 8px rgba(16,185,129,0.35); }
+        .sidebar-sync-header.status-online .sync-text { background-image: linear-gradient(120deg, #059669, #10b981, #34d399); }
+        /* 待关联 - 琥珀色 */
+        .sidebar-sync-header.status-config { border-left-color: #f59e0b; }
+        .sidebar-sync-header.status-config .sync-icon { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 2px 8px rgba(245,158,11,0.35); }
+        .sidebar-sync-header.status-config .sync-text { background-image: linear-gradient(120deg, #b45309, #d97706, #f59e0b); }
+        /* 未配置 - 灰蓝 */
+        .sidebar-sync-header.status-offline { border-left-color: #94a3b8; }
+        .sidebar-sync-header.status-offline .sync-icon { background: linear-gradient(135deg, #94a3b8, #64748b); box-shadow: 0 2px 8px rgba(100,116,139,0.3); }
+        .sidebar-sync-header.status-offline .sync-text { background-image: linear-gradient(120deg, #475569, #64748b, #94a3b8); }
+        body.dark-mode .sidebar-sync-header.status-online .sync-text { background-image: linear-gradient(120deg, #10b981, #34d399, #6ee7b7); }
+        body.dark-mode .sidebar-sync-header.status-config .sync-text { background-image: linear-gradient(120deg, #f59e0b, #fbbf24, #fcd34d); }
+        body.dark-mode .sidebar-sync-header.status-offline .sync-text { background-image: linear-gradient(120deg, #94a3b8, #cbd5e1, #e2e8f0); }
+
+        /* 侧边栏目录搜索框 */
+        .sidebar-search {
+            margin: 0.6rem 0.8rem 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--search-bg);
+            border-radius: 20px;
+            padding: 0.3rem 0.7rem;
+            border: 1px solid var(--border-light);
+            flex-shrink: 0;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .sidebar-search:focus-within {
+            border-color: #6b9bd2;
+            box-shadow: 0 0 0 3px rgba(107,155,210,0.12);
+        }
+        .sidebar-search span { flex-shrink: 0; color: var(--text-secondary); font-size: 0.85rem; }
+        .sidebar-search input {
+            border: none; background: transparent; padding: 0.4rem 0; width: 100%;
+            outline: none; color: var(--text-primary); font-size: 0.85rem;
+        }
+        .sidebar-search input::placeholder { color: var(--text-secondary); }
+        .sidebar-search-empty {
+            padding: 0.8rem 1rem;
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+        .cat-search-mark {
+            background: rgba(255, 210, 90, 0.45);
+            color: inherit;
+            border-radius: 3px;
+            padding: 0 1px;
+        }
+        /* 子目录（二级目录） */
+        .category-item .cat-arrow {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            user-select: none;
+            border-radius: 5px;
+            transition: background 0.15s, color 0.15s;
+        }
+        /* 只有带子目录的箭头才着色，叶子/全部的空占位保持透明 */
+        .category-item .cat-arrow:not(:empty) {
+            color: #5b8cc9;
+            background: rgba(107,155,210,0.14);
+        }
+        .category-item .cat-arrow:not(:empty):hover {
+            background: rgba(107,155,210,0.3);
+            color: #1a2740;
+        }
+        body.dark-mode .category-item .cat-arrow:not(:empty) {
+            color: #a5b4fc;
+            background: rgba(129,140,248,0.16);
+        }
+        body.dark-mode .category-item .cat-arrow:not(:empty):hover {
+            background: rgba(129,140,248,0.32);
+            color: #e0e7ff;
+        }
+        .subcat-list {
+            padding-left: 1.15rem;
+            margin: 0;
+        }
+        .category-item.subcat-item {
+            padding: 0.42rem 0.7rem;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            margin: 1px 0;
+        }
+        .category-item.subcat-item .cat-icon { font-size: 0.85rem; }
+        .category-item.subcat-item .cat-count { font-size: 0.65rem; }
 
         /* Gist 右侧滑出面板 */
         .gist-drawer-overlay {
@@ -508,12 +635,12 @@
         .sidebar-overlay {
             display: none;
             position: fixed;
-            top: var(--navbar-height);
+            top: 0;
             left: 0;
             width: 100%;
-            height: calc(100vh - var(--navbar-height));
+            height: 100vh;
             background: rgba(0,0,0,0.4);
-            z-index: 85;
+            z-index: 110;
         }
         .sidebar-overlay.show { display: block; }
 
@@ -1106,6 +1233,21 @@
         }
         .theme-toggle:hover { background: linear-gradient(135deg, #e2e8f0, #ddd6fe); }
         body.dark-mode .theme-toggle:hover { background: linear-gradient(135deg, #334155, #312e81); }
+        /* ==================== 顶部按钮配色（仅上传/拉取保留颜色） ==================== */
+        #uploadToGistNavBtn {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border-color: transparent; color: #047857;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.18);
+        }
+        #uploadToGistNavBtn:hover { background: linear-gradient(135deg, #a7f3d0, #6ee7b7); color: #065f46; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.28); }
+
+        #downloadFromGistNavBtn {
+            background: linear-gradient(135deg, #dbeafe, #bae6fd);
+            border-color: transparent; color: #0369a1;
+            box-shadow: 0 2px 8px rgba(56,189,248,0.18);
+        }
+        #downloadFromGistNavBtn:hover { background: linear-gradient(135deg, #bae6fd, #7dd3fc); color: #075985; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(56,189,248,0.28); }
+
         .export-dropdown { position: relative; display: inline-block; }
         .dropdown-content {
             display: none;
@@ -1218,8 +1360,7 @@
             }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; }
-            .nav-brand-text { display: none; }
-            .nav-brand-btns { display: none; }
+            .top-nav { margin-left: 0; }
             .nav-search { width: 140px; min-width: 100px; }
             .nav-actions .btn span.label-text { display: none; }
             .nav-actions .btn { padding: 0.45rem 0.6rem; }
@@ -1390,23 +1531,12 @@
 
 <!-- ==================== TOP NAVBAR ==================== -->
 <nav class="top-nav">
-    <div class="nav-brand">
-        <div class="nav-logo" id="customLogoDisplay">
-            <img src="https://gegewu-cloud.github.io/img/zznnlogo.webp" alt="logo">
-        </div>
-        <span class="nav-brand-text" id="brandText" title="双击编辑名称">冰雪随笔</span>
-        <div class="nav-brand-btns">
-            <button id="customBrandBtn" title="修改名称">✎</button>
-            <button id="customLogoBtn" title="自定义Logo">🖼</button>
-            <button id="customFaviconBtn" title="更换标签页图标">🔖</button>
-        </div>
+    <div class="nav-search">
+        <span><i class="bi bi-search"></i></span>
+        <input type="text" id="searchInput" placeholder="搜索命令...">
     </div>
 
     <div class="nav-actions">
-        <div class="nav-search">
-            <span><i class="bi bi-search"></i></span>
-            <input type="text" id="searchInput" placeholder="搜索命令...">
-        </div>
         <button class="btn btn-outline btn-sm" id="uploadToGistNavBtn" title="上传到 Gist"><i class="bi bi-cloud-upload"></i> <span class="label-text">上传</span></button>
         <button class="btn btn-outline btn-sm" id="downloadFromGistNavBtn" title="从 Gist 拉取"><i class="bi bi-cloud-download"></i> <span class="label-text">拉取</span></button>
         <span style="color:var(--border-light);margin:0 2px;">|</span>
@@ -1428,7 +1558,7 @@
         <button class="btn btn-outline" id="saveBtn" title="保存备份"><i class="bi bi-floppy"></i> <span class="label-text">保存</span></button>
         <button class="btn btn-primary" id="openAddBtn"><i class="bi bi-plus-lg"></i> <span class="label-text">新增</span></button>
         <div class="export-dropdown">
-            <button class="btn btn-outline"><i class="bi bi-download"></i> <span class="label-text">导出</span></button>
+            <button class="btn btn-outline" id="exportNavBtn"><i class="bi bi-download"></i> <span class="label-text">导出</span></button>
             <div class="dropdown-content">
                 <a id="exportJsonBtn"><i class="bi bi-filetype-json"></i> JSON</a>
                 <a id="exportMarkdownBtn"><i class="bi bi-markdown"></i> Markdown</a>
@@ -1447,6 +1577,7 @@
 
 <!-- ==================== CATEGORY ACTION MENU ==================== -->
 <div class="cat-action-menu" id="catActionMenu">
+    <button id="catAddSubBtn">➕ 添加子目录</button>
     <button id="catRenameBtn">✏️ 重命名分类</button>
     <button id="catDeleteBtn" class="danger">🗑️ 删除分类</button>
 </div>
@@ -1454,10 +1585,29 @@
 <!-- ==================== SIDEBAR ==================== -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-resize-handle" id="sidebarResizeHandle"></div>
+    <!-- Logo / 品牌区 -->
+    <div class="nav-brand">
+        <div class="nav-logo" id="customLogoDisplay">
+            <img src="https://gegewu-cloud.github.io/img/zznnlogo.webp" alt="logo">
+        </div>
+        <span class="nav-brand-text" id="brandText" title="双击编辑名称">冰雪随笔</span>
+        <div class="nav-brand-btns">
+            <button id="customBrandBtn" title="修改名称">✎</button>
+            <button id="customLogoBtn" title="自定义Logo">🖼</button>
+            <button id="customFaviconBtn" title="更换标签页图标">🔖</button>
+        </div>
+    </div>
     <!-- Gist 同步入口 -->
     <div class="sidebar-sync-header" id="sidebarSyncToggle" title="点击打开 GitHub Gist 同步设置">
-        <span class="sync-dot" id="sidebarSyncDot"></span>
-        <span id="sidebarSyncLabel">☁️ Gist 未配置</span>
+        <span class="sync-icon" id="sidebarSyncIcon"><i class="bi bi-cloud-slash"></i></span>
+        <span class="sync-text" id="sidebarSyncLabel">GIST 未配置</span>
+        <i class="bi bi-chevron-right sync-arrow"></i>
+    </div>
+
+    <!-- 目录搜索 -->
+    <div class="sidebar-search">
+        <span><i class="bi bi-search"></i></span>
+        <input type="text" id="sidebarSearchInput" placeholder="搜索目录..." autocomplete="off">
     </div>
 
     <div class="category-list" id="categoryFilter"></div>
@@ -1536,6 +1686,12 @@
                     <select id="cmdCategory"></select>
                     <button type="button" id="quickAddCategoryBtn" class="btn btn-sm">➕ 新建</button>
                 </div>
+            </div>
+            <div class="form-group"><label>一级子目录（可选）</label>
+                <select id="cmdSubCategory"></select>
+            </div>
+            <div class="form-group"><label>二级子目录（可选）</label>
+                <select id="cmdSubSubCategory"></select>
             </div>
             <div class="form-group"><label>描述</label><textarea id="cmdDesc" rows="2"></textarea></div>
             <div class="form-group"><label>示例/备注</label><textarea id="cmdExample" rows="3"></textarea></div>
@@ -1621,6 +1777,8 @@
     function normalizeCommand(cmd) {
         if (!cmd.codeLang) cmd.codeLang = 'bash';
         if (!cmd.category) cmd.category = '其他';
+        if (!cmd.subCategory) cmd.subCategory = '';
+        if (!cmd.subSubCategory) cmd.subSubCategory = '';
         if (!cmd.description) cmd.description = '';
         if (!cmd.example) cmd.example = '';
         if (!cmd.codeBlocks) cmd.codeBlocks = [];
@@ -1636,13 +1794,24 @@
     let gistId = localStorage.getItem('gist_id') || '';
 
     function updateSyncStatus() {
-        const dot = document.getElementById('sidebarSyncDot');
+        const header = document.getElementById('sidebarSyncToggle');
+        const icon = document.getElementById('sidebarSyncIcon');
         const label = document.getElementById('sidebarSyncLabel');
-        if (dot && label) {
-            dot.className = 'sync-dot';
-            if (gistToken && gistId) { dot.classList.add('online'); label.innerText = '☁️ Gist 已同步'; }
-            else if (gistToken) { dot.classList.add('config'); label.innerText = '☁️ Gist 待关联'; }
-            else { dot.classList.add('offline'); label.innerText = '☁️ Gist 未配置'; }
+        if (header && icon && label) {
+            header.classList.remove('status-online', 'status-config', 'status-offline');
+            if (gistToken && gistId) {
+                header.classList.add('status-online');
+                icon.innerHTML = '<i class="bi bi-cloud-check"></i>';
+                label.innerText = 'GIST 已同步';
+            } else if (gistToken) {
+                header.classList.add('status-config');
+                icon.innerHTML = '<i class="bi bi-cloud-arrow-up"></i>';
+                label.innerText = 'GIST 待关联';
+            } else {
+                header.classList.add('status-offline');
+                icon.innerHTML = '<i class="bi bi-cloud-slash"></i>';
+                label.innerText = 'GIST 未配置';
+            }
         }
     }
 
@@ -1819,10 +1988,145 @@
         { id: "5", name: "kubectl get pods -n default -o wide", category: "K8s", description: "查看Pod详情", example: "", codeLang: "bash" }
     ];
 
-    let allCats = new Set(), curCat = "全部", curSearch = "";
-    function refreshCats() { allCats.clear(); commands.forEach(c => { if(c.category) allCats.add(c.category); }); if(allCats.size === 0) ["Git","Docker","网络","K8s"].forEach(c => allCats.add(c)); }
+    let allCats = new Set(), curCat = "全部", curSearch = "", catSearch = "", curSub = "", curSubSub = "";
+    let expandedCats = new Set();
+    let expandedSubs = new Set();
+    function refreshCats() { allCats.clear(); commands.forEach(c => { if(c.category) allCats.add(c.category); }); Object.keys(loadSubdirs()).forEach(c => allCats.add(c)); if(allCats.size === 0) ["Git","Docker","网络","K8s"].forEach(c => allCats.add(c)); }
     function getCatList() { return Array.from(allCats).sort(); }
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
+
+    // 模糊搜索：支持子串匹配 + 字符顺序（子序列）匹配
+    function fuzzyMatch(query, text) {
+        query = (query || '').toLowerCase();
+        text = (text || '').toLowerCase();
+        if (!query) return true;
+        if (text.includes(query)) return true;
+        let qi = 0;
+        for (let ti = 0; ti < text.length && qi < query.length; ti++) {
+            if (text[ti] === query[qi]) qi++;
+        }
+        return qi === query.length;
+    }
+
+    // 模糊匹配高亮：按字符顺序标记匹配到的字符
+    function fuzzyHighlight(text, query) {
+        if (!query) return escapeHtml(text);
+        const q = query.toLowerCase();
+        const lower = text.toLowerCase();
+        let out = '', qi = 0;
+        for (let ti = 0; ti < text.length; ti++) {
+            if (qi < q.length && lower[ti] === q[qi]) {
+                out += '<mark class="cat-search-mark">' + escapeHtml(text[ti]) + '</mark>';
+                qi++;
+            } else {
+                out += escapeHtml(text[ti]);
+            }
+        }
+        return out;
+    }
+
+    // ==================== 子目录（一级 + 二级，共三级）====================
+    // cat_subdirs: { 分类: { 一级子目录: [二级子目录, ...] } }
+    function loadSubdirs() { try { return JSON.parse(localStorage.getItem('cat_subdirs') || '{}'); } catch(e) { return {}; } }
+    function saveSubdirs(map) { localStorage.setItem('cat_subdirs', JSON.stringify(map)); }
+    function getSubdirs(cat) {
+        const map = loadSubdirs();
+        const subs = new Set(Object.keys(map[cat] || {}));
+        commands.forEach(c => { if (c.category === cat && c.subCategory) subs.add(c.subCategory); });
+        return Array.from(subs).sort();
+    }
+    function getSubSubdirs(cat, sub) {
+        const map = loadSubdirs();
+        const subs = new Set((map[cat] && map[cat][sub]) || []);
+        commands.forEach(c => { if (c.category === cat && c.subCategory === sub && c.subSubCategory) subs.add(c.subSubCategory); });
+        return Array.from(subs).sort();
+    }
+    function addSubCategory(parent) {
+        const name = prompt('请输入一级子目录名称：', '');
+        if (!name || !name.trim()) return;
+        const sub = name.trim();
+        if (getSubdirs(parent).includes(sub)) { alert('该子目录已存在'); return; }
+        const map = loadSubdirs();
+        if (!map[parent]) map[parent] = {};
+        map[parent][sub] = map[parent][sub] || [];
+        saveSubdirs(map);
+        expandedCats.add(parent);
+        renderCatFilter();
+        hideCatMenu();
+    }
+    function addSubSubCategory(parent, sub) {
+        const name = prompt(`在「${parent} / ${sub}」下创建二级子目录：`, '');
+        if (!name || !name.trim()) return;
+        const ss = name.trim();
+        if (getSubSubdirs(parent, sub).includes(ss)) { alert('该子目录已存在'); return; }
+        const map = loadSubdirs();
+        if (!map[parent]) map[parent] = {};
+        if (!map[parent][sub]) map[parent][sub] = [];
+        map[parent][sub].push(ss);
+        saveSubdirs(map);
+        expandedCats.add(parent);
+        expandedSubs.add(parent + '||' + sub);
+        renderCatFilter();
+        hideCatMenu();
+    }
+    async function renameSubCategory(parent, oldSub) {
+        const newName = prompt('重命名一级子目录：', oldSub);
+        if (!newName || !newName.trim() || newName.trim() === oldSub) return;
+        const newSub = newName.trim();
+        if (getSubdirs(parent).includes(newSub)) { alert('该子目录已存在'); return; }
+        const map = loadSubdirs();
+        if (map[parent] && map[parent][oldSub] !== undefined) {
+            map[parent][newSub] = map[parent][oldSub];
+            delete map[parent][oldSub];
+            saveSubdirs(map);
+        }
+        const toUpdate = commands.filter(c => c.category === parent && c.subCategory === oldSub);
+        for (const c of toUpdate) { c.subCategory = newSub; await saveCmd(c); }
+        if (curCat === parent && curSub === oldSub) curSub = newSub;
+        await refresh();
+        hideCatMenu();
+    }
+    async function deleteSubCategory(parent, sub) {
+        const n = commands.filter(c => c.category === parent && c.subCategory === sub).length;
+        const msg = n > 0 ? `子目录「${sub}」下有 ${n} 条笔记。\n删除后这些笔记将移到「${parent}」下。\n\n确定删除吗？` : `确定删除子目录「${sub}」吗？`;
+        if (!confirm(msg)) return;
+        const map = loadSubdirs();
+        if (map[parent] && map[parent][sub] !== undefined) { delete map[parent][sub]; if (Object.keys(map[parent]).length === 0) delete map[parent]; saveSubdirs(map); }
+        const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub);
+        for (const c of toUpdate) { c.subCategory = ''; c.subSubCategory = ''; await saveCmd(c); }
+        if (curCat === parent && curSub === sub) { curSub = ''; curSubSub = ''; }
+        await refresh();
+        hideCatMenu();
+    }
+    async function renameSubSubCategory(parent, sub, oldSS) {
+        const newName = prompt('重命名二级子目录：', oldSS);
+        if (!newName || !newName.trim() || newName.trim() === oldSS) return;
+        const newSS = newName.trim();
+        if (getSubSubdirs(parent, sub).includes(newSS)) { alert('该子目录已存在'); return; }
+        const map = loadSubdirs();
+        if (map[parent] && map[parent][sub]) {
+            const idx = map[parent][sub].indexOf(oldSS);
+            if (idx !== -1) map[parent][sub][idx] = newSS;
+            saveSubdirs(map);
+        }
+        const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === oldSS);
+        for (const c of toUpdate) { c.subSubCategory = newSS; await saveCmd(c); }
+        if (curCat === parent && curSub === sub && curSubSub === oldSS) curSubSub = newSS;
+        await refresh();
+        hideCatMenu();
+    }
+    async function deleteSubSubCategory(parent, sub, ss) {
+        const n = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === ss).length;
+        const msg = n > 0 ? `二级子目录「${ss}」下有 ${n} 条笔记。\n删除后这些笔记将移到「${parent} / ${sub}」下。\n\n确定删除吗？` : `确定删除二级子目录「${ss}」吗？`;
+        if (!confirm(msg)) return;
+        const map = loadSubdirs();
+        if (map[parent] && map[parent][sub]) { map[parent][sub] = map[parent][sub].filter(x => x !== ss); if (map[parent][sub].length === 0) delete map[parent][sub]; if (Object.keys(map[parent]).length === 0) delete map[parent]; saveSubdirs(map); }
+        const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === ss);
+        for (const c of toUpdate) { c.subSubCategory = ''; await saveCmd(c); }
+        if (curCat === parent && curSub === sub && curSubSub === ss) curSubSub = '';
+        await refresh();
+        hideCatMenu();
+    }
 
     function renderMarkdown(text, showToc = true, prefix = '') {
         if (!text) return '';
@@ -1938,7 +2242,7 @@
     async function commit(cmd) { await saveCmd(cmd); await refresh(); }
     async function remove(id) { await delCmd(id); await refresh(); }
 
-    function filterCmds() { return commands.filter(c => { if(curCat !== "全部" && c.category !== curCat) return false; if(!curSearch.trim()) return true; const s = curSearch.toLowerCase(); if (c.name.toLowerCase().includes(s) || c.description.toLowerCase().includes(s) || (c.example && c.example.toLowerCase().includes(s))) return true; return (c.codeBlocks || []).some(b => b.name && b.name.toLowerCase().includes(s)); }); }
+    function filterCmds() { return commands.filter(c => { if(curCat !== "全部") { if(c.category !== curCat) return false; if(curSub && (c.subCategory || '') !== curSub) return false; if(curSubSub && (c.subSubCategory || '') !== curSubSub) return false; } if(!curSearch.trim()) return true; const s = curSearch.toLowerCase(); if (c.name.toLowerCase().includes(s) || c.description.toLowerCase().includes(s) || (c.example && c.example.toLowerCase().includes(s))) return true; return (c.codeBlocks || []).some(b => b.name && b.name.toLowerCase().includes(s)); }); }
 
     // Count commands per category for sidebar badges
     function getCatCounts() {
@@ -1946,6 +2250,32 @@
         commands.forEach(c => {
             const cat = c.category || '其他';
             counts[cat] = (counts[cat] || 0) + 1;
+        });
+        return counts;
+    }
+
+    // Count commands per (category, subCategory) for subdirectory badges
+    function getSubCounts() {
+        const counts = {};
+        commands.forEach(c => {
+            const cat = c.category || '其他';
+            const sub = c.subCategory || '';
+            if (!counts[cat]) counts[cat] = {};
+            counts[cat][sub] = (counts[cat][sub] || 0) + 1;
+        });
+        return counts;
+    }
+
+    // Count commands per (category, subCategory, subSubCategory) for 二级子目录 badges
+    function getSubSubCounts() {
+        const counts = {};
+        commands.forEach(c => {
+            const cat = c.category || '其他';
+            const sub = c.subCategory || '';
+            const ss = c.subSubCategory || '';
+            if (!counts[cat]) counts[cat] = {};
+            if (!counts[cat][sub]) counts[cat][sub] = {};
+            counts[cat][sub][ss] = (counts[cat][sub][ss] || 0) + 1;
         });
         return counts;
     }
@@ -2043,7 +2373,7 @@
         const filtered = filterCmds();
         const container = document.getElementById('commandsContainer');
         const header = document.getElementById('contentHeader');
-        header.textContent = curCat !== '全部' ? curCat : '';
+        header.textContent = curCat !== '全部' ? (curSub ? (curSubSub ? curCat + ' / ' + curSub + ' / ' + curSubSub : curCat + ' / ' + curSub) : curCat) : '';
         if(filtered.length === 0) { container.innerHTML = '<div class="empty-state">暂无命令，点击新增添加第一条</div>'; return; }
         container.innerHTML = filtered.map(cmd => {
             const highlighted = highlightCode(cmd.name, cmd.codeLang);
@@ -2106,29 +2436,115 @@
     }
 
     function renderCatFilter() {
-        const cats = getCatList();
+        const allCatsList = getCatList();
         const counts = getCatCounts();
+        const subCounts = getSubCounts();
+        const subSubCounts = getSubSubCounts();
         const total = commands.length;
         const div = document.getElementById('categoryFilter');
+        const searchQ = catSearch.trim();
+        const catIndex = {};
+        allCatsList.forEach((c, i) => catIndex[c] = i);
+        const cats = allCatsList.filter(c => {
+            if (!searchQ) return true;
+            if (fuzzyMatch(catSearch, c)) return true;
+            return getSubdirs(c).some(s => fuzzyMatch(catSearch, s) || getSubSubdirs(c, s).some(ss => fuzzyMatch(catSearch, ss)));
+        });
         let html = `<div class="sticky-all-wrapper"><button class="category-item ${curCat==='全部'?'active':''}" data-cat="全部">
-            <span class="cat-icon"><i class="bi bi-grid"></i></span><span>全部</span><span class="cat-count">${total}</span>
+            <span class="cat-arrow"></span><span class="cat-icon"><i class="bi bi-grid"></i></span><span>全部</span><span class="cat-count">${total}</span>
         </button></div>`;
-        const icons = ICON_LIST;
-        cats.forEach((c, i) => {
+        if (searchQ && cats.length === 0) {
+            html += `<div class="sidebar-search-empty"><i class="bi bi-search"></i> 未找到匹配目录</div>`;
+        }
+        cats.forEach((c) => {
+            const subdirs = getSubdirs(c);
             const count = counts[c] || 0;
-            const icon = getCatIcon(c, i);
+            const icon = getCatIcon(c, catIndex[c] || 0);
+            const hasChildren = subdirs.length > 0;
+            const isActive = (curCat === c && !curSub);
+            const expanded = searchQ ? true : expandedCats.has(c);
             html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}">
-                <button class="category-item ${curCat===c?'active':''}" data-cat="${escapeHtml(c)}">
-                    <span class="cat-icon"><i class="bi ${escapeHtml(icon)}"></i></span><span class="cat-name-text">${escapeHtml(c)}</span><span class="cat-count">${count}</span>
+                <button class="category-item ${isActive?'active':''} ${hasChildren?'has-children':''}" data-cat="${escapeHtml(c)}">
+                    <span class="cat-arrow">${hasChildren ? (expanded ? '▾' : '▸') : ''}</span>
+                    <span class="cat-icon"><i class="bi ${escapeHtml(icon)}"></i></span>
+                    <span class="cat-name-text">${fuzzyHighlight(c, catSearch)}</span>
+                    <span class="cat-count">${count}</span>
                 </button>
-                <button class="cat-more-btn" data-cat="${escapeHtml(c)}" title="更多操作">⋮</button>
+                <button class="cat-more-btn" data-cat="${escapeHtml(c)}" data-sub="" data-subsub="" title="更多操作">⋮</button>
             </div>`;
+            if (hasChildren && expanded) {
+                let shownSubs = subdirs;
+                if (searchQ && !fuzzyMatch(catSearch, c)) {
+                    shownSubs = subdirs.filter(s => fuzzyMatch(catSearch, s) || getSubSubdirs(c, s).some(ss => fuzzyMatch(catSearch, ss)));
+                }
+                html += `<div class="subcat-list">`;
+                shownSubs.forEach(s => {
+                    const subSubs = getSubSubdirs(c, s);
+                    const scount = (subCounts[c] && subCounts[c][s]) || 0;
+                    const subHasChildren = subSubs.length > 0;
+                    const subActive = (curCat === c && curSub === s && !curSubSub);
+                    const subExpanded = searchQ ? true : expandedSubs.has(c + '||' + s);
+                    html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}">
+                        <button class="category-item subcat-item ${subActive?'active':''} ${subHasChildren?'has-children':''}" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}">
+                            <span class="cat-arrow">${subHasChildren ? (subExpanded ? '▾' : '▸') : ''}</span>
+                            <span class="cat-icon"><i class="bi bi-folder2-open"></i></span>
+                            <span class="cat-name-text">${fuzzyHighlight(s, catSearch)}</span>
+                            <span class="cat-count">${scount}</span>
+                        </button>
+                        <button class="cat-more-btn" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="" title="更多操作">⋮</button>
+                    </div>`;
+                    if (subHasChildren && subExpanded) {
+                        let shownSS = subSubs;
+                        if (searchQ && !fuzzyMatch(catSearch, s) && !fuzzyMatch(catSearch, c)) {
+                            shownSS = subSubs.filter(ss => fuzzyMatch(catSearch, ss));
+                        }
+                        html += `<div class="subcat-list">`;
+                        shownSS.forEach(ss => {
+                            const sscount = (subSubCounts[c] && subSubCounts[c][s] && subSubCounts[c][s][ss]) || 0;
+                            const ssActive = (curCat === c && curSub === s && curSubSub === ss);
+                            html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}">
+                                <button class="category-item subcat-item subsubcat-item ${ssActive?'active':''}" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}">
+                                    <span class="cat-arrow"></span>
+                                    <span class="cat-icon"><i class="bi bi-file-earmark"></i></span>
+                                    <span class="cat-name-text">${fuzzyHighlight(ss, catSearch)}</span>
+                                    <span class="cat-count">${sscount}</span>
+                                </button>
+                                <button class="cat-more-btn" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}" title="更多操作">⋮</button>
+                            </div>`;
+                        });
+                        html += `</div>`;
+                    }
+                });
+                html += `</div>`;
+            }
         });
         div.innerHTML = html;
 
-        // Click on category item to filter
+        // Click on category item to filter / toggle expand
         document.querySelectorAll('.category-item').forEach(btn => btn.addEventListener('click', e => {
-            curCat = btn.dataset.cat;
+            const cat = btn.dataset.cat;
+            const sub = btn.dataset.sub || '';
+            const subsub = btn.dataset.subsub || '';
+            const isTop = btn.dataset.sub === undefined;
+            const isSub = btn.dataset.sub !== undefined && btn.dataset.subsub === undefined;
+            if (e.target.closest('.cat-arrow')) {
+                if (isTop && getSubdirs(cat).length > 0) {
+                    if (expandedCats.has(cat)) expandedCats.delete(cat); else expandedCats.add(cat);
+                    renderCatFilter();
+                    return;
+                }
+                if (isSub && getSubSubdirs(cat, sub).length > 0) {
+                    const key = cat + '||' + sub;
+                    if (expandedSubs.has(key)) expandedSubs.delete(key); else expandedSubs.add(key);
+                    renderCatFilter();
+                    return;
+                }
+            }
+            curCat = cat;
+            curSub = sub;
+            curSubSub = subsub;
+            if (sub) expandedCats.add(cat);
+            if (subsub) expandedSubs.add(cat + '||' + sub);
             renderCatFilter();
             renderCards();
             if (window.innerWidth <= 768) closeSidebar();
@@ -2139,16 +2555,37 @@
         document.querySelectorAll('.cat-more-btn').forEach(btn => btn.addEventListener('click', e => {
             e.stopPropagation();
             e.preventDefault();
-            const catName = btn.dataset.cat;
-            showCatMenu(btn, catName);
+            showCatMenu(btn, btn.dataset.cat, btn.dataset.sub || '', btn.dataset.subsub || '');
         }));
     }
 
+    function renderSubSelect(selId, parentCat, selectedSub) {
+        const sel = document.getElementById(selId);
+        if (!sel) return;
+        const subs = getSubdirs(parentCat);
+        let html = `<option value="">（无子目录）</option>`;
+        subs.forEach(s => { html += `<option value="${escapeHtml(s)}" ${s === selectedSub ? 'selected' : ''}>${escapeHtml(s)}</option>`; });
+        sel.innerHTML = html;
+        sel.value = (selectedSub && subs.includes(selectedSub)) ? selectedSub : '';
+    }
+    function renderSubSubSelect(selId, parentCat, parentSub, selectedSS) {
+        const sel = document.getElementById(selId);
+        if (!sel) return;
+        const subs = getSubSubdirs(parentCat, parentSub);
+        let html = `<option value="">（无子目录）</option>`;
+        subs.forEach(s => { html += `<option value="${escapeHtml(s)}" ${s === selectedSS ? 'selected' : ''}>${escapeHtml(s)}</option>`; });
+        sel.innerHTML = html;
+        sel.value = (selectedSS && subs.includes(selectedSS)) ? selectedSS : '';
+    }
+    function updateSubCatSelect(parentCat, selectedSub) { renderSubSelect('cmdSubCategory', parentCat, selectedSub); }
+    function updateSubSubCatSelect(parentCat, parentSub, selectedSS) { renderSubSubSelect('cmdSubSubCategory', parentCat, parentSub, selectedSS); }
     function updateCatSelect() {
         const sel = document.getElementById('cmdCategory');
         const cats = getCatList();
         sel.innerHTML = cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
         if(cats.length === 0) sel.innerHTML = '<option>其他</option>';
+        updateSubCatSelect(sel.value || '', '');
+        updateSubSubCatSelect(sel.value || '', '', '');
     }
 
     async function sortAndRender() { refreshCats(); renderCatFilter(); updateCatSelect(); renderCards(); }
@@ -2171,6 +2608,8 @@
         document.getElementById('fsTitle').innerText = '编辑: ' + (cmd.cardTitle || cmd.name.split('\n')[0].substring(0,60));
         document.getElementById('fsCategory').innerText = cmd.category;
         const catOpts = getCatList().map(c => `<option value="${escapeHtml(c)}" ${c===cmd.category?'selected':''}>${escapeHtml(c)}</option>`).join('');
+        const subCatOpts = `<option value="">（无子目录）</option>` + getSubdirs(cmd.category).map(s => `<option value="${escapeHtml(s)}" ${s===cmd.subCategory?'selected':''}>${escapeHtml(s)}</option>`).join('');
+        const subSubCatOpts = `<option value="">（无子目录）</option>` + getSubSubdirs(cmd.category, cmd.subCategory).map(s => `<option value="${escapeHtml(s)}" ${s===cmd.subSubCategory?'selected':''}>${escapeHtml(s)}</option>`).join('');
         const body = `
             <div class="fullscreen-section">
                 <h4>📌 卡片标题</h4>
@@ -2187,6 +2626,14 @@
                     <div style="flex:1;min-width:140px;">
                         <label style="font-size:0.75rem;color:var(--text-secondary);">分类</label>
                         <select id="fsEditCategory" style="width:100%;padding:0.5rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);">${catOpts}</select>
+                    </div>
+                    <div style="flex:1;min-width:140px;">
+                        <label style="font-size:0.75rem;color:var(--text-secondary);">一级子目录（可选）</label>
+                        <select id="fsEditSubCategory" style="width:100%;padding:0.5rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);">${subCatOpts}</select>
+                    </div>
+                    <div style="flex:1;min-width:140px;">
+                        <label style="font-size:0.75rem;color:var(--text-secondary);">二级子目录（可选）</label>
+                        <select id="fsEditSubSubCategory" style="width:100%;padding:0.5rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);">${subSubCatOpts}</select>
                     </div>
                     <div style="flex:1;min-width:140px;">
                         <label style="font-size:0.75rem;color:var(--text-secondary);">代码语言</label>
@@ -2211,6 +2658,13 @@
             </div>
         `;
         document.getElementById('fsBody').innerHTML = body;
+        document.getElementById('fsEditCategory').addEventListener('change', e => {
+            renderSubSelect('fsEditSubCategory', e.target.value, '');
+            renderSubSubSelect('fsEditSubSubCategory', e.target.value, '', '');
+        });
+        document.getElementById('fsEditSubCategory').addEventListener('change', e => {
+            renderSubSubSelect('fsEditSubSubCategory', document.getElementById('fsEditCategory').value, e.target.value, '');
+        });
         // Populate extra code blocks
         populateCodeBlocksFromCmd('fsExtraCodeBlocksContainer', cmd.codeBlocks || []);
         document.getElementById('fsAddCodeBlockBtn').addEventListener('click', () => {
@@ -2229,13 +2683,15 @@
         const name = document.getElementById('fsEditName').value;
         if (!name.trim()) { showToast('命令不能为空', false); return; }
         const category = document.getElementById('fsEditCategory').value;
+        const subCategory = document.getElementById('fsEditSubCategory').value || '';
+        const subSubCategory = document.getElementById('fsEditSubSubCategory').value || '';
         const codeLang = document.getElementById('fsEditLang').value;
         const cardTitle = document.getElementById('fsEditCardTitle').value.trim();
         const codeTitle = document.getElementById('fsEditCodeTitle').value.trim();
         const description = document.getElementById('fsEditDesc').value.trim();
         const example = document.getElementById('fsEditExample').value.trim();
         const codeBlocks = collectFormCodeBlocks('fsExtraCodeBlocksContainer');
-        const cmd = { id, name, category, description, example, codeLang, cardTitle, codeTitle, codeBlocks };
+        const cmd = { id, name, category, subCategory, subSubCategory, description, example, codeLang, cardTitle, codeTitle, codeBlocks };
         try {
             await commit(cmd);
             showToast('保存成功', true);
@@ -2259,6 +2715,8 @@
         updateCatSelect();
         const def = getCatList()[0] || '其他';
         document.getElementById('cmdCategory').value = def;
+        updateSubCatSelect(def, '');
+        updateSubSubCatSelect(def, '', '');
         document.getElementById('cmdDesc').value = '';
         document.getElementById('cmdExample').value = '';
         document.getElementById('editId').value = '';
@@ -2326,12 +2784,14 @@
         if(!name.trim()) return alert('命令不能为空');
         let cat = document.getElementById('cmdCategory').value;
         if(!cat) cat = '其他';
+        const subCategory = document.getElementById('cmdSubCategory').value || '';
+        const subSubCategory = document.getElementById('cmdSubSubCategory').value || '';
         const codeLang = document.getElementById('cmdLang').value;
         const cardTitle = document.getElementById('cmdCardTitle').value.trim();
         const codeTitle = document.getElementById('cmdCodeTitle').value.trim();
         const id = document.getElementById('editId').value || Date.now().toString(36) + Math.random().toString(36).substr(2,6);
         const codeBlocks = collectFormCodeBlocks('extraCodeBlocksContainer');
-        const cmd = { id, name, category: cat, description: document.getElementById('cmdDesc').value.trim() || '无描述', example: document.getElementById('cmdExample').value.trim(), codeLang: codeLang || 'bash', cardTitle, codeTitle, codeBlocks };
+        const cmd = { id, name, category: cat, subCategory, subSubCategory, description: document.getElementById('cmdDesc').value.trim() || '无描述', example: document.getElementById('cmdExample').value.trim(), codeLang: codeLang || 'bash', cardTitle, codeTitle, codeBlocks };
         await commit(cmd);
         document.getElementById('commandModal').style.display = 'none';
         resetModal();
@@ -2345,7 +2805,7 @@
 
     function setupImport() {
         const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json';
-        inp.onchange = async e => { const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = async ev => { try { const p = JSON.parse(ev.target.result); if(Array.isArray(p)) { await bulkImport(p.map(c => ({ id: c.id || Date.now()+Math.random(), name: c.name, category: c.category || '其他', description: c.description || '', example: c.example || '', codeLang: c.codeLang || 'bash' }))); await refresh(); alert(`导入成功，共 ${commands.length} 条`); } else throw new Error(); } catch(err) { alert('无效JSON文件'); } }; reader.readAsText(f); };
+        inp.onchange = async e => { const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = async ev => { try { const p = JSON.parse(ev.target.result); if(Array.isArray(p)) { await bulkImport(p.map(c => ({ id: c.id || Date.now()+Math.random(), name: c.name, category: c.category || '其他', subCategory: c.subCategory || '', subSubCategory: c.subSubCategory || '', description: c.description || '', example: c.example || '', codeLang: c.codeLang || 'bash' }))); await refresh(); alert(`导入成功，共 ${commands.length} 条`); } else throw new Error(); } catch(err) { alert('无效JSON文件'); } }; reader.readAsText(f); };
         document.getElementById('importBtn').addEventListener('click', () => inp.click());
     }
 
@@ -2650,7 +3110,7 @@
         if (icon) saveCatIcon(name, icon);
         allCats.add(name); renderCatFilter(); updateCatSelect();
         if(pendingCatCb) pendingCatCb(name);
-        else { curCat = name; renderCatFilter(); renderCards(); }
+        else { curCat = name; curSub = ''; curSubSub = ''; renderCatFilter(); renderCards(); }
         closeNewCatModal();
     }
 
@@ -2706,9 +3166,15 @@
 
     // ==================== CATEGORY RENAME / DELETE ====================
     let currentCatMenuTarget = null;
+    let currentCatMenuSub = '';
+    let currentCatMenuSubSub = '';
 
-    function showCatMenu(btn, catName) {
+    function showCatMenu(btn, catName, subName = '', subSubName = '') {
         currentCatMenuTarget = catName;
+        currentCatMenuSub = subName || '';
+        currentCatMenuSubSub = subSubName || '';
+        const addSubBtn = document.getElementById('catAddSubBtn');
+        if (addSubBtn) addSubBtn.style.display = currentCatMenuSubSub ? 'none' : 'block';
         const menu = document.getElementById('catActionMenu');
         const rect = btn.getBoundingClientRect();
         menu.style.top = rect.bottom + 4 + 'px';
@@ -2720,6 +3186,8 @@
         const menu = document.getElementById('catActionMenu');
         menu.classList.remove('show');
         currentCatMenuTarget = null;
+        currentCatMenuSub = '';
+        currentCatMenuSubSub = '';
     }
 
     // ==================== EDIT CATEGORY MODAL ====================
@@ -2745,6 +3213,9 @@
         if (newName !== oldName) {
             // Remove old icon mapping
             saveCatIcon(oldName, null);
+            // 移动子目录映射
+            const map = loadSubdirs();
+            if (map[oldName]) { map[newName] = map[oldName]; delete map[oldName]; saveSubdirs(map); }
             // Update all commands
             const toUpdate = commands.filter(c => c.category === oldName);
             for (const cmd of toUpdate) { cmd.category = newName; await saveCmd(cmd); }
@@ -2763,10 +3234,15 @@
         // Reassign all commands in this category to 其他
         for (const cmd of cmdsInCat) {
             cmd.category = '其他';
+            cmd.subCategory = '';
+            cmd.subSubCategory = '';
             await saveCmd(cmd);
         }
+        // 移除该分类下的子目录结构
+        const map = loadSubdirs();
+        if (map[catName]) { delete map[catName]; saveSubdirs(map); }
         // If current filter was on deleted category, reset to all
-        if (curCat === catName) curCat = '全部';
+        if (curCat === catName) { curCat = '全部'; curSub = ''; curSubSub = ''; }
         await refresh();
         hideCatMenu();
     }
@@ -2833,11 +3309,15 @@
     function openGistDrawer() {
         document.getElementById('gistDrawer').classList.add('open');
         document.getElementById('gistDrawerOverlay').classList.add('show');
+        const syncHeader = document.getElementById('sidebarSyncToggle');
+        if (syncHeader) syncHeader.classList.add('open');
         document.body.style.overflow = 'hidden';
     }
     function closeGistDrawer() {
         document.getElementById('gistDrawer').classList.remove('open');
         document.getElementById('gistDrawerOverlay').classList.remove('show');
+        const syncHeader = document.getElementById('sidebarSyncToggle');
+        if (syncHeader) syncHeader.classList.remove('open');
         document.body.style.overflow = '';
     }
     function toggleGistDrawer() {
@@ -2857,10 +3337,13 @@
         commands = existing;
         await refresh();
         document.getElementById('searchInput').addEventListener('input', e => { curSearch = e.target.value; renderCards(); });
+        document.getElementById('sidebarSearchInput').addEventListener('input', e => { catSearch = e.target.value; renderCatFilter(); });
         document.getElementById('openAddBtn').addEventListener('click', () => { resetModal(); document.getElementById('commandModal').style.display = 'flex'; });
         document.getElementById('saveBtn').addEventListener('click', () => { exportJSON(); showToast('备份已保存', true); });
         document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('commandModal').style.display = 'none'; resetModal(); });
         document.getElementById('commandForm').addEventListener('submit', onSave);
+        document.getElementById('cmdCategory').addEventListener('change', e => { updateSubCatSelect(e.target.value, ''); updateSubSubCatSelect(e.target.value, '', ''); });
+        document.getElementById('cmdSubCategory').addEventListener('change', e => updateSubSubCatSelect(document.getElementById('cmdCategory').value, e.target.value, ''));
         document.getElementById('exportJsonBtn').addEventListener('click', exportJSON);
         document.getElementById('exportMarkdownBtn').addEventListener('click', exportMarkdown);
         document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
@@ -2898,10 +3381,21 @@
 
         // category action menu buttons
         document.getElementById('catRenameBtn').addEventListener('click', () => {
-            if (currentCatMenuTarget) openEditCatModal(currentCatMenuTarget);
+            if (!currentCatMenuTarget) return;
+            if (currentCatMenuSubSub) renameSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub);
+            else if (currentCatMenuSub) renameSubCategory(currentCatMenuTarget, currentCatMenuSub);
+            else openEditCatModal(currentCatMenuTarget);
         });
         document.getElementById('catDeleteBtn').addEventListener('click', () => {
-            if (currentCatMenuTarget) deleteCategory(currentCatMenuTarget);
+            if (!currentCatMenuTarget) return;
+            if (currentCatMenuSubSub) deleteSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub);
+            else if (currentCatMenuSub) deleteSubCategory(currentCatMenuTarget, currentCatMenuSub);
+            else deleteCategory(currentCatMenuTarget);
+        });
+        document.getElementById('catAddSubBtn').addEventListener('click', () => {
+            if (!currentCatMenuTarget || currentCatMenuSubSub) return;
+            if (currentCatMenuSub) addSubSubCategory(currentCatMenuTarget, currentCatMenuSub);
+            else addSubCategory(currentCatMenuTarget);
         });
 
         // edit category modal
