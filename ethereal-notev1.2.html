@@ -7,6 +7,9 @@
     <link id="dynamicFavicon" rel="icon" type="image/webp" href="https://gegewu-cloud.github.io/img/zznnlogo.webp">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <style>
         :root {
@@ -90,21 +93,126 @@
 
         /* ==================== TOP NAVBAR ==================== */
         .top-nav {
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
             height: var(--navbar-height);
-            margin-left: var(--sidebar-width);
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border-light);
-            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            margin-left: 0;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-bottom: 1px solid transparent;
+            box-shadow: none;
             display: flex;
             align-items: center;
             padding: 0 1.5rem;
             gap: 1.2rem;
-            transition: background 0.3s ease, margin-left 0.3s ease;
+            transition: background 0.3s ease, margin-left 0.3s ease, box-shadow 0.3s ease;
         }
-        body.dark-mode .top-nav { box-shadow: 0 1px 8px rgba(0,0,0,0.25); }
+        body.past-hero .top-nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+        }
+        body.dark-mode.past-hero .top-nav { box-shadow: 0 1px 8px rgba(0,0,0,0.25); }
+        @media (min-width: 769px) {
+            body.past-hero .top-nav { margin-left: var(--sidebar-width); }
+        }
+
+        /* ==================== HERO（全屏首屏，Butterfly 风格）==================== */
+        .hero {
+            height: 100vh;
+            min-height: 520px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(160deg, #16325f 0%, #2c4a7c 40%, #4a5fa8 72%, #6b7fd4 100%);
+            color: #fff;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.12), transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.10), transparent 45%);
+            pointer-events: none;
+        }
+        /* 内容区有图片背景、且未单独设置首屏背景时：首屏透出内容背景图（不加遮罩） */
+        body.has-bg-image:not(.has-hero-bg) .hero { background: transparent; }
+        body.has-bg-image .hero::before { background: none; }
+        body.has-hero-bg .hero::before { background: none; }
+        /* 夜间模式：首屏整体压暗一点 */
+        body.dark-mode .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .hero-inner { position: relative; z-index: 2; padding: 0 1.5rem; }
+        .hero-title {
+            font-family: 'ZCOOL KuaiLe', 'Comic Sans MS', 'STCaiyun', 'YouYuan', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.8rem;
+            /* 冰雪艺术字：冰蓝渐变 + 描边 + 发光 */
+            background: linear-gradient(180deg, #eaf6ff 0%, #b6e0ff 22%, #ffffff 50%, #9bd0ff 72%, #cfeaff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(120,180,255,0.35);
+            filter: drop-shadow(0 2px 6px rgba(70,140,255,0.55)) drop-shadow(0 0 18px rgba(120,190,255,0.35));
+        }
+        .hero-subtitle {
+            font-family: 'Ma Shan Zheng', 'ZCOOL KuaiLe', 'KaiTi', 'STKaiti', cursive;
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            margin-bottom: 0;
+            /* 冰雪艺术字：与标题呼应的冰蓝渐变 + 发光 */
+            background: linear-gradient(135deg, #cfeaff 0%, #ffffff 45%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 1px 4px rgba(120,190,255,0.5));
+        }
+        .hero-scroll-hint {
+            position: absolute;
+            left: 50%;
+            bottom: 2.2rem;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            color: rgba(255,255,255,0.85);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            z-index: 2;
+            cursor: pointer;
+        }
+        .hero-scroll-hint i { font-size: 1.4rem; animation: hero-bounce 1.8s infinite; }
+        @keyframes hero-bounce {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(8px); opacity: 0.5; }
+        }
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2.2rem; }
+            .hero-subtitle { font-size: 0.95rem; }
+        }
+        /* 首屏时隐藏侧边栏与内容左边距（桌面端） */
+        @media (min-width: 769px) {
+            body:not(.past-hero) .sidebar { transform: translateX(-100%); }
+            body:not(.past-hero) .main-content { margin-left: 0; }
+        }
 
         .nav-brand {
             display: flex;
@@ -127,19 +235,22 @@
         .nav-logo img { width: 100%; height: 100%; object-fit: cover; }
         .nav-logo span { font-size: 1.5rem; }
         .nav-brand-text {
+            font-family: 'ZCOOL KuaiLe', 'Comic Sans MS', 'STCaiyun', 'YouYuan', sans-serif;
             font-size: 1.15rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #1e293b, #6b9bd2);
+            background: linear-gradient(135deg, #1e6ec7, #6b9bd2, #4a90d9);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
             white-space: nowrap;
+            filter: drop-shadow(0 1px 3px rgba(70,140,255,0.35));
         }
         body.dark-mode .nav-brand-text {
-            background: linear-gradient(135deg, #e2e8f0, #a5b4fc);
+            background: linear-gradient(135deg, #cfeaff, #a5b4fc, #e2e8f0);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
+            filter: drop-shadow(0 1px 4px rgba(120,190,255,0.5));
         }
         .nav-brand-btns { display: flex; gap: 4px; }
         .nav-brand-btns button {
@@ -163,26 +274,96 @@
             flex-wrap: wrap;
         }
 
+        /* 首屏（未滚动）时顶部导航栏显示 logo */
+        .topnav-brand {
+            display: none;
+            margin-right: 0.25rem;
+        }
+        body:not(.past-hero) .topnav-brand {
+            display: flex;
+        }
+        body:not(.past-hero) .topnav-brand .nav-logo {
+            background: rgba(255,255,255,0.16);
+        }
+        body:not(.past-hero) .topnav-brand .nav-brand-text {
+            background: linear-gradient(135deg, #cfeaff, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 1px 4px rgba(120,190,255,0.5));
+        }
+
+        /* 首屏：导航栏按钮去色（透明底、白色图标文字） */
+        body:not(.past-hero) .nav-actions .btn,
+        body:not(.past-hero) .nav-actions .theme-toggle {
+            background: transparent;
+            border-color: rgba(255,255,255,0.35);
+            color: #fff;
+        }
+        body:not(.past-hero) #uploadToGistNavBtn,
+        body:not(.past-hero) #downloadFromGistNavBtn {
+            background: transparent;
+            border-color: rgba(255,255,255,0.35);
+            color: #fff;
+            box-shadow: none;
+        }
+        body:not(.past-hero) #bgImageBtn { background: transparent !important; }
+        body:not(.past-hero) .nav-actions .btn:hover,
+        body:not(.past-hero) .nav-actions .theme-toggle:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        body:not(.past-hero) #uploadToGistNavBtn:hover,
+        body:not(.past-hero) #downloadFromGistNavBtn:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            transform: none;
+            box-shadow: none;
+        }
+        body:not(.past-hero) .nav-search {
+            background: transparent;
+            border-color: rgba(255,255,255,0.35);
+            order: 10;
+        }
+        body:not(.past-hero) .nav-search span,
+        body:not(.past-hero) .nav-search input {
+            color: #fff;
+        }
+        body:not(.past-hero) .nav-search input::placeholder { color: rgba(255,255,255,0.7); }
+
         .nav-search {
-            width: 220px;
+            width: 40px;
             flex-shrink: 1;
-            min-width: 140px;
+            min-width: 40px;
             display: flex;
             align-items: center;
             background: var(--search-bg);
             border-radius: 40px;
-            padding: 0.3rem 1rem;
+            padding: 0.3rem 0.55rem;
             border: 1px solid var(--border-light);
-            transition: border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            transition: width 0.3s ease, border-color 0.2s, box-shadow 0.2s;
+        }
+        .nav-search.expanded {
+            width: 220px;
+            cursor: text;
         }
         .nav-search:focus-within {
             border-color: #6b9bd2;
             box-shadow: 0 0 0 3px rgba(107,155,210,0.12);
         }
-        .nav-search span { flex-shrink: 0; margin-right: 6px; }
+        .nav-search span { flex-shrink: 0; margin-right: 0; transition: margin-right 0.3s ease; }
+        .nav-search.expanded span { margin-right: 6px; }
         .nav-search input {
-            border: none; background: transparent; padding: 0.6rem 0; width: 100%;
+            border: none; background: transparent; padding: 0; width: 0;
             outline: none; color: var(--text-primary); font-size: 0.9rem;
+            opacity: 0;
+            transition: width 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+        }
+        .nav-search.expanded input {
+            width: 100%;
+            opacity: 1;
+            padding: 0.6rem 0;
         }
         .nav-search input::placeholder { color: var(--text-secondary); }
 
@@ -685,6 +866,108 @@
             gap: 1.3rem;
             margin-bottom: 2rem;
         }
+        /* ==================== 视图模式（卡片 / 列表）==================== */
+        .commands-grid.list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.95rem;
+            padding: 1.1rem 1.25rem;
+            background: rgba(255,255,255, var(--main-alpha));
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+        .list-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: var(--grad-accent);
+            opacity: 0;
+            transition: opacity 0.18s ease;
+        }
+        .list-item:hover {
+            transform: translateY(-2px);
+            border-color: #6b9bd2;
+            box-shadow: 0 12px 26px rgba(107,155,210,0.15);
+        }
+        .list-item:hover::before { opacity: 1; }
+        body.dark-mode .list-item { background: rgba(30,41,59, var(--main-alpha)); }
+        body.dark-mode .list-item:hover { border-color: #60a5fa; box-shadow: 0 12px 26px rgba(96,165,250,0.18); }
+
+        .list-item-icon {
+            flex-shrink: 0;
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: var(--soft-tint);
+            color: var(--btn-outline);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem;
+            margin-top: 2px;
+        }
+        .list-item-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .list-item .list-title {
+            font-family: 'Segoe UI', 'SF Pro Text', 'Inter', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 1.02rem;
+            line-height: 1.4;
+            color: var(--text-primary);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
+        .list-item .list-desc {
+            font-size: 0.85rem;
+            line-height: 1.55;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .list-item .list-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            flex-wrap: wrap;
+            margin-top: 0.1rem;
+        }
+        .list-item .list-lang {
+            font-family: monospace;
+            font-size: 0.66rem;
+            padding: 0.14rem 0.6rem;
+            border-radius: 999px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            border: 1px solid var(--border-light);
+        }
+        .list-item .list-more {
+            margin-left: auto;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--btn-outline);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: transform 0.18s ease, color 0.18s ease;
+        }
+        .list-item:hover .list-more { transform: translateX(3px); }
         .command-card {
             background: rgba(255,255,255, var(--main-alpha));
             border-radius: 20px;
@@ -1215,6 +1498,10 @@
             font-family: monospace; font-size: 0.82rem;
         }
         .inline-row { display: flex; gap: 8px; align-items: center; }
+        .brand-inline { display: flex; gap: 8px; align-items: center; }
+        .brand-inline select { width: 92px; flex: 0 0 92px; }
+        .brand-inline input { flex: 1; min-width: 0; }
+        .brand-preview { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; min-width: 26px; min-height: 26px; font-size: 1.2rem; }
         .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.3rem; }
 
         /* ==================== SHARED BUTTONS ==================== */
@@ -1318,6 +1605,40 @@
             margin-bottom: 6px;
             font-weight: 500;
         }
+        .bg-popover-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .bg-section { margin-bottom: 0.9rem; }
+        .bg-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .bg-hint {
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+            opacity: 0.75;
+            margin: -6px 0 4px;
+        }
+        .bg-settings-popover .bg-section input[type="text"] { margin-bottom: 6px; }
+        .bg-apply-btn {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            border-color: transparent;
+            color: #065f46;
+        }
+        .bg-apply-btn:hover { opacity: 0.9; background: linear-gradient(135deg, #34d399, #10b981); color: #065f46; }
+        .bg-clear-btn { border-color: #ef4444; color: #ef4444; }
+        .bg-clear-btn:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+        /* 首屏去色规则不应影响弹窗内的按钮：恢复其正常样式 */
+        body:not(.past-hero) .bg-settings-popover .btn { background: var(--bg-card); border-color: var(--border-light); color: var(--text-primary); }
+        body:not(.past-hero) .bg-settings-popover .bg-apply-btn { background: linear-gradient(135deg, #34d399, #10b981); border-color: transparent; color: #065f46; }
+        body:not(.past-hero) .bg-settings-popover .bg-clear-btn { background: transparent; border-color: #ef4444; color: #ef4444; }
         .bg-settings-popover input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -1384,14 +1705,13 @@
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; }
             .top-nav { margin-left: 0; }
-            .nav-search { width: 140px; min-width: 100px; }
+            .nav-search.expanded { width: 160px; }
             .nav-actions .btn span.label-text { display: none; }
             .nav-actions .btn { padding: 0.45rem 0.6rem; }
             .nav-actions { gap: 4px; }
         }
         @media (max-width: 480px) {
             .top-nav { padding: 0 0.6rem; gap: 0.5rem; }
-            .nav-search { min-width: 120px; }
             .nav-search input { font-size: 0.8rem; }
             .fullscreen-header { padding: 0.8rem; }
             .fullscreen-body { padding: 0.8rem; }
@@ -1554,26 +1874,47 @@
 
 <!-- ==================== TOP NAVBAR ==================== -->
 <nav class="top-nav">
-    <div class="nav-search">
+    <div class="nav-brand topnav-brand" id="topnavBrand">
+        <div class="nav-logo">
+            <img src="https://gegewu-cloud.github.io/img/zznnlogo.webp" alt="logo">
+        </div>
+        <span class="nav-brand-text" id="topnavBrandText">冰雪随笔</span>
+    </div>
+    <div class="nav-search" id="navSearch">
         <span><i class="bi bi-search"></i></span>
         <input type="text" id="searchInput" placeholder="搜索命令...">
     </div>
 
     <div class="nav-actions">
+        <button class="theme-toggle" id="viewToggleBtn" title="列表视图"><i class="bi bi-list-ul"></i></button>
         <button class="btn btn-outline btn-sm" id="uploadToGistNavBtn" title="上传到 Gist"><i class="bi bi-cloud-upload"></i> <span class="label-text">上传</span></button>
         <button class="btn btn-outline btn-sm" id="downloadFromGistNavBtn" title="从 Gist 拉取"><i class="bi bi-cloud-download"></i> <span class="label-text">拉取</span></button>
         <span style="color:var(--border-light);margin:0 2px;">|</span>
         <div class="bg-settings-wrapper">
             <button class="theme-toggle" id="bgImageBtn" title="背景图片与透明度设置"><i class="bi bi-image"></i></button>
             <div class="bg-settings-popover" id="bgSettingsPopover">
-                <label>🎚️ 内容透明度 <span id="bgOpacityLabel">92%</span></label>
-                <input type="range" id="bgOpacitySlider" min="10" max="100" value="92" step="1">
-                <div class="opacity-value" id="bgOpacityValue">92%</div>
-                <label>🖼️ 图片URL</label>
-                <input type="text" id="bgUrlInput" placeholder="输入图片URL或留空清除">
+                <div class="bg-popover-title">背景设置</div>
+
+                <div class="bg-section">
+                    <div class="bg-section-title">🎚️ 内容透明度</div>
+                    <input type="range" id="bgOpacitySlider" min="10" max="100" value="92" step="1">
+                    <div class="opacity-value" id="bgOpacityValue">92%</div>
+                </div>
+
+                <div class="bg-section">
+                    <div class="bg-section-title">🏔️ 首屏背景</div>
+                    <input type="text" id="heroBgUrlInput" placeholder="图片URL">
+                    <div class="bg-hint">留空则跟随下方内容背景</div>
+                </div>
+
+                <div class="bg-section">
+                    <div class="bg-section-title">🖼️ 内容背景</div>
+                    <input type="text" id="bgUrlInput" placeholder="图片URL，留空则清除背景">
+                </div>
+
                 <div class="bg-settings-row">
-                    <button class="btn btn-sm" id="bgApplyBtn">✅ 应用</button>
-                    <button class="btn btn-sm" id="bgClearBtn" style="border-color:#ef4444;color:#ef4444;">🗑️ 清除</button>
+                    <button class="btn btn-sm bg-apply-btn" id="bgApplyBtn">应用</button>
+                    <button class="btn btn-sm bg-clear-btn" id="bgClearBtn">清除</button>
                 </div>
             </div>
         </div>
@@ -1595,6 +1936,18 @@
     <button class="sidebar-toggle" id="sidebarToggle" title="菜单">☰</button>
 </nav>
 
+<!-- ==================== HERO（全屏首屏）==================== -->
+<section class="hero" id="hero">
+    <div class="hero-inner">
+        <h1 class="hero-title" id="heroTitle">冰雪随笔</h1>
+        <p class="hero-subtitle" id="heroSubtitle" title="双击编辑副标题">命令 · 笔记 · 代码片段管理手册</p>
+    </div>
+    <div class="hero-scroll-hint" id="heroScrollHint">
+        <span>向下滚动</span>
+        <i class="bi bi-chevron-down"></i>
+    </div>
+</section>
+
 <!-- ==================== SIDEBAR OVERLAY (mobile) ==================== -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -1615,9 +1968,7 @@
         </div>
         <span class="nav-brand-text" id="brandText" title="双击编辑名称">冰雪随笔</span>
         <div class="nav-brand-btns">
-            <button id="customBrandBtn" title="修改名称">✎</button>
-            <button id="customLogoBtn" title="自定义Logo">🖼</button>
-            <button id="customFaviconBtn" title="更换标签页图标">🔖</button>
+            <button id="customBrandBtn" title="品牌设置">⚙</button>
         </div>
     </div>
     <!-- Gist 同步入口 -->
@@ -1752,6 +2103,57 @@
         <div class="modal-buttons">
             <button class="btn" id="cancelEditCatBtn">取消</button>
             <button class="btn btn-primary" id="confirmEditCatBtn">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 自定义文字弹窗（品牌名/副标题） ==================== -->
+<div id="textInputModal" class="modal">
+    <div class="modal-content" style="max-width:400px;">
+        <h3 id="textInputTitle">编辑</h3>
+        <div class="form-group"><label id="textInputLabel">内容</label><input type="text" id="textInputField" placeholder="请输入内容"></div>
+        <div class="modal-buttons">
+            <button class="btn" id="cancelTextInputBtn">取消</button>
+            <button class="btn btn-primary" id="confirmTextInputBtn">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 品牌设置弹窗（名称 / 页面Logo / 标签页图标） ==================== -->
+<div id="brandSettingsModal" class="modal">
+    <div class="modal-content" style="max-width:460px;">
+        <h3>🎨 品牌设置</h3>
+        <div class="form-group">
+            <label>品牌名称</label>
+            <input type="text" id="brandNameInput" placeholder="请输入品牌名称">
+        </div>
+        <div class="form-group">
+            <label>页面 Logo 类型</label>
+            <div class="brand-inline">
+                <select id="logoTypeSelect">
+                    <option value="emoji">Emoji</option>
+                    <option value="image">图片</option>
+                    <option value="text">文字</option>
+                </select>
+                <input type="text" id="logoValueInput" placeholder="图片URL / Emoji / 文字">
+                <span class="brand-preview" id="logoPreview"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>标签页图标类型</label>
+            <div class="brand-inline">
+                <select id="faviconTypeSelect">
+                    <option value="emoji">Emoji</option>
+                    <option value="image">图片</option>
+                    <option value="text">文字</option>
+                </select>
+                <input type="text" id="faviconValueInput" placeholder="图片URL / Emoji / 文字">
+                <span class="brand-preview" id="faviconPreview"></span>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn" id="cancelBrandSettingsBtn">取消</button>
+            <button class="btn btn-primary" id="confirmBrandSettingsBtn">保存</button>
         </div>
     </div>
 </div>
@@ -1906,30 +2308,23 @@
     }
 
     // ==================== Favicon 自定义 ====================
-    function setFavicon(type, value) {
-        const faviconLink = document.getElementById('dynamicFavicon');
-        let faviconUrl = '';
+    function buildFaviconUrl(type, value) {
         if (type === 'emoji') {
             const emoji = value || '🐾';
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#6b9bd2"/><text x="50" y="72" font-size="52" text-anchor="middle" fill="white" font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif">${emoji}</text></svg>`;
-            faviconUrl = 'data:image/svg+xml,' + encodeURIComponent(svg);
-        } else if (type === 'image' && value) { faviconUrl = value; }
+            return 'data:image/svg+xml,' + encodeURIComponent(svg);
+        } else if (type === 'image' && value) { return value; }
         else if (type === 'text' && value) {
             const shortText = value.substring(0, 2);
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#6b9bd2" rx="20"/><text x="50" y="68" font-size="44" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold">${shortText}</text></svg>`;
-            faviconUrl = 'data:image/svg+xml,' + encodeURIComponent(svg);
+            return 'data:image/svg+xml,' + encodeURIComponent(svg);
         }
-        if (faviconUrl) { faviconLink.href = faviconUrl; localStorage.setItem('favicon_type', type); localStorage.setItem('favicon_value', value); }
+        return '';
     }
-    function customizeFavicon() {
-        const currentType = localStorage.getItem('favicon_type') || 'image';
-        const currentVal = localStorage.getItem('favicon_value') || DEFAULT_LOGO_URL;
-        const type = prompt('标签页图标类型:\n1. emoji\n2. image\n3. text', currentType);
-        if (!type) return;
-        let newValue = '';
-        if (type === 'image') { newValue = prompt('图片URL:', currentVal); if (newValue) setFavicon('image', newValue); }
-        else if (type === 'text') { newValue = prompt('简短文字(1-2字符):', currentVal === DEFAULT_LOGO_URL ? '喵' : currentVal); if (newValue) setFavicon('text', newValue); }
-        else { newValue = prompt('Emoji:', currentVal === DEFAULT_LOGO_URL ? '🐾' : currentVal); if (newValue) setFavicon('emoji', newValue); }
+    function setFavicon(type, value) {
+        const faviconLink = document.getElementById('dynamicFavicon');
+        const faviconUrl = buildFaviconUrl(type, value);
+        if (faviconUrl) { faviconLink.href = faviconUrl; localStorage.setItem('favicon_type', type); localStorage.setItem('favicon_value', value); }
     }
     function loadSavedFavicon() {
         const savedType = localStorage.getItem('favicon_type');
@@ -1979,30 +2374,150 @@
             document.getElementById('brandText').innerText = saved;
             document.title = saved + ' · 江畔何人初见雪、江雪何年初映人';
         }
+        syncHeroBrand();
     }
-    function customizeBrandText() {
-        const current = localStorage.getItem('brand_text') || '冰雪随笔';
-        const input = prompt('修改品牌名称：', current);
-        if (input && input.trim()) {
-            localStorage.setItem('brand_text', input.trim());
-            document.getElementById('brandText').innerText = input.trim();
-            document.title = input.trim() + ' · 江畔何人初见雪、江雪何年初映人';
-        }
+    // 通用文字输入弹窗（代替浏览器原生 prompt）
+    let textInputCb = null;
+    function openTextInputModal(title, label, placeholder, current, cb) {
+        textInputCb = cb || null;
+        document.getElementById('textInputTitle').innerText = title;
+        document.getElementById('textInputLabel').innerText = label;
+        document.getElementById('textInputField').placeholder = placeholder;
+        document.getElementById('textInputField').value = current;
+        document.getElementById('textInputModal').style.display = 'flex';
+        setTimeout(() => { const f = document.getElementById('textInputField'); f.focus(); f.select(); }, 0);
+    }
+    function closeTextInputModal() { document.getElementById('textInputModal').style.display = 'none'; textInputCb = null; }
+    function confirmTextInput() {
+        const val = document.getElementById('textInputField').value.trim();
+        closeTextInputModal();
+        if (textInputCb) textInputCb(val);
     }
 
-    function showLogoCustomizer() {
-        const currentType = localStorage.getItem('custom_logo_type') || 'image';
-        const currentVal = localStorage.getItem('custom_logo_value') || DEFAULT_LOGO_URL;
-        const type = prompt('页面Logo类型 (emoji / 图片 / 文字):', currentType);
-        if(!type) return;
-        let newValue = '';
-        if(type === 'image') { newValue = prompt('图片URL:', currentVal); }
-        else if(type === 'text') { newValue = prompt('简短文字:', currentVal === '🐾' ? '喵' : currentVal); }
-        else { newValue = prompt('Emoji:', currentVal); }
-        if(newValue === null) return;
-        localStorage.setItem('custom_logo_type', type);
-        localStorage.setItem('custom_logo_value', newValue);
-        initCustomLogo();
+    function customizeBrandText() {
+        const current = localStorage.getItem('brand_text') || '冰雪随笔';
+        openTextInputModal('✏️ 修改品牌名称', '品牌名称', '请输入品牌名称', current, (val) => {
+            if (val) {
+                localStorage.setItem('brand_text', val);
+                document.getElementById('brandText').innerText = val;
+                document.title = val + ' · 江畔何人初见雪、江雪何年初映人';
+            }
+            syncHeroBrand();
+        });
+    }
+
+    function syncHeroBrand() {
+        const brand = localStorage.getItem('brand_text') || '冰雪随笔';
+        const heroTitle = document.getElementById('heroTitle');
+        if (heroTitle) heroTitle.textContent = brand;
+        const topnavBrandText = document.getElementById('topnavBrandText');
+        if (topnavBrandText) topnavBrandText.textContent = brand;
+        const subtitle = localStorage.getItem('brand_subtitle') || '命令 · 笔记 · 代码片段管理手册';
+        const heroSubtitle = document.getElementById('heroSubtitle');
+        if (heroSubtitle) heroSubtitle.textContent = subtitle;
+    }
+
+    function customizeSubtitle() {
+        const current = localStorage.getItem('brand_subtitle') || '命令 · 笔记 · 代码片段管理手册';
+        openTextInputModal('✏️ 修改首屏副标题', '副标题内容', '请输入副标题', current, (val) => {
+            if (val) localStorage.setItem('brand_subtitle', val);
+            syncHeroBrand();
+        });
+    }
+
+    // ==================== HERO 首屏滚动状态 ====================
+    function updateHeroState() {
+        const past = window.scrollY > window.innerHeight - 120;
+        document.body.classList.toggle('past-hero', past);
+    }
+
+    // ==================== 品牌设置弹窗（名称 / Logo / 图标 合一） ====================
+    function openBrandSettingsModal() {
+        document.getElementById('brandNameInput').value = localStorage.getItem('brand_text') || '冰雪随笔';
+        document.getElementById('logoTypeSelect').value = localStorage.getItem('custom_logo_type') || 'image';
+        document.getElementById('logoValueInput').value = localStorage.getItem('custom_logo_value') || DEFAULT_LOGO_URL;
+        document.getElementById('faviconTypeSelect').value = localStorage.getItem('favicon_type') || 'image';
+        document.getElementById('faviconValueInput').value = localStorage.getItem('favicon_value') || DEFAULT_LOGO_URL;
+        updateBrandTypePlaceholder('logo');
+        updateBrandTypePlaceholder('favicon');
+        renderLogoPreview();
+        renderFaviconPreview();
+        document.getElementById('brandSettingsModal').style.display = 'flex';
+    }
+    function closeBrandSettingsModal() { document.getElementById('brandSettingsModal').style.display = 'none'; }
+    function updateBrandTypePlaceholder(kind) {
+        const type = document.getElementById((kind === 'logo' ? 'logo' : 'favicon') + 'TypeSelect').value;
+        const input = document.getElementById((kind === 'logo' ? 'logo' : 'favicon') + 'ValueInput');
+        const v = input.value.trim();
+        if (type === 'image') {
+            input.placeholder = '图片URL';
+            if (!v || v === DEFAULT_LOGO_URL) input.value = DEFAULT_LOGO_URL;
+        } else if (type === 'emoji') {
+            input.placeholder = 'Emoji，例如：🐾';
+            if (!v || v === DEFAULT_LOGO_URL) input.value = '🐾';
+        } else {
+            input.placeholder = '简短文字（1-2字符）';
+            if (!v || v === DEFAULT_LOGO_URL) input.value = '喵';
+        }
+        if (kind === 'logo') renderLogoPreview(); else renderFaviconPreview();
+    }
+    function renderLogoPreview() {
+        const type = document.getElementById('logoTypeSelect').value;
+        const val = document.getElementById('logoValueInput').value.trim();
+        const el = document.getElementById('logoPreview');
+        el.innerHTML = '';
+        if (type === 'image' && val) {
+            const img = document.createElement('img');
+            img.src = val; img.alt = 'logo';
+            img.style.cssText = 'width:26px;height:26px;border-radius:6px;object-fit:cover;';
+            el.appendChild(img);
+        } else if (val) { el.innerText = val; }
+    }
+    function renderFaviconPreview() {
+        const type = document.getElementById('faviconTypeSelect').value;
+        const val = document.getElementById('faviconValueInput').value.trim();
+        const el = document.getElementById('faviconPreview');
+        el.innerHTML = '';
+        const url = buildFaviconUrl(type, val);
+        if (url) {
+            const img = document.createElement('img');
+            img.src = url; img.alt = 'favicon';
+            img.style.cssText = 'width:22px;height:22px;border-radius:5px;';
+            el.appendChild(img);
+        }
+    }
+    function confirmBrandSettings() {
+        // 品牌名称
+        const brand = document.getElementById('brandNameInput').value.trim();
+        if (brand) {
+            localStorage.setItem('brand_text', brand);
+            document.getElementById('brandText').innerText = brand;
+            document.title = brand + ' · 江畔何人初见雪、江雪何年初映人';
+        }
+        // 页面 Logo
+        const logoType = document.getElementById('logoTypeSelect').value;
+        const logoValue = document.getElementById('logoValueInput').value.trim();
+        if (logoValue) {
+            localStorage.setItem('custom_logo_type', logoType);
+            localStorage.setItem('custom_logo_value', logoValue);
+            initCustomLogo();
+        } else {
+            localStorage.removeItem('custom_logo_type');
+            localStorage.removeItem('custom_logo_value');
+            document.getElementById('customLogoDisplay').innerHTML = '<img src="' + DEFAULT_LOGO_URL + '" alt="logo">';
+        }
+        // 标签页图标
+        const faviconType = document.getElementById('faviconTypeSelect').value;
+        const faviconValue = document.getElementById('faviconValueInput').value.trim();
+        if (faviconValue) {
+            setFavicon(faviconType, faviconValue);
+        } else {
+            localStorage.removeItem('favicon_type');
+            localStorage.removeItem('favicon_value');
+            document.getElementById('dynamicFavicon').href = DEFAULT_LOGO_URL;
+        }
+        syncHeroBrand();
+        closeBrandSettingsModal();
     }
 
     // ==================== IndexedDB ====================
@@ -2020,13 +2535,15 @@
         { id: "2", name: "git log --oneline --graph --all", category: "Git", description: "图形化查看提交历史", example: "按 q 退出", codeLang: "bash" },
         { id: "3", name: "docker ps -a --format 'table {{.Names}}\\t{{.Status}}'", category: "Docker", description: "格式化容器列表", example: "", codeLang: "bash" },
         { id: "4", name: "curl -X GET 'https://api.github.com/repos/user/repo'", category: "网络", description: "GitHub API请求", example: "", codeLang: "bash" },
-        { id: "5", name: "kubectl get pods -n default -o wide", category: "K8s", description: "查看Pod详情", example: "", codeLang: "bash" }
+        { id: "5", name: "kubectl get pods -n default -o wide", category: "K8s", description: "查看Pod详情", example: "", codeLang: "bash" },
+        { id: "m1", name: "使用手册", category: "使用手册", description: "**冰雪随笔** 是一款本地化的「命令 / 笔记 / 代码片段」管理器，数据保存在浏览器 IndexedDB，无需登录。\n\n## 快速上手\n1. 首屏向下滚动进入内容区。\n2. 点击右上角「＋ 新增」创建第一条笔记。\n3. 用顶部搜索框快速查找内容。\n\n## 笔记管理\n- **新增**：右上角「＋ 新增」按钮，填写标题、分类、描述、代码语言、示例。\n- **编辑 / 删除**：卡片底部有「编辑」「删除」按钮。\n- **复制**：代码块右上角「复制」一键复制。\n- **全屏查看**：点击标题进入全屏，适合阅读长命令。\n- **描述 Markdown**：描述支持标题、加粗、列表、代码块、表格、引用等排版。\n\n## 分类与目录\n支持三级目录：**分类 → 一级子目录 → 二级子目录**。\n- 新建分类：新增笔记时直接输入新分类名。\n- 子目录：侧边栏分类菜单中「添加子目录」。\n- 管理：分类支持重命名、删除、折叠 / 展开。\n- 图标：可为分类设置图标。\n\n## 搜索与视图\n- **顶部搜索**：关键字即时过滤，支持模糊匹配。\n- **侧边栏搜索**：只搜目录名。\n- **视图切换**：右上角列表图标，卡片 / 列表视图切换。\n\n## 背景与主题\n- **内容透明度 / 首屏背景 / 内容背景**：导航栏图片图标打开背景设置。\n- **应用 / 清除**：保存设置或一键恢复纯色。\n- **主题**：月亮图标日间 / 夜间一键切换。\n\n## 品牌设置\n点击侧边栏品牌名旁 **⚙ 按钮**或**双击品牌名**：\n- 品牌名称、页面 Logo（Emoji / 图片 / 文字）、标签页图标（Emoji / 图片 / 文字）。\n- 副标题：双击首屏副标题文字修改。\n\n## Gist 同步\n- **配置**：侧边栏「GIST」入口填 Token 与 Gist ID。\n- **上传 / 拉取**：导航栏按钮。\n- **未配置时**：仅用本地存储，不影响使用。\n\n## 导入与导出\n- **导出**：JSON / Markdown / CSV / 纯文本。\n- **导入**：JSON 文件批量导入。\n\n## 小彩蛋\n- 点击空白处弹出随机颜色诗句。\n- 飘落特效（雪花 / 气泡 / 樱花）。\n- Live2D 挂件可拖拽互动。\n\n## 数据安全\n数据仅存本机浏览器，建议定期「导出」JSON 备份或配置 Gist 同步。", example: "", codeLang: "text" }
     ];
 
     let allCats = new Set(), curCat = "全部", curSearch = "", catSearch = "", curSub = "", curSubSub = "";
+    let viewMode = localStorage.getItem('view_mode') || 'card';
     let expandedCats = new Set();
     let expandedSubs = new Set();
-    function refreshCats() { allCats.clear(); commands.forEach(c => { if(c.category) allCats.add(c.category); }); Object.keys(loadSubdirs()).forEach(c => allCats.add(c)); if(allCats.size === 0) ["Git","Docker","网络","K8s"].forEach(c => allCats.add(c)); }
+    function refreshCats() { allCats.clear(); commands.forEach(c => { if(c.category) allCats.add(c.category); }); Object.keys(loadSubdirs()).forEach(c => allCats.add(c)); if(allCats.size === 0) ["Git","Docker","网络","K8s","使用手册"].forEach(c => allCats.add(c)); }
     function getCatList() { return Array.from(allCats).sort(); }
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
 
@@ -2418,12 +2935,59 @@
 
     let currentFsCommand = null;
 
+    function updateViewToggleBtn() {
+        const btn = document.getElementById('viewToggleBtn');
+        if (!btn) return;
+        if (viewMode === 'list') {
+            btn.innerHTML = '<i class="bi bi-grid-3x3-gap"></i>';
+            btn.title = '卡片视图';
+        } else {
+            btn.innerHTML = '<i class="bi bi-list-ul"></i>';
+            btn.title = '列表视图';
+        }
+    }
+    function toggleViewMode() {
+        viewMode = (viewMode === 'card') ? 'list' : 'card';
+        localStorage.setItem('view_mode', viewMode);
+        updateViewToggleBtn();
+        renderCards();
+    }
+
     function renderCards() {
         const filtered = filterCmds();
         const container = document.getElementById('commandsContainer');
         const header = document.getElementById('contentHeader');
         header.textContent = curCat !== '全部' ? (curSub ? (curSubSub ? curCat + ' / ' + curSub + ' / ' + curSubSub : curCat + ' / ' + curSub) : curCat) : '';
+        container.classList.toggle('list-view', viewMode === 'list');
         if(filtered.length === 0) { container.innerHTML = '<div class="empty-state">暂无命令，点击新增添加第一条</div>'; return; }
+        if (viewMode === 'list') {
+            container.innerHTML = filtered.map(cmd => {
+                const title = cmd.cardTitle || (cmd.name || '').split('\n')[0].trim();
+                const desc = (cmd.description || '')
+                    .replace(/```[\s\S]*?```/g, ' ')
+                    .replace(/[#>*`_~\[\]()]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                return `<div class="list-item" data-cmd-id="${cmd.id}">
+                    <span class="list-item-icon"><i class="bi bi-terminal"></i></span>
+                    <div class="list-item-main">
+                        <h3 class="list-title">${escapeHtml(title)}</h3>
+                        ${desc ? `<p class="list-desc">${escapeHtml(desc)}</p>` : ''}
+                        <div class="list-meta">
+                            <span class="category-tag">${escapeHtml(cmd.category)}</span>
+                            <span class="list-lang">${escapeHtml(cmd.codeLang || 'bash')}</span>
+                            <span class="list-more">查看 <i class="bi bi-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            document.querySelectorAll('.list-item').forEach(item => item.addEventListener('click', e => {
+                e.stopPropagation();
+                const cmd = commands.find(c => c.id === item.dataset.cmdId);
+                if (cmd) showFullscreen(cmd);
+            }));
+            return;
+        }
         container.innerHTML = filtered.map(cmd => {
             const highlighted = highlightCode(cmd.name, cmd.codeLang);
             const shortTitle = cmd.name.split('\n')[0].substring(0,50);
@@ -3007,7 +3571,8 @@
     }
 
     // ==================== BACKGROUND IMAGE ====================
-    const DEFAULT_BG_URL = 'https://onenote.zznnwn.cloudns.biz/api/raw/?path=/Welcome%E9%9B%AA%E5%8D%83%E8%88%9F%E7%9A%84%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/%E7%94%B5%E8%84%91%E5%A3%81%E7%BA%B8%F0%9F%8D%A1/%E9%A3%8E%E6%99%AF/www.todaybing.com.ugPgvukx.jpg';
+    const DEFAULT_BG_URL = 'https://onenote.zznnwn.cloudns.biz/api/raw/?path=/Welcome%E9%9B%AA%E5%8D%83%E8%88%9F%E7%9A%84%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/%E7%94%B5%E8%84%91%E5%A3%81%E7%BA%B8%F0%9F%8D%A1/%E5%8A%A8%E6%BC%AB/%E5%90%84%E7%A7%8D%E5%8A%A8%E6%BC%AB%E5%A3%81%E7%BA%B8/btf8.png';
+    const DEFAULT_HERO_BG_URL = 'https://wn.zznnwn.cloudns.biz/img/bg18.png';
 
     // 滑块值(10-95) → CSS alpha(0.10-0.95)，值越大越不透明
     function sliderToAlpha(val) { return (val / 100).toFixed(2); }
@@ -3033,7 +3598,8 @@
     function applyBgImage(url) {
         const layer = document.getElementById('bgImageLayer');
         if (url) {
-            layer.style.backgroundImage = `url('${url}')`;
+            // 图片 + 深蓝渐变兜底：图片加载前显示深蓝渐变（避免灰色），加载后图片覆盖渐变
+            layer.style.backgroundImage = `url('${url}'), linear-gradient(160deg, #16325f 0%, #2c4a7c 40%, #4a5fa8 72%, #6b7fd4 100%)`;
             layer.style.display = 'block';
             document.body.classList.add('has-bg-image');
             // 让body背景半透，露出图片
@@ -3051,6 +3617,24 @@
             applyMainAlpha(1);
             document.getElementById('bgImageBtn').innerHTML = '<i class="bi bi-image"></i>';
             document.getElementById('bgImageBtn').style.background = '';
+        }
+    }
+
+    // 首屏（hero）独立背景：直接覆盖到 hero 元素上，未设置时 hero 恢复透明/渐变
+    function applyHeroBgImage(url) {
+        const hero = document.getElementById('hero');
+        if (url) {
+            hero.style.backgroundImage = `url('${url}'), linear-gradient(160deg, #16325f 0%, #2c4a7c 40%, #4a5fa8 72%, #6b7fd4 100%)`;
+            hero.style.backgroundSize = 'cover';
+            hero.style.backgroundPosition = 'center';
+            hero.style.backgroundRepeat = 'no-repeat';
+            document.body.classList.add('has-hero-bg');
+        } else {
+            hero.style.backgroundImage = '';
+            hero.style.backgroundSize = '';
+            hero.style.backgroundPosition = '';
+            hero.style.backgroundRepeat = '';
+            document.body.classList.remove('has-hero-bg');
         }
     }
 
@@ -3086,6 +3670,8 @@
             const currentUrl = localStorage.getItem('bg_image_url');
             const isDefault = currentUrl === null;
             document.getElementById('bgUrlInput').value = isDefault ? DEFAULT_BG_URL : (currentUrl || '');
+            const heroCurrent = localStorage.getItem('hero_bg_url');
+            document.getElementById('heroBgUrlInput').value = heroCurrent === null ? DEFAULT_HERO_BG_URL : (heroCurrent || '');
             const opacity = getStoredOpacity();
             document.getElementById('bgOpacitySlider').value = opacity;
             updateOpacityDisplay(opacity);
@@ -3099,25 +3685,34 @@
 
     function updateOpacityDisplay(val) {
         document.getElementById('bgOpacityValue').innerText = val + '%';
-        document.getElementById('bgOpacityLabel').innerText = '🎚️ 内容透明度 ' + val + '%';
         const pct = ((val - 10) / 90) * 100;
         document.getElementById('bgOpacitySlider').style.setProperty('--pct', pct + '%');
     }
 
     function applyBgSettings() {
         const urlInput = document.getElementById('bgUrlInput').value.trim();
+        const heroUrlInput = document.getElementById('heroBgUrlInput').value.trim();
         const opacity = parseInt(document.getElementById('bgOpacitySlider').value);
 
         // 保存透明度
         localStorage.setItem('bg_opacity', opacity);
 
         if (urlInput === '') {
-            // 清除背景
+            // 清除内容背景
             localStorage.removeItem('bg_image_url');
             applyBgImage('');
         } else {
             localStorage.setItem('bg_image_url', urlInput);
             applyBgImage(urlInput);
+        }
+
+        // 首屏背景：留空则清除（跟随内容背景）
+        if (heroUrlInput === '') {
+            localStorage.removeItem('hero_bg_url');
+            applyHeroBgImage('');
+        } else {
+            localStorage.setItem('hero_bg_url', heroUrlInput);
+            applyHeroBgImage(heroUrlInput);
         }
         closeBgPopover();
     }
@@ -3125,8 +3720,10 @@
     function clearBgSettings() {
         if (confirm('确定清除背景图片，恢复纯色背景吗？')) {
             localStorage.removeItem('bg_image_url');
+            localStorage.removeItem('hero_bg_url');
             localStorage.removeItem('bg_opacity');
             applyBgImage('');
+            applyHeroBgImage('');
             closeBgPopover();
         }
     }
@@ -3140,6 +3737,10 @@
         } else {
             applyBgImage(DEFAULT_BG_URL);
         }
+        // 恢复首屏独立背景（未设置时使用默认首屏背景）
+        const heroSaved = localStorage.getItem('hero_bg_url');
+        if (heroSaved === '') applyHeroBgImage('');
+        else applyHeroBgImage(heroSaved || DEFAULT_HERO_BG_URL);
     }
 
     let pendingCatCb = null;
@@ -3379,13 +3980,39 @@
 
     async function init() {
         initTheme();
+        updateHeroState();
+        initBgImage();
+        window.addEventListener('scroll', updateHeroState, { passive: true });
+        const heroHint = document.getElementById('heroScrollHint');
+        if (heroHint) heroHint.addEventListener('click', () => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' }));
         document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        if (viewToggleBtn) viewToggleBtn.addEventListener('click', toggleViewMode);
+        updateViewToggleBtn();
         await openDB();
         let existing = await getAll();
         if(existing.length === 0) { await bulkImport(DEFAULT); existing = DEFAULT.map(normalizeCommand); }
         commands = existing;
         await refresh();
         document.getElementById('searchInput').addEventListener('input', e => { curSearch = e.target.value; renderCards(); });
+        const navSearchEl = document.getElementById('navSearch');
+        const searchInputEl = document.getElementById('searchInput');
+        if (navSearchEl && searchInputEl) {
+            navSearchEl.addEventListener('click', () => {
+                if (!navSearchEl.classList.contains('expanded')) {
+                    navSearchEl.classList.add('expanded');
+                    searchInputEl.focus();
+                    // 点击搜索时，自动滚动到内容区
+                    if (window.scrollY < window.innerHeight - 120) {
+                        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+                    }
+                }
+            });
+            searchInputEl.addEventListener('focus', () => navSearchEl.classList.add('expanded'));
+            searchInputEl.addEventListener('blur', () => {
+                if (!searchInputEl.value.trim()) navSearchEl.classList.remove('expanded');
+            });
+        }
         document.getElementById('sidebarSearchInput').addEventListener('input', e => { catSearch = e.target.value; renderCatFilter(); });
         document.getElementById('openAddBtn').addEventListener('click', () => { resetModal(); document.getElementById('commandModal').style.display = 'flex'; });
         document.getElementById('saveBtn').addEventListener('click', () => { exportJSON(); showToast('备份已保存', true); });
@@ -3397,7 +4024,7 @@
         document.getElementById('exportMarkdownBtn').addEventListener('click', exportMarkdown);
         document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
         document.getElementById('exportTxtBtn').addEventListener('click', exportTxt);
-        window.addEventListener('click', e => { if(e.target === document.getElementById('commandModal')) document.getElementById('commandModal').style.display = 'none'; if(e.target === document.getElementById('newCategoryModal')) closeNewCatModal(); if(e.target === document.getElementById('editCategoryModal')) closeEditCatModal(); if(e.target === document.getElementById('fullscreenModal')) closeFullscreen(); if(!e.target.closest('.cat-more-btn') && !e.target.closest('#catActionMenu')) hideCatMenu(); if(!e.target.closest('.bg-settings-wrapper')) closeBgPopover(); });
+        window.addEventListener('click', e => { if(e.target === document.getElementById('commandModal')) document.getElementById('commandModal').style.display = 'none'; if(e.target === document.getElementById('newCategoryModal')) closeNewCatModal(); if(e.target === document.getElementById('editCategoryModal')) closeEditCatModal(); if(e.target === document.getElementById('textInputModal')) closeTextInputModal(); if(e.target === document.getElementById('brandSettingsModal')) closeBrandSettingsModal(); if(e.target === document.getElementById('addSubdirModal')) closeAddSubdirModal(); if(e.target === document.getElementById('fullscreenModal')) closeFullscreen(); if(!e.target.closest('.cat-more-btn') && !e.target.closest('#catActionMenu')) hideCatMenu(); if(!e.target.closest('.bg-settings-wrapper')) closeBgPopover(); });
         document.getElementById('fsCloseBtn').addEventListener('click', closeFullscreen);
         document.getElementById('fsCopyBtn').addEventListener('click', async () => { if(currentFsCommand) await copyText(currentFsCommand.name); });
         document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
@@ -3457,13 +4084,25 @@
         initCustomLogo();
         initBrandText();
         loadSavedFavicon();
-        initBgImage();
         initEffects();
         initSidebarResize();
-        document.getElementById('customFaviconBtn').addEventListener('click', customizeFavicon);
-        document.getElementById('customLogoBtn').addEventListener('click', showLogoCustomizer);
-        document.getElementById('customBrandBtn').addEventListener('click', customizeBrandText);
-        document.getElementById('brandText').addEventListener('dblclick', customizeBrandText);
+        document.getElementById('customBrandBtn').addEventListener('click', openBrandSettingsModal);
+        document.getElementById('brandText').addEventListener('dblclick', openBrandSettingsModal);
+        document.getElementById('heroSubtitle').addEventListener('dblclick', customizeSubtitle);
+
+        // 品牌设置弹窗
+        document.getElementById('confirmBrandSettingsBtn').addEventListener('click', confirmBrandSettings);
+        document.getElementById('cancelBrandSettingsBtn').addEventListener('click', closeBrandSettingsModal);
+        document.getElementById('logoTypeSelect').addEventListener('change', () => updateBrandTypePlaceholder('logo'));
+        document.getElementById('faviconTypeSelect').addEventListener('change', () => updateBrandTypePlaceholder('favicon'));
+        document.getElementById('logoValueInput').addEventListener('input', renderLogoPreview);
+        document.getElementById('faviconValueInput').addEventListener('input', renderFaviconPreview);
+        document.getElementById('brandNameInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmBrandSettings(); } });
+
+        // 文字输入弹窗
+        document.getElementById('confirmTextInputBtn').addEventListener('click', confirmTextInput);
+        document.getElementById('cancelTextInputBtn').addEventListener('click', closeTextInputModal);
+        document.getElementById('textInputField').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmTextInput(); } });
 
         // 点击页面空白处弹出诗句
         const POEM_TEXT = '江畔何人初见雪、江雪何年初映人';
@@ -3473,7 +4112,9 @@
         });
         function showPoemToast(x, y) {
             const t = document.createElement('div');
-            t.style.cssText = `position:fixed;left:${x}px;top:${y}px;background:linear-gradient(135deg,rgba(107,155,210,0.92),rgba(140,170,220,0.88));color:#fff;padding:10px 20px;border-radius:24px;font-size:0.92rem;font-weight:500;z-index:3000;pointer-events:none;white-space:nowrap;animation:poemFade 2.5s ease forwards;box-shadow:0 6px 20px rgba(107,155,210,0.3);`;
+            // 每次随机一个鲜艳的颜色（避开红色系），无背景，只有文字
+            const hue = 30 + Math.floor(Math.random() * 300);
+            t.style.cssText = `position:fixed;left:${x}px;top:${y}px;background:none;color:hsl(${hue},80%,50%);padding:10px 20px;font-size:0.95rem;font-weight:600;z-index:3000;pointer-events:none;white-space:nowrap;animation:poemFade 2.5s ease forwards;text-shadow:0 0 3px rgba(255,255,255,0.7),0 0 3px rgba(0,0,0,0.35);`;
             t.innerText = POEM_TEXT;
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 2600);
