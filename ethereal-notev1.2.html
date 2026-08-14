@@ -527,21 +527,39 @@
             transition: background 0.15s, color 0.15s;
         }
         /* 只有带子目录的箭头才着色，叶子/全部的空占位保持透明 */
+        /* 收起(▸) → 浅绿色 */
         .category-item .cat-arrow:not(:empty) {
-            color: #5b8cc9;
-            background: rgba(107,155,210,0.14);
+            color: #34d399;
+            background: rgba(52,211,153,0.16);
+        }
+        /* 展开(▾) → 黄色 */
+        .category-item .cat-arrow.expanded {
+            color: #eab308;
+            background: rgba(234,179,8,0.18);
         }
         .category-item .cat-arrow:not(:empty):hover {
-            background: rgba(107,155,210,0.3);
-            color: #1a2740;
+            background: rgba(52,211,153,0.32);
+            color: #047857;
+        }
+        .category-item .cat-arrow.expanded:hover {
+            background: rgba(234,179,8,0.34);
+            color: #854d0e;
         }
         body.dark-mode .category-item .cat-arrow:not(:empty) {
-            color: #a5b4fc;
-            background: rgba(129,140,248,0.16);
+            color: #34d399;
+            background: rgba(52,211,153,0.18);
+        }
+        body.dark-mode .category-item .cat-arrow.expanded {
+            color: #facc15;
+            background: rgba(250,204,21,0.2);
         }
         body.dark-mode .category-item .cat-arrow:not(:empty):hover {
-            background: rgba(129,140,248,0.32);
-            color: #e0e7ff;
+            background: rgba(52,211,153,0.32);
+            color: #6ee7b7;
+        }
+        body.dark-mode .category-item .cat-arrow.expanded:hover {
+            background: rgba(250,204,21,0.34);
+            color: #fde68a;
         }
         .subcat-list {
             padding-left: 1.15rem;
@@ -901,17 +919,22 @@
             font-family: monospace;
             vertical-align: middle;
         }
+        /* 代码块展开按钮：收起态浅绿，展开态黄色 */
         .toggle-code-btn {
-            background: var(--grad-toggle);
+            background: linear-gradient(135deg, #a7f3d0, #6ee7b7);
             border: none;
-            color: white;
+            color: #065f46;
             font-size: 0.68rem;
             padding: 0.2rem 0.6rem;
             border-radius: 16px;
             cursor: pointer;
             transition: opacity 0.2s, transform 0.15s;
         }
-        .toggle-code-btn:hover { opacity: 0.85; transform: scale(1.05); }
+        .toggle-code-btn:hover { opacity: 0.9; transform: scale(1.05); }
+        .toggle-code-btn.expanded {
+            background: linear-gradient(135deg, #fde68a, #fbbf24);
+            color: #78350f;
+        }
         .desc-toggle-header, .example-toggle-header {
             display: flex;
             justify-content: space-between;
@@ -1733,6 +1756,18 @@
     </div>
 </div>
 
+<!-- ==================== ADD SUBDIRECTORY MODAL ==================== -->
+<div id="addSubdirModal" class="modal">
+    <div class="modal-content" style="max-width:380px;">
+        <h3 id="addSubdirTitle">➕ 添加子目录</h3>
+        <div class="form-group"><label id="addSubdirLabel">子目录名称</label><input type="text" id="addSubdirName" placeholder="请输入名称"></div>
+        <div class="modal-buttons">
+            <button class="btn" id="cancelAddSubdirBtn">取消</button>
+            <button class="btn btn-primary" id="confirmAddSubdirBtn">确定</button>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/jquery@latest/dist/jquery.min.js,gh/weilining/jsdelivr/jquery/circlemagic/circlemagic.min.js,gh/weilining/jsdelivr@latest/jquery/circlemagic/butterflycirclemagic.js"></script>
 <script>
@@ -2041,34 +2076,48 @@
         commands.forEach(c => { if (c.category === cat && c.subCategory === sub && c.subSubCategory) subs.add(c.subSubCategory); });
         return Array.from(subs).sort();
     }
-    function addSubCategory(parent) {
-        const name = prompt('请输入一级子目录名称：', '');
-        if (!name || !name.trim()) return;
-        const sub = name.trim();
-        if (getSubdirs(parent).includes(sub)) { alert('该子目录已存在'); return; }
-        const map = loadSubdirs();
-        if (!map[parent]) map[parent] = {};
-        map[parent][sub] = map[parent][sub] || [];
-        saveSubdirs(map);
-        expandedCats.add(parent);
+    let pendingSubdir = null; // { parent, sub } — sub 为空表示一级子目录
+    function openAddSubdirModal(parent, sub) {
+        pendingSubdir = { parent, sub: sub || '' };
+        const isLevel2 = !!sub;
+        document.getElementById('addSubdirTitle').innerText = isLevel2 ? '➕ 添加二级子目录' : '➕ 添加一级子目录';
+        document.getElementById('addSubdirLabel').innerText = isLevel2 ? `在「${parent} / ${sub}」下创建：` : `在「${parent}」下创建：`;
+        document.getElementById('addSubdirName').value = '';
+        document.getElementById('addSubdirModal').style.display = 'flex';
+        setTimeout(() => document.getElementById('addSubdirName').focus(), 50);
+    }
+    function closeAddSubdirModal() {
+        document.getElementById('addSubdirModal').style.display = 'none';
+        pendingSubdir = null;
+    }
+    function confirmAddSubdir() {
+        if (!pendingSubdir) return;
+        const { parent, sub } = pendingSubdir;
+        const name = document.getElementById('addSubdirName').value.trim();
+        if (!name) { alert('请输入名称'); return; }
+        if (sub) {
+            if (getSubSubdirs(parent, sub).includes(name)) { alert('该子目录已存在'); return; }
+            const map = loadSubdirs();
+            if (!map[parent]) map[parent] = {};
+            if (!map[parent][sub]) map[parent][sub] = [];
+            map[parent][sub].push(name);
+            saveSubdirs(map);
+            expandedCats.add(parent);
+            expandedSubs.add(parent + '||' + sub);
+        } else {
+            if (getSubdirs(parent).includes(name)) { alert('该子目录已存在'); return; }
+            const map = loadSubdirs();
+            if (!map[parent]) map[parent] = {};
+            map[parent][name] = map[parent][name] || [];
+            saveSubdirs(map);
+            expandedCats.add(parent);
+        }
         renderCatFilter();
         hideCatMenu();
+        closeAddSubdirModal();
     }
-    function addSubSubCategory(parent, sub) {
-        const name = prompt(`在「${parent} / ${sub}」下创建二级子目录：`, '');
-        if (!name || !name.trim()) return;
-        const ss = name.trim();
-        if (getSubSubdirs(parent, sub).includes(ss)) { alert('该子目录已存在'); return; }
-        const map = loadSubdirs();
-        if (!map[parent]) map[parent] = {};
-        if (!map[parent][sub]) map[parent][sub] = [];
-        map[parent][sub].push(ss);
-        saveSubdirs(map);
-        expandedCats.add(parent);
-        expandedSubs.add(parent + '||' + sub);
-        renderCatFilter();
-        hideCatMenu();
-    }
+    function addSubCategory(parent) { openAddSubdirModal(parent, ''); }
+    function addSubSubCategory(parent, sub) { openAddSubdirModal(parent, sub); }
     async function renameSubCategory(parent, oldSub) {
         const newName = prompt('重命名一级子目录：', oldSub);
         if (!newName || !newName.trim() || newName.trim() === oldSub) return;
@@ -2426,7 +2475,7 @@
         }).join('');
 
         document.querySelectorAll('.command-title').forEach(el => { const inner = el.querySelector('.command-title-inner'); if(inner && inner.scrollWidth > el.clientWidth) el.classList.add('overflow'); });
-        document.querySelectorAll('.toggle-code-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '收起'; } else { block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
+        document.querySelectorAll('.toggle-code-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); block.classList.add('expanded'); btn.innerText = '收起'; btn.classList.add('expanded'); } else { block.classList.remove('expanded'); block.classList.add('collapsed'); btn.innerText = '展开'; btn.classList.remove('expanded'); } } e.stopPropagation(); }));
         document.querySelectorAll('.toggle-desc-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.toggle-example-btn').forEach(btn => btn.addEventListener('click', e => { const targetId = btn.dataset.target; const block = document.getElementById(targetId); if(block) { if(block.classList.contains('collapsed')) { block.classList.remove('collapsed'); btn.innerText = '收起'; } else { block.classList.add('collapsed'); btn.innerText = '展开'; } } e.stopPropagation(); }));
         document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); let raw; const target = document.getElementById(btn.dataset.target); if(target) { raw = target.dataset.raw; } else if(btn.dataset.raw) { raw = btn.dataset.raw; } if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"'); await copyText(raw); } }));
@@ -2465,7 +2514,7 @@
             const expanded = searchQ ? true : expandedCats.has(c);
             html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}">
                 <button class="category-item ${isActive?'active':''} ${hasChildren?'has-children':''}" data-cat="${escapeHtml(c)}">
-                    <span class="cat-arrow">${hasChildren ? (expanded ? '▾' : '▸') : ''}</span>
+                    <span class="cat-arrow${hasChildren && expanded ? ' expanded' : ''}">${hasChildren ? (expanded ? '▾' : '▸') : ''}</span>
                     <span class="cat-icon"><i class="bi ${escapeHtml(icon)}"></i></span>
                     <span class="cat-name-text">${fuzzyHighlight(c, catSearch)}</span>
                     <span class="cat-count">${count}</span>
@@ -2486,7 +2535,7 @@
                     const subExpanded = searchQ ? true : expandedSubs.has(c + '||' + s);
                     html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}">
                         <button class="category-item subcat-item ${subActive?'active':''} ${subHasChildren?'has-children':''}" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}">
-                            <span class="cat-arrow">${subHasChildren ? (subExpanded ? '▾' : '▸') : ''}</span>
+                            <span class="cat-arrow${subHasChildren && subExpanded ? ' expanded' : ''}">${subHasChildren ? (subExpanded ? '▾' : '▸') : ''}</span>
                             <span class="cat-icon"><i class="bi bi-folder2-open"></i></span>
                             <span class="cat-name-text">${fuzzyHighlight(s, catSearch)}</span>
                             <span class="cat-count">${scount}</span>
@@ -3397,6 +3446,9 @@
             if (currentCatMenuSub) addSubSubCategory(currentCatMenuTarget, currentCatMenuSub);
             else addSubCategory(currentCatMenuTarget);
         });
+        document.getElementById('confirmAddSubdirBtn').addEventListener('click', confirmAddSubdir);
+        document.getElementById('cancelAddSubdirBtn').addEventListener('click', closeAddSubdirModal);
+        document.getElementById('addSubdirName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmAddSubdir(); } });
 
         // edit category modal
         document.getElementById('confirmEditCatBtn').addEventListener('click', saveEditCategory);
