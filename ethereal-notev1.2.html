@@ -398,6 +398,7 @@
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border-light);
             overflow-y: auto;
+            overscroll-behavior: contain;
             z-index: 120;
             display: flex;
             flex-direction: column;
@@ -436,6 +437,7 @@
         .category-list {
             flex: 1;
             overflow-y: auto;
+            overscroll-behavior: contain;
             padding: 0 0.6rem;
         }
         .sticky-all-wrapper {
@@ -803,6 +805,7 @@
             padding: 1.5rem;
             flex: 1;
             overflow-y: auto;
+            overscroll-behavior: contain;
         }
         .gist-drawer-body label {
             display: block;
@@ -1486,8 +1489,8 @@
         .fullscreen-desc.collapsed, .fullscreen-example.collapsed { display: none; }
         .fullscreen-actions { padding: 1rem 1.8rem 1.3rem; display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--border-light); flex-shrink: 0; background: transparent; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: var(--modal-bg); max-width: 800px; width: 90%; border-radius: 28px; padding: 1.6rem; border: 1px solid var(--border-light); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; overscroll-behavior: contain; }
+        .modal-content { background: var(--modal-bg); max-width: 800px; width: 90%; max-height: calc(100vh - 4rem); overflow-y: auto; overscroll-behavior: contain; border-radius: 28px; padding: 1.6rem; border: 1px solid var(--border-light); }
         .form-group { margin-bottom: 0.9rem; }
         .form-group label { display: block; font-size: 0.78rem; margin-bottom: 5px; color: var(--text-secondary); }
         .form-group input, .form-group textarea, .form-group select {
@@ -1552,6 +1555,17 @@
             background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: #fff;
             box-shadow: 0 2px 8px rgba(99,102,241,0.5);
+        }
+        #poemToggleBtn.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(245,158,11,0.4);
+        }
+        body.dark-mode #poemToggleBtn.active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(245,158,11,0.5);
         }
         /* ==================== 顶部按钮配色（仅上传/拉取保留颜色） ==================== */
         #uploadToGistNavBtn {
@@ -1898,6 +1912,7 @@
         </div>
         <button class="theme-toggle" id="viewToggleBtn" title="列表视图"><i class="bi bi-list-ul"></i></button>
         <button class="theme-toggle" id="scrollLockBtn" title="锁定滚动：保持在内容区"><i class="bi bi-pin-angle" id="scrollLockIcon"></i></button>
+        <button class="theme-toggle" id="poemToggleBtn" title="点击诗句特效：已开启（点击关闭）"><i class="bi bi-chat-quote-fill" id="poemToggleIcon"></i></button>
         <button class="btn btn-outline btn-sm" id="uploadToGistNavBtn" title="上传到 Gist"><i class="bi bi-cloud-upload"></i> <span class="label-text">上传</span></button>
         <button class="btn btn-outline btn-sm" id="downloadFromGistNavBtn" title="从 Gist 拉取"><i class="bi bi-cloud-download"></i> <span class="label-text">拉取</span></button>
         <span style="color:var(--border-light);margin:0 2px;">|</span>
@@ -4011,6 +4026,7 @@
         let scrollLock = false;
         let scrollLockAnimating = false;
         let scrollLockAnimTimer = null;
+        let lockRaf = null;
         function updateScrollLockBtn() {
             if (!scrollLockBtn) return;
             scrollLockBtn.classList.toggle('active', scrollLock);
@@ -4020,10 +4036,17 @@
         // 硬性兜底：无论何种滚动来源（滚轮、触控板惯性、键盘、拖动滚动条），
         // 只要滚进了首屏区域，立即拉回内容区顶部，避免“滑上去又弹回”的抖动。
         function enforceScrollLock() {
-            if (!scrollLock || scrollLockAnimating) return;
-            if (window.scrollY < lockTop()) {
-                window.scrollTo(0, lockTop());
-            }
+            if (!scrollLock || scrollLockAnimating || lockRaf) return;
+            // 容差 0.5px，避免子像素/取整误差导致反复回拉抖动
+            if (window.scrollY >= lockTop() - 0.5) return;
+            // 用 requestAnimationFrame 合并同一帧内的多次滚动事件，避免在 scroll 事件里
+            // 同步 scrollTo 打断浏览器当前的滚动手势（表现为“滚轮偶尔滚不动”）。
+            lockRaf = requestAnimationFrame(() => {
+                lockRaf = null;
+                if (scrollLock && !scrollLockAnimating && window.scrollY < lockTop() - 0.5) {
+                    window.scrollTo(0, lockTop());
+                }
+            });
         }
         if (scrollLockBtn) {
             scrollLockBtn.addEventListener('click', () => {
@@ -4042,6 +4065,9 @@
         // 滚轮拦截：锁定后，向上滚动不会回到首屏，始终停留在内容区
         window.addEventListener('wheel', (e) => {
             if (!scrollLock || e.deltaY >= 0) return;
+            // 弹窗/全屏浏览/侧边栏/抽屉打开时，滚轮应作用于其内容，不被“保持在内容区”的锁定拦截
+            const t = e.target;
+            if (t instanceof Element && t.closest('.modal, .fullscreen-modal, .sidebar, .gist-drawer')) return;
             let delta = e.deltaY;
             if (e.deltaMode === 1) delta *= 40;                    // 行滚动
             else if (e.deltaMode === 2) delta *= window.innerHeight; // 页滚动
@@ -4088,6 +4114,19 @@
         document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
         document.getElementById('exportTxtBtn').addEventListener('click', exportTxt);
         window.addEventListener('click', e => { if(e.target === document.getElementById('commandModal')) document.getElementById('commandModal').style.display = 'none'; if(e.target === document.getElementById('newCategoryModal')) closeNewCatModal(); if(e.target === document.getElementById('editCategoryModal')) closeEditCatModal(); if(e.target === document.getElementById('textInputModal')) closeTextInputModal(); if(e.target === document.getElementById('brandSettingsModal')) closeBrandSettingsModal(); if(e.target === document.getElementById('addSubdirModal')) closeAddSubdirModal(); if(e.target === document.getElementById('fullscreenModal')) closeFullscreen(); if(!e.target.closest('.cat-more-btn') && !e.target.closest('#catActionMenu')) hideCatMenu(); if(!e.target.closest('.bg-settings-wrapper')) closeBgPopover(); });
+        // 弹窗打开时：滚轮/触摸只滚动弹窗内容，背景保持不动
+        function handleModalScroll(e) {
+            const t = e.target;
+            if (!(t instanceof Element)) return;
+            const modal = t.closest('.modal');
+            if (!modal || modal.style.display === 'none') return;
+            const content = modal.querySelector('.modal-content');
+            if (content && content.contains(t)) return; // 在弹窗内容上，交给其自身滚动
+            e.preventDefault(); // 在遮罩上，阻止背景滚动
+        }
+        document.addEventListener('wheel', handleModalScroll, { passive: false });
+        document.addEventListener('touchmove', handleModalScroll, { passive: false });
+
         document.getElementById('fsCloseBtn').addEventListener('click', closeFullscreen);
         document.getElementById('fsCopyBtn').addEventListener('click', async () => { if(currentFsCommand) await copyText(currentFsCommand.name); });
         document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
@@ -4169,7 +4208,26 @@
 
         // 点击页面空白处弹出诗句
         const POEM_TEXT = '江畔何人初见雪、江雪何年初映人';
+        // 诗句特效开关（默认开启，localStorage 记住状态）
+        let poemEnabled = localStorage.getItem('poem_enabled') !== '0';
+        const poemToggleBtn = document.getElementById('poemToggleBtn');
+        const poemToggleIcon = document.getElementById('poemToggleIcon');
+        function updatePoemToggleBtn() {
+            if (!poemToggleBtn) return;
+            poemToggleBtn.classList.toggle('active', poemEnabled);
+            poemToggleBtn.title = poemEnabled ? '点击诗句特效：已开启（点击关闭）' : '点击诗句特效：已关闭（点击开启）';
+            if (poemToggleIcon) poemToggleIcon.className = poemEnabled ? 'bi bi-chat-quote-fill' : 'bi bi-chat-quote';
+        }
+        if (poemToggleBtn) {
+            poemToggleBtn.addEventListener('click', () => {
+                poemEnabled = !poemEnabled;
+                localStorage.setItem('poem_enabled', poemEnabled ? '1' : '0');
+                updatePoemToggleBtn();
+                showToast(poemEnabled ? '已开启点击诗句特效' : '已关闭点击诗句特效', true);
+            });
+        }
         document.addEventListener('click', e => {
+            if (!poemEnabled) return;
             if (e.target.closest('button,input,textarea,select,a,.modal,.fullscreen-modal,#catActionMenu,.bg-settings-wrapper,.gist-drawer,.sidebar,.sidebar-overlay')) return;
             showPoemToast(e.clientX, e.clientY);
         });
@@ -4185,6 +4243,7 @@
         const poemStyle = document.createElement('style');
         poemStyle.textContent = '@keyframes poemFade{0%{opacity:0;transform:translate(-50%,10px) scale(0.9)}15%{opacity:1;transform:translate(-50%,0) scale(1)}70%{opacity:1;transform:translate(-50%,-20px) scale(1)}100%{opacity:0;transform:translate(-50%,-50px) scale(0.8)}}';
         document.head.appendChild(poemStyle);
+        updatePoemToggleBtn();
 
         // 背景设置面板
         document.getElementById('bgImageBtn').addEventListener('click', e => { e.stopPropagation(); toggleBgPopover(); });
