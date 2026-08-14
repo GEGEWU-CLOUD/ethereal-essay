@@ -4004,6 +4004,10 @@
         // ==================== 滚动锁定（保持在内容区） ====================
         const scrollLockBtn = document.getElementById('scrollLockBtn');
         const scrollLockIcon = document.getElementById('scrollLockIcon');
+        const navBarEl = document.querySelector('.top-nav');
+        const navBarH = navBarEl ? navBarEl.offsetHeight : 64;
+        // 锁定锚点：内容区顶部对齐导航栏底部，避免顶部卡片标题被固定导航栏遮挡
+        const lockTop = () => window.innerHeight - navBarH;
         let scrollLock = false;
         let scrollLockAnimating = false;
         let scrollLockAnimTimer = null;
@@ -4017,8 +4021,8 @@
         // 只要滚进了首屏区域，立即拉回内容区顶部，避免“滑上去又弹回”的抖动。
         function enforceScrollLock() {
             if (!scrollLock || scrollLockAnimating) return;
-            if (window.scrollY < window.innerHeight) {
-                window.scrollTo(0, window.innerHeight);
+            if (window.scrollY < lockTop()) {
+                window.scrollTo(0, lockTop());
             }
         }
         if (scrollLockBtn) {
@@ -4026,9 +4030,9 @@
                 scrollLock = !scrollLock;
                 updateScrollLockBtn();
                 // 开启锁定时若仍在首屏，先滚动到内容区（平滑过渡期间暂停兜底，避免被拉回）
-                if (scrollLock && window.scrollY < window.innerHeight) {
+                if (scrollLock && window.scrollY < lockTop()) {
                     scrollLockAnimating = true;
-                    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+                    window.scrollTo({ top: lockTop(), behavior: 'smooth' });
                     clearTimeout(scrollLockAnimTimer);
                     scrollLockAnimTimer = setTimeout(() => { scrollLockAnimating = false; }, 700);
                 }
@@ -4041,9 +4045,9 @@
             let delta = e.deltaY;
             if (e.deltaMode === 1) delta *= 40;                    // 行滚动
             else if (e.deltaMode === 2) delta *= window.innerHeight; // 页滚动
-            if (window.scrollY + delta < window.innerHeight) {
+            if (window.scrollY + delta < lockTop()) {
                 e.preventDefault();
-                window.scrollTo(0, window.innerHeight);
+                window.scrollTo(0, lockTop());
             }
         }, { passive: false });
         // 兜底监听：任何越界滚动都会被立即纠正回内容区
