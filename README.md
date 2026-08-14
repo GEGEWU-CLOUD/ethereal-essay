@@ -1,6 +1,7 @@
 # ❄️ 冰雪随笔 · Ethereal Note
 
 > 江畔何人初见雪、江雪何年初映人
+> 预览：https://ethereal.zznnwn.cloudns.biz/
 
 一个优雅的命令片段管理器，基于纯静态前端技术构建，支持分类管理、语法高亮、多格式导入导出、GitHub Gist 云端同步。
 
