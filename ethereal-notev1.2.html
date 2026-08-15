@@ -2633,7 +2633,10 @@
             el.textContent = text;
         }
         box.appendChild(el);
-        box.scrollTop = box.scrollHeight;
+        // 仅当用户消息或已在底部附近时自动跟随到底部，避免打断用户向上翻阅历史
+        if (role === 'user' || box.scrollHeight - box.scrollTop - box.clientHeight < 40) {
+            box.scrollTop = box.scrollHeight;
+        }
         return el;
     }
     // ==================== 本地知识库（RAG）检索 ====================
@@ -2844,7 +2847,7 @@
                             if (!started) { started = true; fullReply = ''; }
                             fullReply += delta;
                             pending.textContent = fullReply;
-                            box.scrollTop = box.scrollHeight;
+                            if (box.scrollHeight - box.scrollTop - box.clientHeight < 40) box.scrollTop = box.scrollHeight;
                         }
                     } catch (e) {}
                 }
@@ -2857,7 +2860,7 @@
             if (session.messages.length > 30) session.messages = session.messages.slice(-30);
             session.updatedAt = Date.now();
             saveAiSessions();
-            box.scrollTop = box.scrollHeight;
+            if (box.scrollHeight - box.scrollTop - box.clientHeight < 40) box.scrollTop = box.scrollHeight;
         } catch (e) {
             pending.remove();
             addAiMsg('error', '出错了：' + (e && e.message ? e.message : e));
@@ -5307,7 +5310,7 @@
             if (!scrollLock || e.deltaY >= 0) return;
             // 弹窗/全屏浏览/侧边栏/抽屉打开时，滚轮应作用于其内容，不被“保持在内容区”的锁定拦截
             const t = e.target;
-            if (t instanceof Element && t.closest('.modal, .fullscreen-modal, .sidebar, .gist-drawer')) return;
+            if (t instanceof Element && t.closest('.modal, .fullscreen-modal, .sidebar, .gist-drawer, #aiChatBox')) return;
             let delta = e.deltaY;
             if (e.deltaMode === 1) delta *= 40;                    // 行滚动
             else if (e.deltaMode === 2) delta *= window.innerHeight; // 页滚动
