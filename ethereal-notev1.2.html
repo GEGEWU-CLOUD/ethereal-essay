@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>冰雪随笔 · 江畔何人初见雪、江雪何年初映人</title>
+    <title>凌烟阁·智能笔记 · 江畔何人初见雪、江雪何年初映人</title>
     <link id="dynamicFavicon" rel="icon" type="image/webp" href="https://gegewu-cloud.github.io/img/zznnlogo.webp">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -517,6 +517,14 @@
             flex: 1;
             min-width: 0;
         }
+        /* 分类拖动排序 */
+        .category-item-wrapper[draggable="true"] { cursor: grab; }
+        .category-item-wrapper[draggable="true"]:active { cursor: grabbing; }
+        .category-item-wrapper.dragging { opacity: 0.4; }
+        .category-item-wrapper.drag-over-top { box-shadow: inset 0 2px 0 #6b9bd2; }
+        .category-item-wrapper.drag-over-bottom { box-shadow: inset 0 -2px 0 #6b9bd2; }
+        body.dark-mode .category-item-wrapper.drag-over-top { box-shadow: inset 0 2px 0 #60a5fa; }
+        body.dark-mode .category-item-wrapper.drag-over-bottom { box-shadow: inset 0 -2px 0 #60a5fa; }
         .cat-more-btn {
             display: none;
             background: none;
@@ -594,17 +602,18 @@
         .sidebar-add-cat {
             margin: 0.6rem 1rem;
             padding: 0.55rem 1rem;
-            border: dashed 1.5px var(--text-secondary);
+            border: 1px solid transparent;
             border-radius: 10px;
-            background: transparent;
+            background: linear-gradient(135deg, #10b981, #059669);
             cursor: pointer;
             font-size: 0.8rem;
-            color: var(--text-secondary);
+            font-weight: 500;
+            color: #fff;
             text-align: center;
             transition: all 0.2s;
             flex-shrink: 0;
         }
-        .sidebar-add-cat:hover { border-color: #6b9bd2; color: #6b9bd2; background: linear-gradient(135deg, rgba(107,155,210,0.04), rgba(120,165,215,0.02)); }
+        .sidebar-add-cat:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.35); }
 
         .sidebar-sync-header {
             margin: 0.5rem 0.8rem 0;
@@ -755,6 +764,9 @@
         }
         .category-item.subcat-item .cat-icon { font-size: 0.85rem; }
         .category-item.subcat-item .cat-count { font-size: 0.65rem; }
+        .category-item.subsubcat-item { font-size: 0.78rem; }
+        .category-item.subsubsubcat-item { font-size: 0.75rem; }
+        .category-item.subsubsubcat-item .cat-count { font-size: 0.6rem; }
 
         /* Gist 右侧滑出面板 */
         .gist-drawer-overlay {
@@ -1124,6 +1136,8 @@
             margin: 0;
             border-radius: 0;
         }
+        .md-code-body pre.md-code-block code.hljs { background: transparent; color: var(--code-text); }
+        .md-code-header .code-lang { color: var(--code-text); }
         .command-desc h3, .command-desc h4, .command-desc h5, .command-desc h6 {
             margin: 0.4rem 0 0.2rem;
             font-weight: 700;
@@ -1182,7 +1196,7 @@
         .code-block-title {
             font-size: 0.78rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #2c4a7c, #5b6abf);
+            background: linear-gradient(135deg, #a5b4fc, #818cf8);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
@@ -1505,6 +1519,14 @@
         .brand-inline input { flex: 1; min-width: 0; }
         .brand-preview { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; min-width: 26px; min-height: 26px; font-size: 1.2rem; }
         .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.3rem; }
+        .confirm-modal-body { white-space: pre-line; font-size: 0.88rem; line-height: 1.65; color: var(--text-secondary); margin: 0.2rem 0 0.4rem; word-break: break-word; }
+        .export-format-list { display: flex; flex-direction: column; gap: 8px; margin-top: 0.8rem; }
+        .export-format-item { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 0.7rem 0.9rem; border-radius: 14px; border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-primary); cursor: pointer; transition: all 0.15s; font-size: 0.85rem; }
+        .export-format-item:hover { background: var(--tag-bg); border-color: var(--btn-outline); transform: translateX(2px); }
+        .ef-icon { font-size: 1.3rem; }
+        .ef-info { display: flex; flex-direction: column; }
+        .ef-name { font-weight: 600; }
+        .ef-desc { font-size: 0.72rem; color: var(--text-secondary); }
 
         /* ==================== SHARED BUTTONS ==================== */
         .btn {
@@ -1528,6 +1550,12 @@
         .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(107,155,210,0.3); }
         .btn-outline { border-color: var(--btn-outline); color: var(--btn-outline); }
         .btn-outline:hover { background: var(--btn-outline); color: white; }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); border-color: transparent; color: #fff; }
+        .btn-success:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.35); }
+        body.dark-mode .btn-success { color: #fff; }
+        .btn-danger { background: #ef4444; border-color: transparent; color: #fff; }
+        .btn-danger:hover { background: #dc2626; opacity: 0.9; }
+        body.dark-mode .btn-danger { background: #dc2626; color: #fff; }
         .btn-sm { padding: 0.25rem 0.7rem; font-size: 0.72rem; border-radius: 16px; }
         .theme-toggle {
             background: var(--tag-bg);
@@ -1716,6 +1744,115 @@
             pointer-events: auto !important;
         }
 
+        /* ==================== AI 小猫问答 ==================== */
+        #aiChatBox {
+            position: fixed;
+            bottom: 310px;
+            right: 20px;
+            width: 340px;
+            max-width: calc(100vw - 40px);
+            height: 440px;
+            max-height: calc(100vh - 350px);
+            display: none;
+            flex-direction: column;
+            z-index: 10000;
+            background: var(--modal-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+        #aiChatBox.open { display: flex; }
+        #aiChatBox.fullscreen { top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; max-width: none; max-height: none; border-radius: 0; }
+        .ai-chat-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.7rem 0.9rem;
+            background: linear-gradient(135deg, #a5b4fc, #818cf8);
+            color: #fff; font-weight: 600; font-size: 0.85rem;
+        }
+        .ai-chat-header-left { display: flex; align-items: center; gap: 8px; }
+        .ai-chat-brand-text {
+            font-family: 'ZCOOL KuaiLe', 'Comic Sans MS', 'STCaiyun', 'YouYuan', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #cfeaff 40%, #ffffff 70%, #bfe0ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 1px 3px rgba(30,90,200,0.5)) drop-shadow(0 0 10px rgba(255,255,255,0.4));
+        }
+        .ai-header-btn { cursor: pointer; background: rgba(255,255,255,0.18); border: none; color: #fff; border-radius: 8px; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; line-height: 1; padding: 0; transition: background 0.15s; }
+        .ai-header-btn:hover { background: rgba(255,255,255,0.32); }
+        .ai-header-btn#aiChatCloseBtn { font-size: 1.1rem; }
+        .ai-chat-messages { flex: 1; overflow-y: auto; padding: 0.8rem; display: flex; flex-direction: column; gap: 8px; }
+        .ai-msg { max-width: 85%; padding: 0.5rem 0.7rem; border-radius: 14px; font-size: 0.8rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+        .ai-msg.user { align-self: flex-end; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border-bottom-right-radius: 4px; }
+        .ai-msg.assistant { align-self: flex-start; max-width: 92%; background: var(--tag-bg); color: var(--text-primary); border: 1px solid var(--border-light); border-bottom-left-radius: 4px; white-space: normal; }
+        .ai-msg.assistant p { margin: 0.3rem 0; }
+        .ai-msg.assistant h3, .ai-msg.assistant h4, .ai-msg.assistant h5, .ai-msg.assistant h6 { margin: 0.5rem 0 0.3rem; }
+        .ai-msg.assistant ul, .ai-msg.assistant ol { margin: 0.3rem 0; padding-left: 1.2rem; }
+        .ai-msg.assistant pre { margin: 0.4rem 0; }
+        .ai-msg.assistant .md-code-body.collapsed { max-height: 12rem; }
+        .ai-msg.assistant table.md-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0; font-size: 0.75rem; }
+        .ai-msg.assistant table.md-table th, .ai-msg.assistant table.md-table td { border: 1px solid var(--border-light); padding: 0.35rem 0.5rem; text-align: left; word-break: break-word; }
+        .ai-msg.assistant table.md-table th { background: var(--tag-bg); font-weight: 600; color: var(--text-primary); }
+        .ai-msg.assistant table.md-table td { background: rgba(255,255,255,0.3); }
+        body.dark-mode .ai-msg.assistant table.md-table td { background: rgba(0,0,0,0.2); }
+        .ai-msg.error { align-self: flex-start; background: rgba(239,68,68,0.12); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .ai-msg.assistant { position: relative; padding-bottom: 1.9rem; }
+        .ai-copy-msg-btn { position: absolute; right: 6px; bottom: 5px; display: inline-flex; align-items: center; gap: 3px; border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-secondary); border-radius: 8px; padding: 2px 8px; font-size: 0.68rem; cursor: pointer; line-height: 1.4; transition: all 0.15s; }
+        .ai-copy-msg-btn:hover { color: var(--text-primary); border-color: #818cf8; background: rgba(129,140,248,0.12); }
+        .ai-chat-input-row { display: flex; gap: 6px; padding: 0.6rem 0.7rem; border-top: 1px solid var(--border-light); background: var(--bg-card); }
+        .ai-chat-input-row input { flex: 1; padding: 0.5rem 0.7rem; border-radius: 14px; border: 1px solid var(--border-light); background: var(--search-bg); color: var(--text-primary); font-size: 0.82rem; }
+        .ai-chat-input-row button { border: none; border-radius: 14px; padding: 0.5rem 0.8rem; background: linear-gradient(135deg, #a5b4fc, #818cf8); color: #fff; cursor: pointer; font-size: 0.8rem; white-space: nowrap; }
+        .ai-chat-footer { display: flex; align-items: center; gap: 6px; padding: 0.4rem 0.7rem; border-top: 1px solid var(--border-light); background: var(--bg-card); }
+        .ai-chat-footer input { flex: 1; padding: 0.3rem 0.5rem; border-radius: 10px; font-size: 0.7rem; border: 1px solid var(--border-light); background: var(--search-bg); color: var(--text-secondary); }
+        .ai-chat-footer .ai-save-token { border: none; border-radius: 10px; padding: 0.3rem 0.6rem; font-size: 0.7rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; cursor: pointer; white-space: nowrap; font-weight: 500; }
+        .ai-chat-footer .ai-save-token:hover { opacity: 0.9; }
+        .ai-chat-footer .ai-rag-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; white-space: nowrap; user-select: none; }
+        .ai-chat-footer .ai-rag-toggle input { flex: none; width: auto; margin: 0; padding: 0; accent-color: #6366f1; }
+        .ai-chat-footer.ai-chat-footer-sub { border-top: none; padding-top: 0.15rem; }
+        .ai-chat-footer .ai-footer-label { font-size: 0.7rem; color: var(--text-secondary); white-space: nowrap; user-select: none; }
+        /* ==================== Markdown 可视化编辑器 ==================== */
+        .md-editor { position: relative; }
+        .md-editor-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 6px; }
+        .md-editor-toolbar button { border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-secondary); border-radius: 6px; padding: 3px 8px; font-size: 0.72rem; cursor: pointer; line-height: 1.35; white-space: nowrap; }
+        .md-editor-toolbar button:hover { color: var(--text-primary); border-color: #818cf8; background: rgba(129,140,248,0.1); }
+        .md-editor-toolbar .md-toolbar-spacer { flex: 1; }
+        .md-editor-toolbar .md-toolbar-btn-active { color: #6366f1; border-color: #818cf8; background: rgba(129,140,248,0.16); }
+        .md-editor-preview { margin-top: 6px; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.6rem 0.8rem; background: var(--bg-card); color: var(--text-primary); font-size: 0.85rem; min-height: 50px; max-height: 300px; overflow-y: auto; }
+        .md-editor-preview:empty::before { content: '（无内容）'; color: var(--text-secondary); font-size: 0.8rem; }
+        .md-editor-preview table.md-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0; font-size: 0.78rem; }
+        .md-editor-preview table.md-table th, .md-editor-preview table.md-table td { border: 1px solid var(--border-light); padding: 0.4rem 0.6rem; text-align: left; word-break: break-word; }
+        .md-editor-preview table.md-table th { background: var(--tag-bg); font-weight: 600; color: var(--text-primary); }
+        .md-editor-preview table.md-table td { background: rgba(255,255,255,0.3); }
+        body.dark-mode .md-editor-preview table.md-table td { background: rgba(0,0,0,0.2); }
+        .md-editor-input { width: 100%; }
+        .md-editor-fullscreen { position: fixed; inset: 0; z-index: 11000; background: rgba(10,15,30,0.55); display: none; align-items: center; justify-content: center; padding: 16px; }
+        .md-editor-fullscreen.show { display: flex; }
+        .md-editor-fs-panel { width: 100%; max-width: 1200px; height: 92%; display: flex; flex-direction: column; background: var(--bg-card); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+        .md-editor-fs-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border-light); }
+        .md-editor-fs-header .md-fs-title { font-weight: 600; color: var(--text-primary); font-size: 0.9rem; }
+        .md-editor-fs-body { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+        .md-editor-fs-body textarea.md-editor-input { flex: 1; width: auto; border: none; resize: none; padding: 12px; font-family: monospace; font-size: 0.85rem; line-height: 1.5; background: var(--search-bg); color: var(--text-primary); }
+        .md-editor-fs-body .md-editor-preview { flex: 1; margin: 0; border: none; border-left: 1px solid var(--border-light); border-radius: 0; max-height: none; min-height: 0; overflow-y: auto; padding: 12px; }
+        .ai-chat-footer input[type="number"] { flex: none; width: 48px; }
+        .ai-chat-body { flex: 1; display: flex; flex-direction: row; min-height: 0; }
+        .ai-chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+        .ai-chat-sidebar { display: none; width: 260px; flex-shrink: 0; flex-direction: column; border-right: 1px solid var(--border-light); background: var(--bg-card); }
+        #aiChatBox.fullscreen .ai-chat-sidebar { display: flex; }
+        .ai-chat-sidebar-header { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border-light); font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+        .ai-new-session { border: none; border-radius: 10px; padding: 0.3rem 0.6rem; font-size: 0.72rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; cursor: pointer; white-space: nowrap; }
+        .ai-new-session:hover { opacity: 0.9; }
+        .ai-chat-session-list { flex: 1; overflow-y: auto; padding: 0.5rem; display: flex; flex-direction: column; gap: 6px; }
+        .ai-chat-session-item { display: flex; align-items: center; gap: 6px; padding: 0.5rem 0.6rem; border-radius: 10px; cursor: pointer; border: 1px solid transparent; font-size: 0.78rem; color: var(--text-primary); transition: all 0.12s; }
+        .ai-chat-session-item:hover { background: var(--tag-bg); }
+        .ai-chat-session-item.active { background: linear-gradient(135deg, rgba(165,180,252,0.18), rgba(129,140,248,0.1)); border-color: #818cf8; }
+        .ai-chat-session-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ai-chat-session-del { border: none; background: none; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; line-height: 1; padding: 2px 4px; border-radius: 6px; flex-shrink: 0; }
+        .ai-chat-session-del:hover { color: #ef4444; background: rgba(239,68,68,0.12); }
+
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 1024px) {
             .command-title { font-size: 0.78rem; }
@@ -1902,7 +2039,7 @@
         <div class="nav-logo">
             <img src="https://gegewu-cloud.github.io/img/zznnlogo.webp" alt="logo">
         </div>
-        <span class="nav-brand-text" id="topnavBrandText">冰雪随笔</span>
+        <span class="nav-brand-text" id="topnavBrandText">凌烟阁·智能笔记</span>
     </div>
 
     <div class="nav-actions">
@@ -1965,7 +2102,7 @@
 <!-- ==================== HERO（全屏首屏）==================== -->
 <section class="hero" id="hero">
     <div class="hero-inner">
-        <h1 class="hero-title" id="heroTitle">冰雪随笔</h1>
+        <h1 class="hero-title" id="heroTitle">凌烟阁·智能笔记</h1>
         <p class="hero-subtitle" id="heroSubtitle" title="双击编辑副标题">命令 · 笔记 · 代码片段管理手册</p>
     </div>
     <div class="hero-scroll-hint" id="heroScrollHint">
@@ -1992,7 +2129,7 @@
         <div class="nav-logo" id="customLogoDisplay">
             <img src="https://gegewu-cloud.github.io/img/zznnlogo.webp" alt="logo">
         </div>
-        <span class="nav-brand-text" id="brandText" title="双击编辑名称">冰雪随笔</span>
+        <span class="nav-brand-text" id="brandText" title="双击编辑名称">凌烟阁·智能笔记</span>
         <div class="nav-brand-btns">
             <button id="customBrandBtn" title="品牌设置">⚙</button>
         </div>
@@ -2050,6 +2187,7 @@
         <div class="fullscreen-body" id="fsBody"></div>
         <div class="fullscreen-actions">
             <button class="btn btn-outline" id="fsCopyBtn">复制</button>
+            <button class="btn btn-success" id="fsExportBtn">导出</button>
             <button class="btn btn-primary" id="fsEditBtn">编辑</button>
         </div>
     </div>
@@ -2093,6 +2231,9 @@
             <div class="form-group"><label>二级子目录（可选）</label>
                 <select id="cmdSubSubCategory"></select>
             </div>
+            <div class="form-group"><label>三级子目录（可选）</label>
+                <select id="cmdSubSubSubCategory"></select>
+            </div>
             <div class="form-group"><label>描述</label><textarea id="cmdDesc" rows="2"></textarea></div>
             <div class="form-group"><label>示例/备注</label><textarea id="cmdExample" rows="3"></textarea></div>
             <input type="hidden" id="editId">
@@ -2101,6 +2242,23 @@
                 <button type="submit" class="btn btn-primary">保存</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- ==================== MARKDOWN 全屏编辑器 ==================== -->
+<div id="mdEditorFullscreen" class="md-editor-fullscreen">
+    <div class="md-editor-fs-panel">
+        <div class="md-editor-fs-header">
+            <span class="md-fs-title">📝 描述 · Markdown 可视化编辑</span>
+            <span class="md-toolbar-spacer"></span>
+            <button type="button" class="btn btn-outline" id="mdEditorFsCancel" style="padding:0.3rem 0.7rem;font-size:0.8rem;">取消</button>
+            <button type="button" class="btn btn-primary" id="mdEditorFsOk" style="padding:0.3rem 0.7rem;font-size:0.8rem;">确定</button>
+        </div>
+        <div class="md-editor-toolbar" id="mdEditorFsToolbar" style="padding:6px 14px;margin-bottom:0;border-bottom:1px solid var(--border-light);"></div>
+        <div class="md-editor-fs-body">
+            <textarea id="mdEditorFsInput" class="md-editor-input" placeholder="支持 Markdown：**加粗**、## 标题、- 列表、表格、代码块等"></textarea>
+            <div class="md-editor-preview" id="mdEditorFsPreview" style="display:none;"></div>
+        </div>
     </div>
 </div>
 
@@ -2189,9 +2347,98 @@
     <div class="modal-content" style="max-width:380px;">
         <h3 id="addSubdirTitle">➕ 添加子目录</h3>
         <div class="form-group"><label id="addSubdirLabel">子目录名称</label><input type="text" id="addSubdirName" placeholder="请输入名称"></div>
+        <div class="form-group"><label>图标</label><div class="icon-picker" id="addSubdirIconPicker"></div></div>
+        <input type="hidden" id="addSubdirIcon" value="">
         <div class="modal-buttons">
             <button class="btn" id="cancelAddSubdirBtn">取消</button>
             <button class="btn btn-primary" id="confirmAddSubdirBtn">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 重命名子目录弹窗 ==================== -->
+<div id="renameSubdirModal" class="modal">
+    <div class="modal-content" style="max-width:420px;">
+        <h3 id="renameSubdirTitle">✏️ 重命名子目录</h3>
+        <div class="form-group"><label>子目录名称</label><input type="text" id="renameSubdirName" placeholder="子目录名称"></div>
+        <div class="form-group"><label>图标</label><div class="icon-picker" id="renameSubdirIconPicker"></div></div>
+        <input type="hidden" id="renameSubdirIcon" value="">
+        <div class="modal-buttons">
+            <button class="btn" id="cancelRenameSubdirBtn">取消</button>
+            <button class="btn btn-primary" id="confirmRenameSubdirBtn">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 确认弹窗（删除目录等，替代浏览器 confirm） ==================== -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content" style="max-width:400px;">
+        <h3 id="confirmModalTitle">确认操作</h3>
+        <div class="confirm-modal-body" id="confirmModalMessage"></div>
+        <div class="modal-buttons">
+            <button class="btn" id="cancelConfirmBtn">取消</button>
+            <button class="btn btn-danger" id="confirmConfirmBtn">确定删除</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 导出当前笔记弹窗 ==================== -->
+<div id="exportNoteModal" class="modal">
+    <div class="modal-content" style="max-width:380px;">
+        <h3>📤 导出当前笔记</h3>
+        <div class="confirm-modal-body" id="exportNoteTitle"></div>
+        <div class="export-format-list">
+            <button class="export-format-item" data-format="markdown"><span class="ef-icon">📝</span><span class="ef-info"><span class="ef-name">Markdown</span><span class="ef-desc">.md · 适合文档与笔记</span></span></button>
+            <button class="export-format-item" data-format="csv"><span class="ef-icon">📊</span><span class="ef-info"><span class="ef-name">CSV</span><span class="ef-desc">.csv · 表格数据</span></span></button>
+            <button class="export-format-item" data-format="txt"><span class="ef-icon">📄</span><span class="ef-info"><span class="ef-name">纯文本</span><span class="ef-desc">.txt · 无格式文本</span></span></button>
+            <button class="export-format-item" data-format="json"><span class="ef-icon">🧩</span><span class="ef-info"><span class="ef-name">JSON</span><span class="ef-desc">.json · 结构化数据</span></span></button>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn" id="cancelExportNoteBtn">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== AI 小猫问答 ==================== -->
+<div id="aiChatBox">
+    <div class="ai-chat-header">
+        <div class="ai-chat-header-left">
+            <button class="ai-header-btn" id="aiChatFullscreenBtn" title="全屏显示"><i class="bi bi-arrows-fullscreen" id="aiChatFullscreenIcon"></i></button>
+            <span>🐱 <span class="ai-chat-brand-text">凌烟阁·小猫AI</span></span>
+        </div>
+        <button class="ai-header-btn" id="aiChatCloseBtn" title="关闭">&times;</button>
+    </div>
+    <div class="ai-chat-body">
+        <div class="ai-chat-sidebar" id="aiChatSidebar">
+            <div class="ai-chat-sidebar-header">
+                <span>会话历史</span>
+                <button class="ai-new-session" id="aiChatNewSessionBtn" title="新建会话">＋ 新建</button>
+            </div>
+            <div class="ai-chat-session-list" id="aiChatSessionList"></div>
+        </div>
+        <div class="ai-chat-main">
+            <div class="ai-chat-messages" id="aiChatMessages"></div>
+            <div class="ai-chat-input-row">
+                <input type="text" id="aiChatInput" placeholder="问我点什么…（回车发送）">
+                <button id="aiChatSendBtn">发送</button>
+            </div>
+            <div class="ai-chat-footer">
+                <label class="ai-rag-toggle" title="开启后，回答会检索本地 IndexedDB 与 GitHub Gist 中的随笔/笔记"><input type="checkbox" id="aiChatRagToggle" checked>知识库</label>
+                <input type="password" id="aiChatToken" placeholder="DeepSeek Token">
+                <button class="ai-save-token" id="aiChatSaveTokenBtn" title="保存 DeepSeek Token">保存Token</button>
+            </div>
+            <div class="ai-chat-footer ai-chat-footer-sub">
+                <span class="ai-footer-label" title="AI 检索随笔用的独立 Gist（与命令同步 Gist 分开，可用不同 Token）">随笔Gist</span>
+                <input type="password" id="aiEssayGistToken" placeholder="Gist Token">
+                <input type="text" id="aiEssayGistId" placeholder="Gist ID">
+                <button class="ai-save-token" id="aiEssayGistSaveBtn" title="保存随笔 Gist 配置">保存</button>
+            </div>
+            <div class="ai-chat-footer ai-chat-footer-sub">
+                <label class="ai-rag-toggle" title="与本地库/命令 Gist 一起检索随笔 Gist"><input type="checkbox" id="aiEssayGistToggle" checked>含随笔库</label>
+                <label class="ai-rag-toggle" title="仅检索随笔 Gist，忽略本地库与命令 Gist"><input type="checkbox" id="aiEssayOnlyToggle">仅随笔库</label>
+                <span class="ai-footer-label" title="每次注入给 AI 的知识资料条数">条数</span>
+                <input type="number" id="aiKbTopK" min="1" max="50" value="6">
+            </div>
         </div>
     </div>
 </div>
@@ -2221,6 +2468,378 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLive2DCat);
     else initLive2DCat();
 
+    // ==================== AI 小猫问答（DeepSeek） ====================
+    const DEFAULT_DEEPSEEK_TOKEN = 'sk-9c306cc7dd6b4b18aae8df0bd39c752a';
+    const DEEPSEEK_API = 'https://api.deepseek.com/chat/completions';
+    const DEEPSEEK_MODEL = 'deepseek-chat';
+    let aiSessions = [];
+    let aiCurrentSessionId = null;
+
+    function loadAiToken() {
+        const t = localStorage.getItem('deepseek_token');
+        return t !== null && t !== '' ? t : DEFAULT_DEEPSEEK_TOKEN;
+    }
+    function saveAiToken(t) {
+        if (t) localStorage.setItem('deepseek_token', t);
+        else localStorage.removeItem('deepseek_token');
+    }
+    function loadAiSessions() {
+        try { return JSON.parse(localStorage.getItem('ai_sessions') || '[]'); } catch(e) { return []; }
+    }
+    function saveAiSessions() {
+        try { localStorage.setItem('ai_sessions', JSON.stringify(aiSessions)); } catch(e) {}
+    }
+    function getCurrentSession() {
+        let s = aiSessions.find(x => x.id === aiCurrentSessionId);
+        if (!s && aiSessions.length) { s = aiSessions[0]; aiCurrentSessionId = s.id; }
+        return s || null;
+    }
+    function ensureCurrentSession() {
+        if (getCurrentSession()) return;
+        const s = { id: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8), title: '', messages: [], updatedAt: Date.now() };
+        aiSessions.unshift(s);
+        aiCurrentSessionId = s.id;
+        saveAiSessions();
+    }
+    function openAiChat() {
+        const box = document.getElementById('aiChatBox');
+        box.classList.add('open');
+        const tokenInput = document.getElementById('aiChatToken');
+        if (!tokenInput.value) tokenInput.value = loadAiToken();
+        ensureCurrentSession();
+        renderCurrentSessionMessages();
+        renderAiSessionList();
+    }
+    function closeAiChat() { document.getElementById('aiChatBox').classList.remove('open'); }
+    function toggleAiChat() {
+        if (document.getElementById('aiChatBox').classList.contains('open')) closeAiChat();
+        else openAiChat();
+    }
+    function toggleAiFullscreen() {
+        const box = document.getElementById('aiChatBox');
+        const btn = document.getElementById('aiChatFullscreenBtn');
+        const icon = document.getElementById('aiChatFullscreenIcon');
+        box.classList.toggle('fullscreen');
+        const isFull = box.classList.contains('fullscreen');
+        btn.title = isFull ? '退出全屏' : '全屏显示';
+        if (icon) icon.className = isFull ? 'bi bi-fullscreen-exit' : 'bi bi-arrows-fullscreen';
+    }
+    function createAiSession() {
+        const s = { id: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8), title: '', messages: [], updatedAt: Date.now() };
+        aiSessions.unshift(s);
+        aiCurrentSessionId = s.id;
+        saveAiSessions();
+        renderAiSessionList();
+        renderCurrentSessionMessages();
+        const input = document.getElementById('aiChatInput');
+        if (input) input.focus();
+    }
+    function switchAiSession(id) {
+        if (!id || id === aiCurrentSessionId) return;
+        aiCurrentSessionId = id;
+        renderAiSessionList();
+        renderCurrentSessionMessages();
+    }
+    function deleteAiSession(id) {
+        aiSessions = aiSessions.filter(s => s.id !== id);
+        if (aiCurrentSessionId === id) aiCurrentSessionId = aiSessions.length ? aiSessions[0].id : null;
+        saveAiSessions();
+        if (!aiSessions.length) ensureCurrentSession();
+        renderAiSessionList();
+        renderCurrentSessionMessages();
+    }
+    function clearAiMessages() {
+        const box = document.getElementById('aiChatMessages');
+        if (box) box.innerHTML = '';
+    }
+    function renderCurrentSessionMessages() {
+        clearAiMessages();
+        const s = getCurrentSession();
+        const msgs = (s && s.messages) || [];
+        if (!msgs.length) {
+            addAiMsg('assistant', '你好呀～我是**凌烟阁·小猫助手**！我接入了你的**知识库**（本地 IndexedDB 与 GitHub Gist 中的随笔/笔记/命令），可以帮你**总结随笔内容**、**查询笔记**、**检索命令**，也可以直接问我任何问题。下方勾选「知识库」即启用检索，配置了 Gist 会自动一并检索远程数据。\n\n你可以这样问我：\n- 帮我查一下 Debian 系统的网络配置\n- 总结一下我的随笔内容\n- 帮我检索一下 Docker 相关的命令');
+            return;
+        }
+        msgs.forEach(m => addAiMsg(m.role === 'user' ? 'user' : 'assistant', m.content));
+    }
+    function renderAiSessionList() {
+        const list = document.getElementById('aiChatSessionList');
+        if (!list) return;
+        if (!aiSessions.length) {
+            list.innerHTML = '<div style="font-size:0.75rem;color:var(--text-secondary);padding:0.5rem;">暂无会话</div>';
+            return;
+        }
+        list.innerHTML = aiSessions.map(s => {
+            const title = s.title || (s.messages && s.messages.length ? (s.messages[0].content || '').slice(0, 18) : '新会话');
+            const active = s.id === aiCurrentSessionId ? ' active' : '';
+            return `<div class="ai-chat-session-item${active}" data-id="${escapeHtml(s.id)}">
+                <span class="ai-chat-session-title">${escapeHtml(title)}</span>
+                <button class="ai-chat-session-del" data-id="${escapeHtml(s.id)}" title="删除会话">✕</button>
+            </div>`;
+        }).join('');
+        list.querySelectorAll('.ai-chat-session-item').forEach(item => item.addEventListener('click', e => {
+            if (e.target.closest('.ai-chat-session-del')) return;
+            switchAiSession(item.dataset.id);
+        }));
+        list.querySelectorAll('.ai-chat-session-del').forEach(btn => btn.addEventListener('click', e => {
+            e.stopPropagation();
+            deleteAiSession(btn.dataset.id);
+        }));
+    }
+    function addAiMsg(role, text) {
+        const box = document.getElementById('aiChatMessages');
+        const el = document.createElement('div');
+        el.className = 'ai-msg ' + (role === 'user' ? 'user' : role === 'error' ? 'error' : 'assistant');
+        if (role === 'assistant') {
+            // 模型有时会输出 HTML 的 <br> 换行标签，先转为换行，避免显示成字面量 <br>
+            const cleaned = (text || '').replace(/<br\s*\/?>/gi, '\n');
+            el.innerHTML = renderMarkdown(cleaned, false, 'ai-', 8);
+            // 右下角「复制」按钮：复制整段回答的原始内容
+            const copyBtn = document.createElement('button');
+            copyBtn.type = 'button';
+            copyBtn.className = 'ai-copy-msg-btn';
+            copyBtn.textContent = '📋 复制';
+            copyBtn.title = '复制整段回答';
+            copyBtn.addEventListener('click', async (e) => { e.stopPropagation(); await copyText(cleaned); });
+            el.appendChild(copyBtn);
+        } else {
+            el.textContent = text;
+        }
+        box.appendChild(el);
+        box.scrollTop = box.scrollHeight;
+        return el;
+    }
+    // ==================== 本地知识库（RAG）检索 ====================
+    function loadRagEnabled() {
+        try { const v = localStorage.getItem('ai_rag_enabled'); return v === null ? true : v === '1'; } catch(e) { return true; }
+    }
+    function saveRagEnabled(v) {
+        try { localStorage.setItem('ai_rag_enabled', v ? '1' : '0'); } catch(e) {}
+    }
+    function loadEssayInclude() { try { const v = localStorage.getItem('ai_essay_include'); return v === null ? true : v === '1'; } catch(e) { return true; } }
+    function saveEssayInclude(v) { try { localStorage.setItem('ai_essay_include', v ? '1' : '0'); } catch(e) {} }
+    function loadEssayOnly() { try { return localStorage.getItem('ai_essay_only') === '1'; } catch(e) { return false; } }
+    function saveEssayOnly(v) { try { localStorage.setItem('ai_essay_only', v ? '1' : '0'); } catch(e) {} }
+    function loadKbTopK() { try { const v = parseInt(localStorage.getItem('ai_kb_topk'), 10); return (isFinite(v) && v >= 1) ? v : 6; } catch(e) { return 6; } }
+    function saveKbTopK(v) { try { localStorage.setItem('ai_kb_topk', String(v)); } catch(e) {} }
+    function kbTopK() { const el = document.getElementById('aiKbTopK'); const n = parseInt(el && el.value, 10); return (isFinite(n) && n >= 1) ? n : 6; }
+    function tokenizeKb(text) {
+        if (!text) return [];
+        const s = String(text).toLowerCase();
+        const out = [];
+        const latin = s.match(/[a-z0-9][a-z0-9._/-]*/g) || [];
+        latin.forEach(w => out.push(w));
+        const segs = s.match(/[一-鿿]+/g) || [];
+        segs.forEach(seg => {
+            out.push(seg);
+            for (let i = 0; i < seg.length - 1; i++) out.push(seg.slice(i, i + 2));
+        });
+        return out;
+    }
+    function commandToKbText(cmd) {
+        const lines = [];
+        if (cmd.name) lines.push('标题：' + cmd.name);
+        if (cmd.cardTitle) lines.push('卡片标题：' + cmd.cardTitle);
+        if (cmd.category) lines.push('分类：' + cmd.category);
+        const subs = [cmd.subCategory, cmd.subSubCategory, cmd.subSubSubCategory].filter(Boolean).join(' / ');
+        if (subs) lines.push('目录：' + subs);
+        if (cmd.codeTitle) lines.push('脚本名称：' + cmd.codeTitle);
+        if (cmd.description) lines.push('描述：' + cmd.description);
+        if (cmd.example) lines.push('示例：' + cmd.example);
+        if (cmd.codeBlocks && cmd.codeBlocks.length) {
+            lines.push('代码：' + cmd.codeBlocks.map(b => ((b.title ? '[' + b.title + '] ' : '') + (b.name || ''))).filter(x => x).join('\n'));
+        }
+        return lines.join('\n');
+    }
+    async function fetchGistDocs(gistId, token) {
+        const docs = [];
+        if (!gistId) return docs;
+        try {
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if (token) headers['Authorization'] = 'token ' + token;
+            const resp = await fetch(`https://api.github.com/gists/${gistId}`, { headers });
+            if (!resp.ok) return docs;
+            const data = await resp.json();
+            const files = data.files || {};
+            for (const fname of Object.keys(files)) {
+                const f = files[fname];
+                let raw = (f && f.content) ? f.content : '';
+                if (!raw && f && f.raw_url) {
+                    try { const rr = await fetch(f.raw_url); if (rr.ok) raw = await rr.text(); } catch (e) {}
+                }
+                if (!raw) continue;
+                if (fname.toLowerCase().endsWith('.json')) {
+                    try {
+                        const arr = JSON.parse(raw);
+                        if (Array.isArray(arr)) {
+                            arr.forEach(cmd => {
+                                const c = normalizeCommand(cmd);
+                                docs.push({ id: c.id || null, text: commandToKbText(c), name: (c.name || '') + ' ' + (c.category || '') + ' ' + (c.cardTitle || '') + ' ' + (c.codeTitle || '') });
+                            });
+                        }
+                    } catch (e) {}
+                } else {
+                    // Markdown / 文本等其它文件，整篇作为一条知识
+                    docs.push({ id: null, text: '【文件：' + fname + '】\n' + raw, name: fname });
+                }
+            }
+        } catch (e) {}
+        return docs;
+    }
+    async function collectKnowledgeDocs() {
+        const docs = [];
+        const seenIds = new Set();
+        const addDoc = d => {
+            if (d.id && seenIds.has(d.id)) return;
+            if (d.id) seenIds.add(d.id);
+            docs.push(d);
+        };
+        // 单独检索模式：仅随笔 Gist
+        if (essayOnlyEnabled()) {
+            if (essayGistId) (await fetchGistDocs(essayGistId, essayGistToken)).forEach(addDoc);
+            return docs;
+        }
+        // 1) 本地 IndexedDB
+        try {
+            const local = await getAll();
+            (local || []).forEach(cmd => {
+                if (cmd.id) seenIds.add(cmd.id);
+                docs.push({ text: commandToKbText(cmd), name: (cmd.name || '') + ' ' + (cmd.category || '') + ' ' + (cmd.cardTitle || '') + ' ' + (cmd.codeTitle || '') });
+            });
+        } catch (e) {}
+        // 2) 命令同步 Gist
+        if (gistToken && gistId) {
+            (await fetchGistDocs(gistId, gistToken)).forEach(addDoc);
+        }
+        // 3) 随笔 Gist（勾选「含随笔库」时一起检索）
+        if (includeEssayEnabled() && essayGistId) {
+            (await fetchGistDocs(essayGistId, essayGistToken)).forEach(addDoc);
+        }
+        return docs;
+    }
+    async function retrieveKnowledge(query) {
+        try {
+            const docs = await collectKnowledgeDocs();
+            if (!docs.length) return '';
+            const qTokens = tokenizeKb(query);
+            if (!qTokens.length) return '';
+            const k = kbTopK();
+            const scored = docs.map(doc => {
+                const dSet = new Set(tokenizeKb(doc.text));
+                let score = 0;
+                qTokens.forEach(t => { if (dSet.has(t)) score += (/^[一-鿿]{2}$/.test(t)) ? 1 : 2; });
+                const nameSet = new Set(tokenizeKb(doc.name || ''));
+                qTokens.forEach(t => { if (nameSet.has(t)) score += 2; });
+                return { text: doc.text, score };
+            }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, k);
+            if (!scored.length) return '';
+            return scored.map((x, i) => '【资料' + (i + 1) + '】\n' + x.text).join('\n\n');
+        } catch (e) { return ''; }
+    }
+    function ragEnabled() {
+        const el = document.getElementById('aiChatRagToggle');
+        return el ? el.checked : true;
+    }
+    function includeEssayEnabled() {
+        const el = document.getElementById('aiEssayGistToggle');
+        return el ? el.checked : false;
+    }
+    function essayOnlyEnabled() {
+        const el = document.getElementById('aiEssayOnlyToggle');
+        return el ? el.checked : false;
+    }
+
+    async function sendAiMessage() {
+        const input = document.getElementById('aiChatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        ensureCurrentSession();
+        const session = getCurrentSession();
+        if (!session) return;
+        addAiMsg('user', text);
+        session.messages.push({ role: 'user', content: text });
+        if (!session.title) session.title = text.slice(0, 30);
+        if (session.messages.length > 30) session.messages = session.messages.slice(-30);
+        session.updatedAt = Date.now();
+        saveAiSessions();
+        renderAiSessionList();
+        const token = document.getElementById('aiChatToken').value.trim() || DEFAULT_DEEPSEEK_TOKEN;
+        const sendBtn = document.getElementById('aiChatSendBtn');
+        sendBtn.disabled = true;
+        sendBtn.textContent = '思考中…';
+        const box = document.getElementById('aiChatMessages');
+        const pending = addAiMsg('assistant', '');
+        pending.textContent = '思考中…';
+        pending.style.whiteSpace = 'pre-wrap';
+        let fullReply = '';
+        let started = false;
+        try {
+            // RAG：从本地知识库检索相关资料，注入到请求中
+            let ragContext = '';
+            if (ragEnabled()) {
+                ragContext = await retrieveKnowledge(text);
+            }
+            const messages = [];
+            if (ragContext) {
+                messages.push({ role: 'system', content: '你是「凌烟阁·智能笔记」的本地知识库助手。请优先依据下面提供的知识库资料回答用户问题，并尽量引用资料中的具体内容（标题、分类、命令、示例等）。如果资料不足以回答，请明确说明并指出缺失之处，不要编造。回答请使用 Markdown 格式。\n\n以下是检索到的知识库资料：\n' + ragContext });
+            }
+            messages.push(...session.messages);
+            const resp = await fetch(DEEPSEEK_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ model: DEEPSEEK_MODEL, messages: messages, stream: true })
+            });
+            if (!resp.ok) {
+                let detail = '';
+                try { const j = await resp.json(); detail = j && j.error && j.error.message ? j.error.message : ''; } catch (e) {}
+                throw new Error('HTTP ' + resp.status + (detail ? '：' + detail : ''));
+            }
+            // 流式读取（SSE），边生成边“吐字”
+            const reader = resp.body.getReader();
+            const decoder = new TextDecoder();
+            let buf = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buf += decoder.decode(value, { stream: true });
+                const lines = buf.split('\n');
+                buf = lines.pop();
+                for (const line of lines) {
+                    const t = line.trim();
+                    if (!t.startsWith('data:')) continue;
+                    const payload = t.slice(5).trim();
+                    if (payload === '[DONE]') continue;
+                    try {
+                        const json = JSON.parse(payload);
+                        const delta = json.choices && json.choices[0] && json.choices[0].delta && json.choices[0].delta.content;
+                        if (delta) {
+                            if (!started) { started = true; fullReply = ''; }
+                            fullReply += delta;
+                            pending.textContent = fullReply;
+                            box.scrollTop = box.scrollHeight;
+                        }
+                    } catch (e) {}
+                }
+            }
+            if (!started) { started = true; fullReply = ''; }
+            // 完成后一次性渲染 Markdown
+            pending.style.whiteSpace = '';
+            pending.innerHTML = renderMarkdown((fullReply || '').replace(/<br\s*\/?>/gi, '\n'), false, 'ai-', 8);
+            session.messages.push({ role: 'assistant', content: fullReply });
+            if (session.messages.length > 30) session.messages = session.messages.slice(-30);
+            session.updatedAt = Date.now();
+            saveAiSessions();
+            box.scrollTop = box.scrollHeight;
+        } catch (e) {
+            pending.remove();
+            addAiMsg('error', '出错了：' + (e && e.message ? e.message : e));
+        } finally {
+            sendBtn.disabled = false;
+            sendBtn.textContent = '发送';
+        }
+    }
+
     // ==================== 代码高亮 ====================
     function highlightCode(code, lang = 'bash') {
         if (!code) return '';
@@ -2242,6 +2861,7 @@
         if (!cmd.category) cmd.category = '其他';
         if (!cmd.subCategory) cmd.subCategory = '';
         if (!cmd.subSubCategory) cmd.subSubCategory = '';
+        if (!cmd.subSubSubCategory) cmd.subSubSubCategory = '';
         if (!cmd.description) cmd.description = '';
         if (!cmd.example) cmd.example = '';
         if (!cmd.codeBlocks) cmd.codeBlocks = [];
@@ -2255,6 +2875,8 @@
     // ==================== Gist 同步 ====================
     let gistToken = localStorage.getItem('gist_token') || '';
     let gistId = localStorage.getItem('gist_id') || '';
+    let essayGistId = localStorage.getItem('essay_gist_id') || '';
+    let essayGistToken = localStorage.getItem('essay_gist_token') || '';
 
     function updateSyncStatus() {
         const header = document.getElementById('sidebarSyncToggle');
@@ -2421,7 +3043,7 @@
     }
 
     function customizeBrandText() {
-        const current = localStorage.getItem('brand_text') || '冰雪随笔';
+        const current = localStorage.getItem('brand_text') || '凌烟阁·智能笔记';
         openTextInputModal('✏️ 修改品牌名称', '品牌名称', '请输入品牌名称', current, (val) => {
             if (val) {
                 localStorage.setItem('brand_text', val);
@@ -2433,7 +3055,7 @@
     }
 
     function syncHeroBrand() {
-        const brand = localStorage.getItem('brand_text') || '冰雪随笔';
+        const brand = localStorage.getItem('brand_text') || '凌烟阁·智能笔记';
         const heroTitle = document.getElementById('heroTitle');
         if (heroTitle) heroTitle.textContent = brand;
         const topnavBrandText = document.getElementById('topnavBrandText');
@@ -2459,7 +3081,7 @@
 
     // ==================== 品牌设置弹窗（名称 / Logo / 图标 合一） ====================
     function openBrandSettingsModal() {
-        document.getElementById('brandNameInput').value = localStorage.getItem('brand_text') || '冰雪随笔';
+        document.getElementById('brandNameInput').value = localStorage.getItem('brand_text') || '凌烟阁·智能笔记';
         document.getElementById('logoTypeSelect').value = localStorage.getItem('custom_logo_type') || 'image';
         document.getElementById('logoValueInput').value = localStorage.getItem('custom_logo_value') || DEFAULT_LOGO_URL;
         document.getElementById('faviconTypeSelect').value = localStorage.getItem('favicon_type') || 'image';
@@ -2562,16 +3184,32 @@
         { id: "3", name: "docker ps -a --format 'table {{.Names}}\\t{{.Status}}'", category: "Docker", description: "格式化容器列表", example: "", codeLang: "bash" },
         { id: "4", name: "curl -X GET 'https://api.github.com/repos/user/repo'", category: "网络", description: "GitHub API请求", example: "", codeLang: "bash" },
         { id: "5", name: "kubectl get pods -n default -o wide", category: "K8s", description: "查看Pod详情", example: "", codeLang: "bash" },
-        { id: "m1", name: "使用手册", category: "使用手册", description: "**冰雪随笔** 是一款本地化的「命令 / 笔记 / 代码片段」管理器，数据保存在浏览器 IndexedDB，无需登录。\n\n## 快速上手\n1. 首屏向下滚动进入内容区。\n2. 点击右上角「＋ 新增」创建第一条笔记。\n3. 用顶部搜索框快速查找内容。\n\n## 笔记管理\n- **新增**：右上角「＋ 新增」按钮，填写标题、分类、描述、代码语言、示例。\n- **编辑 / 删除**：卡片底部有「编辑」「删除」按钮。\n- **复制**：代码块右上角「复制」一键复制。\n- **全屏查看**：点击标题进入全屏，适合阅读长命令。\n- **描述 Markdown**：描述支持标题、加粗、列表、代码块、表格、引用等排版。\n\n## 分类与目录\n支持三级目录：**分类 → 一级子目录 → 二级子目录**。\n- 新建分类：新增笔记时直接输入新分类名。\n- 子目录：侧边栏分类菜单中「添加子目录」。\n- 管理：分类支持重命名、删除、折叠 / 展开。\n- 图标：可为分类设置图标。\n\n## 搜索与视图\n- **顶部搜索**：关键字即时过滤，支持模糊匹配。\n- **侧边栏搜索**：只搜目录名。\n- **视图切换**：右上角列表图标，卡片 / 列表视图切换。\n\n## 背景与主题\n- **内容透明度 / 首屏背景 / 内容背景**：导航栏图片图标打开背景设置。\n- **应用 / 清除**：保存设置或一键恢复纯色。\n- **主题**：月亮图标日间 / 夜间一键切换。\n\n## 品牌设置\n点击侧边栏品牌名旁 **⚙ 按钮**或**双击品牌名**：\n- 品牌名称、页面 Logo（Emoji / 图片 / 文字）、标签页图标（Emoji / 图片 / 文字）。\n- 副标题：双击首屏副标题文字修改。\n\n## Gist 同步\n- **配置**：侧边栏「GIST」入口填 Token 与 Gist ID。\n- **上传 / 拉取**：导航栏按钮。\n- **未配置时**：仅用本地存储，不影响使用。\n\n## 导入与导出\n- **导出**：JSON / Markdown / CSV / 纯文本。\n- **导入**：JSON 文件批量导入。\n\n## 小彩蛋\n- 点击空白处弹出随机颜色诗句。\n- 飘落特效（雪花 / 气泡 / 樱花）。\n- Live2D 挂件可拖拽互动。\n\n## 数据安全\n数据仅存本机浏览器，建议定期「导出」JSON 备份或配置 Gist 同步。", example: "", codeLang: "text" }
+        { id: "m1", name: "使用手册", category: "使用手册", description: "**凌烟阁·智能笔记** 是一款本地化的「命令 / 笔记 / 代码片段」管理器，数据保存在浏览器 IndexedDB，无需登录。\n\n## 快速上手\n1. 首屏向下滚动进入内容区。\n2. 点击右上角「＋ 新增」创建第一条笔记。\n3. 用顶部搜索框快速查找内容。\n\n## 笔记管理\n- **新增**：右上角「＋ 新增」按钮，填写标题、分类、描述、代码语言、示例。\n- **编辑 / 删除**：卡片底部有「编辑」「删除」按钮。\n- **复制**：代码块右上角「复制」一键复制。\n- **全屏查看**：点击标题进入全屏，适合阅读长命令。\n- **描述 Markdown**：描述支持标题、加粗、列表、代码块、表格、引用等排版。\n\n## 分类与目录\n支持三级目录：**分类 → 一级子目录 → 二级子目录**。\n- 新建分类：新增笔记时直接输入新分类名。\n- 子目录：侧边栏分类菜单中「添加子目录」。\n- 管理：分类支持重命名、删除、折叠 / 展开。\n- 图标：可为分类设置图标。\n\n## 搜索与视图\n- **顶部搜索**：关键字即时过滤，支持模糊匹配。\n- **侧边栏搜索**：只搜目录名。\n- **视图切换**：右上角列表图标，卡片 / 列表视图切换。\n\n## 背景与主题\n- **内容透明度 / 首屏背景 / 内容背景**：导航栏图片图标打开背景设置。\n- **应用 / 清除**：保存设置或一键恢复纯色。\n- **主题**：月亮图标日间 / 夜间一键切换。\n\n## 品牌设置\n点击侧边栏品牌名旁 **⚙ 按钮**或**双击品牌名**：\n- 品牌名称、页面 Logo（Emoji / 图片 / 文字）、标签页图标（Emoji / 图片 / 文字）。\n- 副标题：双击首屏副标题文字修改。\n\n## Gist 同步\n- **配置**：侧边栏「GIST」入口填 Token 与 Gist ID。\n- **上传 / 拉取**：导航栏按钮。\n- **未配置时**：仅用本地存储，不影响使用。\n\n## 导入与导出\n- **导出**：JSON / Markdown / CSV / 纯文本。\n- **导入**：JSON 文件批量导入。\n\n## 小彩蛋\n- 点击空白处弹出随机颜色诗句。\n- 飘落特效（雪花 / 气泡 / 樱花）。\n- Live2D 挂件可拖拽互动。\n\n## 数据安全\n数据仅存本机浏览器，建议定期「导出」JSON 备份或配置 Gist 同步。", example: "", codeLang: "text" }
     ];
 
-    let allCats = new Set(), curCat = "全部", curSearch = "", catSearch = "", curSub = "", curSubSub = "";
+    let allCats = new Set(), curCat = "全部", curSearch = "", catSearch = "", curSub = "", curSubSub = "", curSubSubSub = "";
     let viewMode = localStorage.getItem('view_mode') || 'card';
     let expandedCats = new Set();
     let expandedSubs = new Set();
+    let expandedSubSubs = new Set();
+    // 搜索时用户手动折叠的目录（搜索内容变化时清空，默认全部展开）
+    let searchCollapsedCats = new Set();
+    let searchCollapsedSubs = new Set();
+    let searchCollapsedSubSubs = new Set();
     function refreshCats() { allCats.clear(); commands.forEach(c => { if(c.category) allCats.add(c.category); }); Object.keys(loadSubdirs()).forEach(c => allCats.add(c)); if(allCats.size === 0) ["Git","Docker","网络","K8s","使用手册"].forEach(c => allCats.add(c)); }
-    function getCatList() { return Array.from(allCats).sort(); }
+    function getCatList() {
+        const cats = Array.from(allCats);
+        const order = loadCatOrder();
+        const ordered = [];
+        for (const c of order) {
+            const i = cats.indexOf(c);
+            if (i !== -1) { ordered.push(c); cats.splice(i, 1); }
+        }
+        cats.sort();
+        return ordered.concat(cats);
+    }
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
+    function unescapeHtml(str) { return (str || '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'); }
 
     // 模糊搜索：支持子串匹配 + 字符顺序（子序列）匹配
     function fuzzyMatch(query, text) {
@@ -2603,10 +3241,32 @@
         return out;
     }
 
-    // ==================== 子目录（一级 + 二级，共三级）====================
-    // cat_subdirs: { 分类: { 一级子目录: [二级子目录, ...] } }
-    function loadSubdirs() { try { return JSON.parse(localStorage.getItem('cat_subdirs') || '{}'); } catch(e) { return {}; } }
+    // ==================== 子目录（一级 + 二级 + 三级，共四级）====================
+    // cat_subdirs: { 分类: { 一级子目录: { 二级子目录: [三级子目录, ...] } } }
+    function loadSubdirs() {
+        try { return migrateSubdirs(JSON.parse(localStorage.getItem('cat_subdirs') || '{}')); }
+        catch(e) { return {}; }
+    }
     function saveSubdirs(map) { localStorage.setItem('cat_subdirs', JSON.stringify(map)); }
+    // 旧格式 { 分类: { 一级: [二级, ...] } } → 新格式 { 分类: { 一级: { 二级: [] } } }
+    function migrateSubdirs(map) {
+        if (!map || typeof map !== 'object') return {};
+        for (const cat in map) {
+            const subs = map[cat];
+            if (!subs || typeof subs !== 'object') continue;
+            for (const sub in subs) {
+                if (Array.isArray(subs[sub])) {
+                    const obj = {};
+                    subs[sub].forEach(ss => { obj[ss] = obj[ss] || []; });
+                    subs[sub] = obj;
+                }
+            }
+        }
+        return map;
+    }
+    // 分类自定义排序（拖动排序持久化）
+    function loadCatOrder() { try { return JSON.parse(localStorage.getItem('cat_order') || '[]'); } catch(e) { return []; } }
+    function saveCatOrder(arr) { localStorage.setItem('cat_order', JSON.stringify(arr)); }
     function getSubdirs(cat) {
         const map = loadSubdirs();
         const subs = new Set(Object.keys(map[cat] || {}));
@@ -2615,17 +3275,27 @@
     }
     function getSubSubdirs(cat, sub) {
         const map = loadSubdirs();
-        const subs = new Set((map[cat] && map[cat][sub]) || []);
+        const subs = new Set(Object.keys((map[cat] && map[cat][sub]) || {}));
         commands.forEach(c => { if (c.category === cat && c.subCategory === sub && c.subSubCategory) subs.add(c.subSubCategory); });
         return Array.from(subs).sort();
     }
-    let pendingSubdir = null; // { parent, sub } — sub 为空表示一级子目录
-    function openAddSubdirModal(parent, sub) {
-        pendingSubdir = { parent, sub: sub || '' };
-        const isLevel2 = !!sub;
-        document.getElementById('addSubdirTitle').innerText = isLevel2 ? '➕ 添加二级子目录' : '➕ 添加一级子目录';
-        document.getElementById('addSubdirLabel').innerText = isLevel2 ? `在「${parent} / ${sub}」下创建：` : `在「${parent}」下创建：`;
+    function getSubSubSubdirs(cat, sub, ss) {
+        const map = loadSubdirs();
+        const subs = new Set((map[cat] && map[cat][sub] && map[cat][sub][ss]) || []);
+        commands.forEach(c => { if (c.category === cat && c.subCategory === sub && c.subSubCategory === ss && c.subSubSubCategory) subs.add(c.subSubSubCategory); });
+        return Array.from(subs).sort();
+    }
+    let pendingSubdir = null; // { parent, sub, subsub } — 为空表示一级，sub 有值 subsub 空为二级，均有值为三级
+    function openAddSubdirModal(parent, sub, subsub) {
+        pendingSubdir = { parent, sub: sub || '', subsub: subsub || '' };
+        const isLevel3 = !!sub && !!subsub;
+        const isLevel2 = !!sub && !subsub;
+        document.getElementById('addSubdirTitle').innerText = isLevel3 ? '➕ 添加三级子目录' : (isLevel2 ? '➕ 添加二级子目录' : '➕ 添加一级子目录');
+        document.getElementById('addSubdirLabel').innerText = isLevel3 ? `在「${parent} / ${sub} / ${subsub}」下创建：` : (isLevel2 ? `在「${parent} / ${sub}」下创建：` : `在「${parent}」下创建：`);
         document.getElementById('addSubdirName').value = '';
+        const defaultIcon = isLevel3 ? 'bi-file-earmark-text' : (isLevel2 ? 'bi-file-earmark' : 'bi-folder2-open');
+        document.getElementById('addSubdirIcon').value = defaultIcon;
+        renderIconPicker('addSubdirIconPicker', 'addSubdirIcon', defaultIcon);
         document.getElementById('addSubdirModal').style.display = 'flex';
         setTimeout(() => document.getElementById('addSubdirName').focus(), 50);
     }
@@ -2635,92 +3305,179 @@
     }
     function confirmAddSubdir() {
         if (!pendingSubdir) return;
-        const { parent, sub } = pendingSubdir;
+        const { parent, sub, subsub } = pendingSubdir;
         const name = document.getElementById('addSubdirName').value.trim();
-        if (!name) { alert('请输入名称'); return; }
-        if (sub) {
-            if (getSubSubdirs(parent, sub).includes(name)) { alert('该子目录已存在'); return; }
-            const map = loadSubdirs();
-            if (!map[parent]) map[parent] = {};
-            if (!map[parent][sub]) map[parent][sub] = [];
-            map[parent][sub].push(name);
+        const icon = document.getElementById('addSubdirIcon').value;
+        if (!name) { showToast('请输入名称', false); return; }
+        const map = loadSubdirs();
+        if (!map[parent]) map[parent] = {};
+        if (sub && subsub) {
+            // 三级子目录
+            if (getSubSubSubdirs(parent, sub, subsub).includes(name)) { showToast('该子目录已存在', false); return; }
+            if (!map[parent][sub]) map[parent][sub] = {};
+            if (!map[parent][sub][subsub]) map[parent][sub][subsub] = [];
+            map[parent][sub][subsub].push(name);
             saveSubdirs(map);
+            saveSubdirIcon(parent + '||' + sub + '||' + subsub + '||' + name, icon);
+            expandedCats.add(parent);
+            expandedSubs.add(parent + '||' + sub);
+            expandedSubSubs.add(parent + '||' + sub + '||' + subsub);
+        } else if (sub) {
+            // 二级子目录
+            if (getSubSubdirs(parent, sub).includes(name)) { showToast('该子目录已存在', false); return; }
+            if (!map[parent][sub]) map[parent][sub] = {};
+            map[parent][sub][name] = map[parent][sub][name] || [];
+            saveSubdirs(map);
+            saveSubdirIcon(parent + '||' + sub + '||' + name, icon);
             expandedCats.add(parent);
             expandedSubs.add(parent + '||' + sub);
         } else {
-            if (getSubdirs(parent).includes(name)) { alert('该子目录已存在'); return; }
-            const map = loadSubdirs();
-            if (!map[parent]) map[parent] = {};
-            map[parent][name] = map[parent][name] || [];
+            // 一级子目录
+            if (getSubdirs(parent).includes(name)) { showToast('该子目录已存在', false); return; }
+            map[parent][name] = map[parent][name] || {};
             saveSubdirs(map);
+            saveSubdirIcon(parent + '||' + name, icon);
             expandedCats.add(parent);
         }
         renderCatFilter();
         hideCatMenu();
         closeAddSubdirModal();
     }
-    function addSubCategory(parent) { openAddSubdirModal(parent, ''); }
-    function addSubSubCategory(parent, sub) { openAddSubdirModal(parent, sub); }
-    async function renameSubCategory(parent, oldSub) {
-        const newName = prompt('重命名一级子目录：', oldSub);
-        if (!newName || !newName.trim() || newName.trim() === oldSub) return;
-        const newSub = newName.trim();
-        if (getSubdirs(parent).includes(newSub)) { alert('该子目录已存在'); return; }
-        const map = loadSubdirs();
-        if (map[parent] && map[parent][oldSub] !== undefined) {
-            map[parent][newSub] = map[parent][oldSub];
-            delete map[parent][oldSub];
-            saveSubdirs(map);
-        }
-        const toUpdate = commands.filter(c => c.category === parent && c.subCategory === oldSub);
-        for (const c of toUpdate) { c.subCategory = newSub; await saveCmd(c); }
-        if (curCat === parent && curSub === oldSub) curSub = newSub;
-        await refresh();
-        hideCatMenu();
+    function addSubCategory(parent) { openAddSubdirModal(parent, '', ''); }
+    function addSubSubCategory(parent, sub) { openAddSubdirModal(parent, sub, ''); }
+    function addSubSubSubCategory(parent, sub, subsub) { openAddSubdirModal(parent, sub, subsub); }
+
+    let pendingRenameSubdir = null; // { parent, sub, subsub, oldName, onConfirm }
+    function openRenameSubdirModal(parent, sub, subsub, oldName, defaultIcon, onConfirm) {
+        pendingRenameSubdir = { parent, sub: sub || '', subsub: subsub || '', oldName, onConfirm };
+        document.getElementById('renameSubdirTitle').innerText = subsub ? '✏️ 重命名三级子目录' : (sub ? '✏️ 重命名二级子目录' : '✏️ 重命名一级子目录');
+        document.getElementById('renameSubdirName').value = oldName;
+        const currentIcon = getSubdirIcon(subdirKey(parent, sub, subsub, oldName), defaultIcon);
+        document.getElementById('renameSubdirIcon').value = currentIcon;
+        renderIconPicker('renameSubdirIconPicker', 'renameSubdirIcon', currentIcon);
+        document.getElementById('renameSubdirModal').style.display = 'flex';
+        setTimeout(() => { const f = document.getElementById('renameSubdirName'); f.focus(); f.select(); }, 0);
     }
-    async function deleteSubCategory(parent, sub) {
+    function closeRenameSubdirModal() {
+        document.getElementById('renameSubdirModal').style.display = 'none';
+        pendingRenameSubdir = null;
+    }
+    async function confirmRenameSubdir() {
+        if (!pendingRenameSubdir) return;
+        const { parent, sub, subsub, oldName, onConfirm } = pendingRenameSubdir;
+        const newName = document.getElementById('renameSubdirName').value.trim();
+        const newIcon = document.getElementById('renameSubdirIcon').value;
+        if (!newName) { showToast('名称不能为空', false); return; }
+        closeRenameSubdirModal();
+        if (onConfirm) await onConfirm(newName, newIcon);
+    }
+    function renameSubCategory(parent, oldSub) {
+        openRenameSubdirModal(parent, '', '', oldSub, 'bi-folder2-open', async (newSub, newIcon) => {
+            if (newSub === oldSub) { saveSubdirIcon(parent + '||' + oldSub, newIcon); return; }
+            if (getSubdirs(parent).includes(newSub)) { showToast('该子目录已存在', false); return; }
+            const map = loadSubdirs();
+            if (map[parent] && map[parent][oldSub] !== undefined) {
+                map[parent][newSub] = map[parent][oldSub];
+                delete map[parent][oldSub];
+                saveSubdirs(map);
+            }
+            const toUpdate = commands.filter(c => c.category === parent && c.subCategory === oldSub);
+            for (const c of toUpdate) { c.subCategory = newSub; await saveCmd(c); }
+            if (curCat === parent && curSub === oldSub) curSub = newSub;
+            migrateSubdirIconKeys(parent + '||' + oldSub, parent + '||' + newSub);
+            saveSubdirIcon(parent + '||' + newSub, newIcon);
+            await refresh();
+            hideCatMenu();
+        });
+    }
+    function deleteSubCategory(parent, sub) {
         const n = commands.filter(c => c.category === parent && c.subCategory === sub).length;
         const msg = n > 0 ? `子目录「${sub}」下有 ${n} 条笔记。\n删除后这些笔记将移到「${parent}」下。\n\n确定删除吗？` : `确定删除子目录「${sub}」吗？`;
-        if (!confirm(msg)) return;
-        const map = loadSubdirs();
-        if (map[parent] && map[parent][sub] !== undefined) { delete map[parent][sub]; if (Object.keys(map[parent]).length === 0) delete map[parent]; saveSubdirs(map); }
-        const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub);
-        for (const c of toUpdate) { c.subCategory = ''; c.subSubCategory = ''; await saveCmd(c); }
-        if (curCat === parent && curSub === sub) { curSub = ''; curSubSub = ''; }
-        await refresh();
-        hideCatMenu();
+        openConfirmModal('🗑️ 删除子目录', msg, async () => {
+            const map = loadSubdirs();
+            if (map[parent] && map[parent][sub] !== undefined) { delete map[parent][sub]; if (Object.keys(map[parent]).length === 0) delete map[parent]; saveSubdirs(map); }
+            removeSubdirIconSubtree(parent + '||' + sub);
+            const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub);
+            for (const c of toUpdate) { c.subCategory = ''; c.subSubCategory = ''; c.subSubSubCategory = ''; await saveCmd(c); }
+            if (curCat === parent && curSub === sub) { curSub = ''; curSubSub = ''; curSubSubSub = ''; }
+            await refresh();
+            hideCatMenu();
+        });
     }
-    async function renameSubSubCategory(parent, sub, oldSS) {
-        const newName = prompt('重命名二级子目录：', oldSS);
-        if (!newName || !newName.trim() || newName.trim() === oldSS) return;
-        const newSS = newName.trim();
-        if (getSubSubdirs(parent, sub).includes(newSS)) { alert('该子目录已存在'); return; }
-        const map = loadSubdirs();
-        if (map[parent] && map[parent][sub]) {
-            const idx = map[parent][sub].indexOf(oldSS);
-            if (idx !== -1) map[parent][sub][idx] = newSS;
-            saveSubdirs(map);
-        }
-        const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === oldSS);
-        for (const c of toUpdate) { c.subSubCategory = newSS; await saveCmd(c); }
-        if (curCat === parent && curSub === sub && curSubSub === oldSS) curSubSub = newSS;
-        await refresh();
-        hideCatMenu();
+    function renameSubSubCategory(parent, sub, oldSS) {
+        openRenameSubdirModal(parent, sub, '', oldSS, 'bi-file-earmark', async (newSS, newIcon) => {
+            if (newSS === oldSS) { saveSubdirIcon(parent + '||' + sub + '||' + oldSS, newIcon); return; }
+            if (getSubSubdirs(parent, sub).includes(newSS)) { showToast('该子目录已存在', false); return; }
+            const map = loadSubdirs();
+            if (map[parent] && map[parent][sub] && map[parent][sub][oldSS] !== undefined) {
+                map[parent][sub][newSS] = map[parent][sub][oldSS];
+                delete map[parent][sub][oldSS];
+                saveSubdirs(map);
+            }
+            const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === oldSS);
+            for (const c of toUpdate) { c.subSubCategory = newSS; await saveCmd(c); }
+            if (curCat === parent && curSub === sub && curSubSub === oldSS) curSubSub = newSS;
+            migrateSubdirIconKeys(parent + '||' + sub + '||' + oldSS, parent + '||' + sub + '||' + newSS);
+            saveSubdirIcon(parent + '||' + sub + '||' + newSS, newIcon);
+            await refresh();
+            hideCatMenu();
+        });
     }
-    async function deleteSubSubCategory(parent, sub, ss) {
+    function deleteSubSubCategory(parent, sub, ss) {
         const n = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === ss).length;
         const msg = n > 0 ? `二级子目录「${ss}」下有 ${n} 条笔记。\n删除后这些笔记将移到「${parent} / ${sub}」下。\n\n确定删除吗？` : `确定删除二级子目录「${ss}」吗？`;
-        if (!confirm(msg)) return;
-        const map = loadSubdirs();
-        if (map[parent] && map[parent][sub]) { map[parent][sub] = map[parent][sub].filter(x => x !== ss); if (map[parent][sub].length === 0) delete map[parent][sub]; if (Object.keys(map[parent]).length === 0) delete map[parent]; saveSubdirs(map); }
-        const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === ss);
-        for (const c of toUpdate) { c.subSubCategory = ''; await saveCmd(c); }
-        if (curCat === parent && curSub === sub && curSubSub === ss) curSubSub = '';
-        await refresh();
-        hideCatMenu();
+        openConfirmModal('🗑️ 删除二级子目录', msg, async () => {
+            const map = loadSubdirs();
+            if (map[parent] && map[parent][sub]) { delete map[parent][sub][ss]; if (Object.keys(map[parent][sub]).length === 0) delete map[parent][sub]; if (Object.keys(map[parent]).length === 0) delete map[parent]; saveSubdirs(map); }
+            removeSubdirIconSubtree(parent + '||' + sub + '||' + ss);
+            const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === ss);
+            for (const c of toUpdate) { c.subSubCategory = ''; c.subSubSubCategory = ''; await saveCmd(c); }
+            if (curCat === parent && curSub === sub && curSubSub === ss) { curSubSub = ''; curSubSubSub = ''; }
+            await refresh();
+            hideCatMenu();
+        });
+    }
+    function renameSubSubSubCategory(parent, sub, ss, oldSSS) {
+        openRenameSubdirModal(parent, sub, ss, oldSSS, 'bi-file-earmark-text', async (newSSS, newIcon) => {
+            if (newSSS === oldSSS) { saveSubdirIcon(parent + '||' + sub + '||' + ss + '||' + oldSSS, newIcon); return; }
+            if (getSubSubSubdirs(parent, sub, ss).includes(newSSS)) { showToast('该子目录已存在', false); return; }
+            const map = loadSubdirs();
+            if (map[parent] && map[parent][sub] && map[parent][sub][ss]) {
+                const idx = map[parent][sub][ss].indexOf(oldSSS);
+                if (idx !== -1) map[parent][sub][ss][idx] = newSSS;
+                saveSubdirs(map);
+            }
+            const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === ss && c.subSubSubCategory === oldSSS);
+            for (const c of toUpdate) { c.subSubSubCategory = newSSS; await saveCmd(c); }
+            if (curCat === parent && curSub === sub && curSubSub === ss && curSubSubSub === oldSSS) curSubSubSub = newSSS;
+            migrateSubdirIconKeys(parent + '||' + sub + '||' + ss + '||' + oldSSS, parent + '||' + sub + '||' + ss + '||' + newSSS);
+            saveSubdirIcon(parent + '||' + sub + '||' + ss + '||' + newSSS, newIcon);
+            await refresh();
+            hideCatMenu();
+        });
+    }
+    function deleteSubSubSubCategory(parent, sub, ss, sss) {
+        const n = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === ss && c.subSubSubCategory === sss).length;
+        const msg = n > 0 ? `三级子目录「${sss}」下有 ${n} 条笔记。\n删除后这些笔记将移到「${parent} / ${sub} / ${ss}」下。\n\n确定删除吗？` : `确定删除三级子目录「${sss}」吗？`;
+        openConfirmModal('🗑️ 删除三级子目录', msg, async () => {
+            const map = loadSubdirs();
+            if (map[parent] && map[parent][sub] && map[parent][sub][ss]) {
+                map[parent][sub][ss] = map[parent][sub][ss].filter(x => x !== sss);
+                if (map[parent][sub][ss].length === 0) delete map[parent][sub][ss];
+                if (Object.keys(map[parent][sub]).length === 0) delete map[parent][sub];
+                if (Object.keys(map[parent]).length === 0) delete map[parent];
+                saveSubdirs(map);
+            }
+            removeSubdirIconSubtree(parent + '||' + sub + '||' + ss + '||' + sss);
+            const toUpdate = commands.filter(c => c.category === parent && c.subCategory === sub && c.subSubCategory === ss && c.subSubSubCategory === sss);
+            for (const c of toUpdate) { c.subSubSubCategory = ''; await saveCmd(c); }
+            if (curCat === parent && curSub === sub && curSubSub === ss && curSubSubSub === sss) curSubSubSub = '';
+            await refresh();
+            hideCatMenu();
+        });
     }
 
-    function renderMarkdown(text, showToc = true, prefix = '') {
+    function renderMarkdown(text, showToc = true, prefix = '', autoCollapseCode = 0) {
         if (!text) return '';
         // 先转义HTML防止XSS
         let html = escapeHtml(text);
@@ -2744,8 +3501,14 @@
         html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (match, lang, code) => {
             const idx = codeBlocks.length;
             const langLabel = (lang || 'code').trim();
-            // code 内容已经被外层 escapeHtml 转义过，无需再次转义
-            codeBlocks.push(`<div class="md-code-wrapper"><div class="md-code-header"><span class="code-lang">${langLabel}</span><div class="md-code-header-actions"><button class="copy-btn" data-raw="${code.trim().replace(/"/g,'&quot;')}">📋 复制</button><button class="toggle-code-btn md-toggle-btn" onclick="var b=this.parentElement.parentElement.nextElementSibling;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.innerText='▲ 收起'}else{b.classList.add('collapsed');this.innerText='▼ 展开'}">▼ 展开</button></div></div><div class="md-code-body collapsed"><pre class="md-code-block"><code>${code.trim()}</code></pre><div class="md-code-expand-hint" onclick="var b=this.parentElement;var btn=b.previousElementSibling?b.previousElementSibling.querySelector('.md-toggle-btn'):null;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.title='点击收起';if(btn)btn.innerText='▲ 收起'}else{b.classList.add('collapsed');this.title='点击展开全部';if(btn)btn.innerText='▼ 展开'}" title="点击展开全部">🐾</div></div></div>`);
+            const trimmed = code.trim();
+            const rawCode = unescapeHtml(trimmed);
+            const lineCount = rawCode ? rawCode.split('\n').length : 0;
+            const isCollapsed = !(autoCollapseCode > 0 && lineCount <= autoCollapseCode);
+            const highlighted = highlightCode(rawCode, langLabel);
+            const toggleBtn = isCollapsed ? `<button class="toggle-code-btn md-toggle-btn" onclick="var b=this.parentElement.parentElement.nextElementSibling;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.innerText='▲ 收起'}else{b.classList.add('collapsed');this.innerText='▼ 展开'}">▼ 展开</button>` : '';
+            const expandHint = isCollapsed ? `<div class="md-code-expand-hint" onclick="var b=this.parentElement;var btn=b.previousElementSibling?b.previousElementSibling.querySelector('.md-toggle-btn'):null;if(b.classList.contains('collapsed')){b.classList.remove('collapsed');this.title='点击收起';if(btn)btn.innerText='▲ 收起'}else{b.classList.add('collapsed');this.title='点击展开全部';if(btn)btn.innerText='▼ 展开'}" title="点击展开全部">🐾</div>` : '';
+            codeBlocks.push(`<div class="md-code-wrapper"><div class="md-code-header"><span class="code-lang">${langLabel}</span><div class="md-code-header-actions"><button class="copy-btn" data-raw="${trimmed.replace(/"/g,'&quot;')}">📋 复制</button>${toggleBtn}</div></div><div class="md-code-body${isCollapsed ? ' collapsed' : ''}"><pre class="md-code-block"><code class="hljs">${highlighted}</code></pre>${expandHint}</div></div>`);
             return `\x00CODEBLOCK${idx}\x00`;
         });
         // 行内代码 `code`
@@ -2783,11 +3546,23 @@
         html = html.replace(/((?:^\|.+\|\s*$[\n\r]*)+)/gm, (match) => {
             const lines = match.trim().split(/\n/).filter(l => l.trim().startsWith('|') && l.trim().endsWith('|'));
             if (lines.length < 2) return match;
-            const parseRow = (row) => row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
-            const headerCells = parseRow(lines[0]);
-            const sepCells = parseRow(lines[1]);
-            const isSep = sepCells.every(c => /^:?-{3,}:?$/.test(c));
+            const splitRow = (row) => row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+            const headerCells = splitRow(lines[0]);
+            const sepCells = splitRow(lines[1]);
+            const isSep = sepCells.every(c => /^:?-+:?$/.test(c));
             if (!isSep) return match;
+            const colCount = headerCells.length;
+            // 单元格内容里可能含有未转义的 |（如 sed -i 's|a|b|g'），按表头列数把多余的 | 归并回最后一列
+            const parseRow = (row) => {
+                const parts = splitRow(row);
+                if (parts.length <= colCount) {
+                    while (parts.length < colCount) parts.push('');
+                    return parts;
+                }
+                const cells = parts.slice(0, colCount - 1);
+                cells.push(parts.slice(colCount - 1).join('|'));
+                return cells;
+            };
             const aligns = sepCells.map(c => {
                 if (c.startsWith(':') && c.endsWith(':')) return 'center';
                 if (c.endsWith(':')) return 'right';
@@ -2834,7 +3609,7 @@
     async function commit(cmd) { await saveCmd(cmd); await refresh(); }
     async function remove(id) { await delCmd(id); await refresh(); }
 
-    function filterCmds() { return commands.filter(c => { if(curCat !== "全部") { if(c.category !== curCat) return false; if(curSub && (c.subCategory || '') !== curSub) return false; if(curSubSub && (c.subSubCategory || '') !== curSubSub) return false; } if(!curSearch.trim()) return true; const s = curSearch.toLowerCase(); if (c.name.toLowerCase().includes(s) || c.description.toLowerCase().includes(s) || (c.example && c.example.toLowerCase().includes(s))) return true; return (c.codeBlocks || []).some(b => b.name && b.name.toLowerCase().includes(s)); }); }
+    function filterCmds() { return commands.filter(c => { if(curCat !== "全部") { if(c.category !== curCat) return false; if(curSub && (c.subCategory || '') !== curSub) return false; if(curSubSub && (c.subSubCategory || '') !== curSubSub) return false; if(curSubSubSub && (c.subSubSubCategory || '') !== curSubSubSub) return false; } if(!curSearch.trim()) return true; const s = curSearch.toLowerCase(); if (c.name.toLowerCase().includes(s) || c.description.toLowerCase().includes(s) || (c.example && c.example.toLowerCase().includes(s))) return true; return (c.codeBlocks || []).some(b => b.name && b.name.toLowerCase().includes(s)); }); }
 
     // Count commands per category for sidebar badges
     function getCatCounts() {
@@ -2872,6 +3647,22 @@
         return counts;
     }
 
+    // Count commands per (category, subCategory, subSubCategory, subSubSubCategory) for 三级子目录 badges
+    function getSubSubSubCounts() {
+        const counts = {};
+        commands.forEach(c => {
+            const cat = c.category || '其他';
+            const sub = c.subCategory || '';
+            const ss = c.subSubCategory || '';
+            const sss = c.subSubSubCategory || '';
+            if (!counts[cat]) counts[cat] = {};
+            if (!counts[cat][sub]) counts[cat][sub] = {};
+            if (!counts[cat][sub][ss]) counts[cat][sub][ss] = {};
+            counts[cat][sub][ss][sss] = (counts[cat][sub][ss][sss] || 0) + 1;
+        });
+        return counts;
+    }
+
     async function copyText(txt) { await navigator.clipboard.writeText(txt); const t = document.createElement('div'); t.className = 'copy-toast'; t.innerText = '✅ 已复制'; document.body.appendChild(t); setTimeout(() => t.remove(), 1500); }
 
     function showFullscreen(cmd) {
@@ -2901,6 +3692,7 @@
         document.getElementById('fullscreenModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
         document.getElementById('fsCopyBtn').style.display = '';
+        document.getElementById('fsExportBtn').style.display = '';
         document.getElementById('fsEditBtn').innerText = '编辑';
         document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
         // 代码块展开/收起
@@ -2955,6 +3747,7 @@
         currentFsCommand = null;
         // 重置按钮状态
         document.getElementById('fsCopyBtn').style.display = '';
+        document.getElementById('fsExportBtn').style.display = '';
         document.getElementById('fsEditBtn').innerText = '编辑';
         document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
     }
@@ -2983,7 +3776,7 @@
         const filtered = filterCmds();
         const container = document.getElementById('commandsContainer');
         const header = document.getElementById('contentHeader');
-        header.textContent = curCat !== '全部' ? (curSub ? (curSubSub ? curCat + ' / ' + curSub + ' / ' + curSubSub : curCat + ' / ' + curSub) : curCat) : '';
+        header.textContent = curCat !== '全部' ? (curSub ? (curSubSub ? (curSubSubSub ? curCat + ' / ' + curSub + ' / ' + curSubSub + ' / ' + curSubSubSub : curCat + ' / ' + curSub + ' / ' + curSubSub) : curCat + ' / ' + curSub) : curCat) : '';
         container.classList.toggle('list-view', viewMode === 'list');
         if(filtered.length === 0) { container.innerHTML = '<div class="empty-state">暂无命令，点击新增添加第一条</div>'; return; }
         if (viewMode === 'list') {
@@ -3057,7 +3850,8 @@
                     <div id="example-${cmd.id}" class="example example-block collapsed">${escapeHtml(cmd.example).replace(/\n/g,'<br>')}</div>` : ''}
                     <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
                         <span style="font-size:0.62rem; color: var(--text-secondary);">右键全屏浏览</span>
-                        <div><button class="edit-cmd-btn btn btn-sm" data-id="${cmd.id}">编辑</button>
+                        <div><button class="export-cmd-btn btn btn-sm btn-success" data-id="${cmd.id}">导出</button>
+                        <button class="edit-cmd-btn btn btn-sm" data-id="${cmd.id}">编辑</button>
                         <button class="delete-cmd-btn btn btn-sm" data-id="${cmd.id}" style="border-color:#ef4444; color:#ef4444;">删除</button></div>
                     </div>
                 </div>
@@ -3071,6 +3865,7 @@
         document.querySelectorAll('.copy-btn').forEach(btn => btn.addEventListener('click', async e => { e.stopPropagation(); let raw; const target = document.getElementById(btn.dataset.target); if(target) { raw = target.dataset.raw; } else if(btn.dataset.raw) { raw = btn.dataset.raw; } if(raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"'); await copyText(raw); } }));
         document.querySelectorAll('.command-card').forEach(card => card.addEventListener('contextmenu', async e => { e.preventDefault(); const id = card.querySelector('.edit-cmd-btn')?.dataset.id; if(id) { const cmd = commands.find(c => c.id === id); if(cmd) showFullscreen(cmd); } return false; }));
         document.querySelectorAll('.edit-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { const id = btn.dataset.id; const c = commands.find(cmd => cmd.id === id); if(c) openEdit(c); e.stopPropagation(); }));
+        document.querySelectorAll('.export-cmd-btn').forEach(btn => btn.addEventListener('click', e => { const id = btn.dataset.id; const c = commands.find(cmd => cmd.id === id); if(c) openExportNoteModal(c); e.stopPropagation(); }));
         document.querySelectorAll('.delete-cmd-btn').forEach(btn => btn.addEventListener('click', async e => { if(confirm('永久删除？')) { await remove(btn.dataset.id); refreshCats(); renderCatFilter(); updateCatSelect(); } e.stopPropagation(); }));
     }
 
@@ -3079,6 +3874,7 @@
         const counts = getCatCounts();
         const subCounts = getSubCounts();
         const subSubCounts = getSubSubCounts();
+        const subSubSubCounts = getSubSubSubCounts();
         const total = commands.length;
         const div = document.getElementById('categoryFilter');
         const searchQ = catSearch.trim();
@@ -3087,7 +3883,7 @@
         const cats = allCatsList.filter(c => {
             if (!searchQ) return true;
             if (fuzzyMatch(catSearch, c)) return true;
-            return getSubdirs(c).some(s => fuzzyMatch(catSearch, s) || getSubSubdirs(c, s).some(ss => fuzzyMatch(catSearch, ss)));
+            return getSubdirs(c).some(s => fuzzyMatch(catSearch, s) || getSubSubdirs(c, s).some(ss => fuzzyMatch(catSearch, ss) || getSubSubSubdirs(c, s, ss).some(sss => fuzzyMatch(catSearch, sss))));
         });
         let html = `<div class="sticky-all-wrapper"><button class="category-item ${curCat==='全部'?'active':''}" data-cat="全部">
             <span class="cat-arrow"></span><span class="cat-icon"><i class="bi bi-grid"></i></span><span>全部</span><span class="cat-count">${total}</span>
@@ -3101,11 +3897,11 @@
             const icon = getCatIcon(c, catIndex[c] || 0);
             const hasChildren = subdirs.length > 0;
             const isActive = (curCat === c && !curSub);
-            const expanded = searchQ ? true : expandedCats.has(c);
+            const expanded = searchQ ? !searchCollapsedCats.has(c) : expandedCats.has(c);
             html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}">
                 <button class="category-item ${isActive?'active':''} ${hasChildren?'has-children':''}" data-cat="${escapeHtml(c)}">
                     <span class="cat-arrow${hasChildren && expanded ? ' expanded' : ''}">${hasChildren ? (expanded ? '▾' : '▸') : ''}</span>
-                    <span class="cat-icon"><i class="bi ${escapeHtml(icon)}"></i></span>
+                    <span class="cat-icon">${iconHtml(icon)}</span>
                     <span class="cat-name-text">${fuzzyHighlight(c, catSearch)}</span>
                     <span class="cat-count">${count}</span>
                 </button>
@@ -3114,7 +3910,7 @@
             if (hasChildren && expanded) {
                 let shownSubs = subdirs;
                 if (searchQ && !fuzzyMatch(catSearch, c)) {
-                    shownSubs = subdirs.filter(s => fuzzyMatch(catSearch, s) || getSubSubdirs(c, s).some(ss => fuzzyMatch(catSearch, ss)));
+                    shownSubs = subdirs.filter(s => fuzzyMatch(catSearch, s) || getSubSubdirs(c, s).some(ss => fuzzyMatch(catSearch, ss) || getSubSubSubdirs(c, s, ss).some(sss => fuzzyMatch(catSearch, sss))));
                 }
                 html += `<div class="subcat-list">`;
                 shownSubs.forEach(s => {
@@ -3122,11 +3918,11 @@
                     const scount = (subCounts[c] && subCounts[c][s]) || 0;
                     const subHasChildren = subSubs.length > 0;
                     const subActive = (curCat === c && curSub === s && !curSubSub);
-                    const subExpanded = searchQ ? true : expandedSubs.has(c + '||' + s);
+                    const subExpanded = searchQ ? !searchCollapsedSubs.has(c + '||' + s) : expandedSubs.has(c + '||' + s);
                     html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}">
                         <button class="category-item subcat-item ${subActive?'active':''} ${subHasChildren?'has-children':''}" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}">
                             <span class="cat-arrow${subHasChildren && subExpanded ? ' expanded' : ''}">${subHasChildren ? (subExpanded ? '▾' : '▸') : ''}</span>
-                            <span class="cat-icon"><i class="bi bi-folder2-open"></i></span>
+                            <span class="cat-icon">${iconHtml(getSubdirIcon(c + '||' + s, 'bi-folder2-open'))}</span>
                             <span class="cat-name-text">${fuzzyHighlight(s, catSearch)}</span>
                             <span class="cat-count">${scount}</span>
                         </button>
@@ -3135,21 +3931,45 @@
                     if (subHasChildren && subExpanded) {
                         let shownSS = subSubs;
                         if (searchQ && !fuzzyMatch(catSearch, s) && !fuzzyMatch(catSearch, c)) {
-                            shownSS = subSubs.filter(ss => fuzzyMatch(catSearch, ss));
+                            shownSS = subSubs.filter(ss => fuzzyMatch(catSearch, ss) || getSubSubSubdirs(c, s, ss).some(sss => fuzzyMatch(catSearch, sss)));
                         }
                         html += `<div class="subcat-list">`;
                         shownSS.forEach(ss => {
+                            const subSubSubs = getSubSubSubdirs(c, s, ss);
                             const sscount = (subSubCounts[c] && subSubCounts[c][s] && subSubCounts[c][s][ss]) || 0;
-                            const ssActive = (curCat === c && curSub === s && curSubSub === ss);
+                            const ssHasChildren = subSubSubs.length > 0;
+                            const ssActive = (curCat === c && curSub === s && curSubSub === ss && !curSubSubSub);
+                            const ssExpanded = searchQ ? !searchCollapsedSubSubs.has(c + '||' + s + '||' + ss) : expandedSubSubs.has(c + '||' + s + '||' + ss);
                             html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}">
-                                <button class="category-item subcat-item subsubcat-item ${ssActive?'active':''}" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}">
-                                    <span class="cat-arrow"></span>
-                                    <span class="cat-icon"><i class="bi bi-file-earmark"></i></span>
+                                <button class="category-item subcat-item subsubcat-item ${ssActive?'active':''} ${ssHasChildren?'has-children':''}" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}">
+                                    <span class="cat-arrow${ssHasChildren && ssExpanded ? ' expanded' : ''}">${ssHasChildren ? (ssExpanded ? '▾' : '▸') : ''}</span>
+                                    <span class="cat-icon">${iconHtml(getSubdirIcon(c + '||' + s + '||' + ss, 'bi-file-earmark'))}</span>
                                     <span class="cat-name-text">${fuzzyHighlight(ss, catSearch)}</span>
                                     <span class="cat-count">${sscount}</span>
                                 </button>
-                                <button class="cat-more-btn" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}" title="更多操作">⋮</button>
+                                <button class="cat-more-btn" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}" data-subsubsub="" title="更多操作">⋮</button>
                             </div>`;
+                            if (ssHasChildren && ssExpanded) {
+                                let shownSSS = subSubSubs;
+                                if (searchQ && !fuzzyMatch(catSearch, ss) && !fuzzyMatch(catSearch, s) && !fuzzyMatch(catSearch, c)) {
+                                    shownSSS = subSubSubs.filter(sss => fuzzyMatch(catSearch, sss));
+                                }
+                                html += `<div class="subcat-list">`;
+                                shownSSS.forEach(sss => {
+                                    const ssscount = (subSubSubCounts[c] && subSubSubCounts[c][s] && subSubSubCounts[c][s][ss] && subSubSubCounts[c][s][ss][sss]) || 0;
+                                    const sssActive = (curCat === c && curSub === s && curSubSub === ss && curSubSubSub === sss);
+                                    html += `<div class="category-item-wrapper" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}" data-subsubsub="${escapeHtml(sss)}">
+                                        <button class="category-item subcat-item subsubcat-item subsubsubcat-item ${sssActive?'active':''}" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}" data-subsubsub="${escapeHtml(sss)}">
+                                            <span class="cat-arrow"></span>
+                                            <span class="cat-icon">${iconHtml(getSubdirIcon(c + '||' + s + '||' + ss + '||' + sss, 'bi-file-earmark-text'))}</span>
+                                            <span class="cat-name-text">${fuzzyHighlight(sss, catSearch)}</span>
+                                            <span class="cat-count">${ssscount}</span>
+                                        </button>
+                                        <button class="cat-more-btn" data-cat="${escapeHtml(c)}" data-sub="${escapeHtml(s)}" data-subsub="${escapeHtml(ss)}" data-subsubsub="${escapeHtml(sss)}" title="更多操作">⋮</button>
+                                    </div>`;
+                                });
+                                html += `</div>`;
+                            }
                         });
                         html += `</div>`;
                     }
@@ -3164,17 +3984,37 @@
             const cat = btn.dataset.cat;
             const sub = btn.dataset.sub || '';
             const subsub = btn.dataset.subsub || '';
+            const subsubsub = btn.dataset.subsubsub || '';
             const isTop = btn.dataset.sub === undefined;
             const isSub = btn.dataset.sub !== undefined && btn.dataset.subsub === undefined;
+            const isSubSub = btn.dataset.subsub !== undefined && btn.dataset.subsubsub === undefined;
             if (e.target.closest('.cat-arrow')) {
                 if (isTop && getSubdirs(cat).length > 0) {
-                    if (expandedCats.has(cat)) expandedCats.delete(cat); else expandedCats.add(cat);
+                    if (searchQ) {
+                        if (searchCollapsedCats.has(cat)) searchCollapsedCats.delete(cat); else searchCollapsedCats.add(cat);
+                    } else {
+                        if (expandedCats.has(cat)) expandedCats.delete(cat); else expandedCats.add(cat);
+                    }
                     renderCatFilter();
                     return;
                 }
                 if (isSub && getSubSubdirs(cat, sub).length > 0) {
                     const key = cat + '||' + sub;
-                    if (expandedSubs.has(key)) expandedSubs.delete(key); else expandedSubs.add(key);
+                    if (searchQ) {
+                        if (searchCollapsedSubs.has(key)) searchCollapsedSubs.delete(key); else searchCollapsedSubs.add(key);
+                    } else {
+                        if (expandedSubs.has(key)) expandedSubs.delete(key); else expandedSubs.add(key);
+                    }
+                    renderCatFilter();
+                    return;
+                }
+                if (isSubSub && getSubSubSubdirs(cat, sub, subsub).length > 0) {
+                    const key = cat + '||' + sub + '||' + subsub;
+                    if (searchQ) {
+                        if (searchCollapsedSubSubs.has(key)) searchCollapsedSubSubs.delete(key); else searchCollapsedSubSubs.add(key);
+                    } else {
+                        if (expandedSubSubs.has(key)) expandedSubSubs.delete(key); else expandedSubSubs.add(key);
+                    }
                     renderCatFilter();
                     return;
                 }
@@ -3182,8 +4022,10 @@
             curCat = cat;
             curSub = sub;
             curSubSub = subsub;
+            curSubSubSub = subsubsub;
             if (sub) expandedCats.add(cat);
             if (subsub) expandedSubs.add(cat + '||' + sub);
+            if (subsubsub) expandedSubSubs.add(cat + '||' + sub + '||' + subsub);
             renderCatFilter();
             renderCards();
             if (window.innerWidth <= 768) closeSidebar();
@@ -3194,8 +4036,76 @@
         document.querySelectorAll('.cat-more-btn').forEach(btn => btn.addEventListener('click', e => {
             e.stopPropagation();
             e.preventDefault();
-            showCatMenu(btn, btn.dataset.cat, btn.dataset.sub || '', btn.dataset.subsub || '');
+            showCatMenu(btn, btn.dataset.cat, btn.dataset.sub || '', btn.dataset.subsub || '', btn.dataset.subsubsub || '');
         }));
+
+        // 挂载分类拖动排序
+        setupCatDragSort();
+    }
+
+    // ==================== 分类拖动排序 ====================
+    let dragCat = null;
+    function getTopLevelCatWrappers() {
+        return Array.from(document.querySelectorAll('#categoryFilter .category-item-wrapper'))
+            .filter(w => w.dataset.cat !== undefined && w.dataset.sub === undefined);
+    }
+    function moveCategory(fromCat, toCat, before) {
+        if (!fromCat || !toCat || fromCat === toCat) return;
+        const list = getCatList();
+        const fromIdx = list.indexOf(fromCat);
+        if (fromIdx === -1) return;
+        list.splice(fromIdx, 1);
+        let toIdx = list.indexOf(toCat);
+        if (toIdx === -1) {
+            list.push(fromCat);
+        } else {
+            if (!before) toIdx += 1;
+            list.splice(toIdx, 0, fromCat);
+        }
+        saveCatOrder(list);
+        dragCat = null;
+        renderCatFilter();
+        updateCatSelect();
+    }
+    function setupCatDragSort() {
+        const wrappers = getTopLevelCatWrappers();
+        wrappers.forEach(w => {
+            w.setAttribute('draggable', 'true');
+            w.addEventListener('dragstart', e => {
+                dragCat = w.dataset.cat;
+                w.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                try { e.dataTransfer.setData('text/plain', dragCat); } catch(err) {}
+            });
+            w.addEventListener('dragend', () => {
+                w.classList.remove('dragging');
+                document.querySelectorAll('#categoryFilter .category-item-wrapper').forEach(x => x.classList.remove('drag-over-top', 'drag-over-bottom'));
+                dragCat = null;
+            });
+            w.addEventListener('dragover', e => {
+                if (!dragCat || dragCat === w.dataset.cat) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                const rect = w.getBoundingClientRect();
+                const before = e.clientY < (rect.top + rect.height / 2);
+                w.classList.toggle('drag-over-top', before);
+                w.classList.toggle('drag-over-bottom', !before);
+            });
+            w.addEventListener('dragleave', e => {
+                if (!w.contains(e.relatedTarget)) {
+                    w.classList.remove('drag-over-top', 'drag-over-bottom');
+                }
+            });
+            w.addEventListener('drop', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                w.classList.remove('drag-over-top', 'drag-over-bottom');
+                if (!dragCat || dragCat === w.dataset.cat) return;
+                const rect = w.getBoundingClientRect();
+                const before = e.clientY < (rect.top + rect.height / 2);
+                moveCategory(dragCat, w.dataset.cat, before);
+            });
+        });
     }
 
     function renderSubSelect(selId, parentCat, selectedSub) {
@@ -3216,8 +4126,18 @@
         sel.innerHTML = html;
         sel.value = (selectedSS && subs.includes(selectedSS)) ? selectedSS : '';
     }
+    function renderSubSubSubSelect(selId, parentCat, parentSub, parentSS, selectedSSS) {
+        const sel = document.getElementById(selId);
+        if (!sel) return;
+        const subs = getSubSubSubdirs(parentCat, parentSub, parentSS);
+        let html = `<option value="">（无子目录）</option>`;
+        subs.forEach(s => { html += `<option value="${escapeHtml(s)}" ${s === selectedSSS ? 'selected' : ''}>${escapeHtml(s)}</option>`; });
+        sel.innerHTML = html;
+        sel.value = (selectedSSS && subs.includes(selectedSSS)) ? selectedSSS : '';
+    }
     function updateSubCatSelect(parentCat, selectedSub) { renderSubSelect('cmdSubCategory', parentCat, selectedSub); }
     function updateSubSubCatSelect(parentCat, parentSub, selectedSS) { renderSubSubSelect('cmdSubSubCategory', parentCat, parentSub, selectedSS); }
+    function updateSubSubSubCatSelect(parentCat, parentSub, parentSS, selectedSSS) { renderSubSubSubSelect('cmdSubSubSubCategory', parentCat, parentSub, parentSS, selectedSSS); }
     function updateCatSelect() {
         const sel = document.getElementById('cmdCategory');
         const cats = getCatList();
@@ -3225,6 +4145,7 @@
         if(cats.length === 0) sel.innerHTML = '<option>其他</option>';
         updateSubCatSelect(sel.value || '', '');
         updateSubSubCatSelect(sel.value || '', '', '');
+        updateSubSubSubCatSelect(sel.value || '', '', '', '');
     }
 
     async function sortAndRender() { refreshCats(); renderCatFilter(); updateCatSelect(); renderCards(); }
@@ -3249,6 +4170,7 @@
         const catOpts = getCatList().map(c => `<option value="${escapeHtml(c)}" ${c===cmd.category?'selected':''}>${escapeHtml(c)}</option>`).join('');
         const subCatOpts = `<option value="">（无子目录）</option>` + getSubdirs(cmd.category).map(s => `<option value="${escapeHtml(s)}" ${s===cmd.subCategory?'selected':''}>${escapeHtml(s)}</option>`).join('');
         const subSubCatOpts = `<option value="">（无子目录）</option>` + getSubSubdirs(cmd.category, cmd.subCategory).map(s => `<option value="${escapeHtml(s)}" ${s===cmd.subSubCategory?'selected':''}>${escapeHtml(s)}</option>`).join('');
+        const subSubSubCatOpts = `<option value="">（无子目录）</option>` + getSubSubSubdirs(cmd.category, cmd.subCategory, cmd.subSubCategory).map(s => `<option value="${escapeHtml(s)}" ${s===cmd.subSubSubCategory?'selected':''}>${escapeHtml(s)}</option>`).join('');
         const body = `
             <div class="fullscreen-section">
                 <h4>📌 卡片标题</h4>
@@ -3275,6 +4197,10 @@
                         <select id="fsEditSubSubCategory" style="width:100%;padding:0.5rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);">${subSubCatOpts}</select>
                     </div>
                     <div style="flex:1;min-width:140px;">
+                        <label style="font-size:0.75rem;color:var(--text-secondary);">三级子目录（可选）</label>
+                        <select id="fsEditSubSubSubCategory" style="width:100%;padding:0.5rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);">${subSubSubCatOpts}</select>
+                    </div>
+                    <div style="flex:1;min-width:140px;">
                         <label style="font-size:0.75rem;color:var(--text-secondary);">代码语言</label>
                         <select id="fsEditLang" style="width:100%;padding:0.5rem;border-radius:12px;border:1px solid var(--border-light);background:var(--search-bg);color:var(--text-primary);">
                             ${['bash','python','cpp','javascript','typescript','yaml','json','go','rust','java','csharp','php','sql','html','css','plaintext'].map(l => `<option value="${l}" ${l===cmd.codeLang?'selected':''}>${l}</option>`).join('')}
@@ -3297,12 +4223,18 @@
             </div>
         `;
         document.getElementById('fsBody').innerHTML = body;
+        enhanceTextareaAsMdEditor(document.getElementById('fsEditDesc'));
         document.getElementById('fsEditCategory').addEventListener('change', e => {
             renderSubSelect('fsEditSubCategory', e.target.value, '');
             renderSubSubSelect('fsEditSubSubCategory', e.target.value, '', '');
+            renderSubSubSubSelect('fsEditSubSubSubCategory', e.target.value, '', '', '');
         });
         document.getElementById('fsEditSubCategory').addEventListener('change', e => {
             renderSubSubSelect('fsEditSubSubCategory', document.getElementById('fsEditCategory').value, e.target.value, '');
+            renderSubSubSubSelect('fsEditSubSubSubCategory', document.getElementById('fsEditCategory').value, e.target.value, '', '');
+        });
+        document.getElementById('fsEditSubSubCategory').addEventListener('change', e => {
+            renderSubSubSubSelect('fsEditSubSubSubCategory', document.getElementById('fsEditCategory').value, document.getElementById('fsEditSubCategory').value, e.target.value, '');
         });
         // Populate extra code blocks
         populateCodeBlocksFromCmd('fsExtraCodeBlocksContainer', cmd.codeBlocks || []);
@@ -3313,6 +4245,7 @@
         document.body.style.overflow = 'hidden';
         // 切换底部按钮
         document.getElementById('fsCopyBtn').style.display = 'none';
+        document.getElementById('fsExportBtn').style.display = 'none';
         document.getElementById('fsEditBtn').innerText = '保存';
         document.getElementById('fsEditBtn').onclick = saveFullscreenEdit;
     }
@@ -3324,13 +4257,14 @@
         const category = document.getElementById('fsEditCategory').value;
         const subCategory = document.getElementById('fsEditSubCategory').value || '';
         const subSubCategory = document.getElementById('fsEditSubSubCategory').value || '';
+        const subSubSubCategory = document.getElementById('fsEditSubSubSubCategory').value || '';
         const codeLang = document.getElementById('fsEditLang').value;
         const cardTitle = document.getElementById('fsEditCardTitle').value.trim();
         const codeTitle = document.getElementById('fsEditCodeTitle').value.trim();
         const description = document.getElementById('fsEditDesc').value.trim();
         const example = document.getElementById('fsEditExample').value.trim();
         const codeBlocks = collectFormCodeBlocks('fsExtraCodeBlocksContainer');
-        const cmd = { id, name, category, subCategory, subSubCategory, description, example, codeLang, cardTitle, codeTitle, codeBlocks };
+        const cmd = { id, name, category, subCategory, subSubCategory, subSubSubCategory, description, example, codeLang, cardTitle, codeTitle, codeBlocks };
         try {
             await commit(cmd);
             showToast('保存成功', true);
@@ -3356,6 +4290,7 @@
         document.getElementById('cmdCategory').value = def;
         updateSubCatSelect(def, '');
         updateSubSubCatSelect(def, '', '');
+        updateSubSubSubCatSelect(def, '', '', '');
         document.getElementById('cmdDesc').value = '';
         document.getElementById('cmdExample').value = '';
         document.getElementById('editId').value = '';
@@ -3425,12 +4360,13 @@
         if(!cat) cat = '其他';
         const subCategory = document.getElementById('cmdSubCategory').value || '';
         const subSubCategory = document.getElementById('cmdSubSubCategory').value || '';
+        const subSubSubCategory = document.getElementById('cmdSubSubSubCategory').value || '';
         const codeLang = document.getElementById('cmdLang').value;
         const cardTitle = document.getElementById('cmdCardTitle').value.trim();
         const codeTitle = document.getElementById('cmdCodeTitle').value.trim();
         const id = document.getElementById('editId').value || Date.now().toString(36) + Math.random().toString(36).substr(2,6);
         const codeBlocks = collectFormCodeBlocks('extraCodeBlocksContainer');
-        const cmd = { id, name, category: cat, subCategory, subSubCategory, description: document.getElementById('cmdDesc').value.trim() || '无描述', example: document.getElementById('cmdExample').value.trim(), codeLang: codeLang || 'bash', cardTitle, codeTitle, codeBlocks };
+        const cmd = { id, name, category: cat, subCategory, subSubCategory, subSubSubCategory, description: document.getElementById('cmdDesc').value.trim() || '无描述', example: document.getElementById('cmdExample').value.trim(), codeLang: codeLang || 'bash', cardTitle, codeTitle, codeBlocks };
         await commit(cmd);
         document.getElementById('commandModal').style.display = 'none';
         resetModal();
@@ -3438,13 +4374,82 @@
 
     function download(content, filename, mime) { const a = document.createElement('a'); const blob = new Blob([content], { type: mime }); a.href = URL.createObjectURL(blob); a.download = filename; a.click(); URL.revokeObjectURL(a.href); }
     function exportJSON() { download(JSON.stringify(commands, null, 2), `commands_${Date.now()}.json`, 'application/json'); }
-    function exportMarkdown() { let md = '# 冰雪随笔\n\n'; commands.forEach(c => { md += `## ${c.category}\n\`\`\`${c.codeLang||'bash'}\n${c.name}\n\`\`\`\n描述: ${c.description}\n`; (c.codeBlocks || []).forEach((b, i) => { md += `\`\`\`${b.codeLang||'bash'}\n${b.name}\n\`\`\`\n`; }); md += '\n'; }); download(md, `commands.md`, 'text/markdown'); }
+    function exportMarkdown() { let md = '# 凌烟阁·智能笔记\n\n'; commands.forEach(c => { md += `## ${c.category}\n\`\`\`${c.codeLang||'bash'}\n${c.name}\n\`\`\`\n描述: ${c.description}\n`; (c.codeBlocks || []).forEach((b, i) => { md += `\`\`\`${b.codeLang||'bash'}\n${b.name}\n\`\`\`\n`; }); md += '\n'; }); download(md, `commands.md`, 'text/markdown'); }
     function exportCSV() { const rows = commands.map(c => `"${c.name.replace(/"/g,'""')}","${c.category}","${c.description.replace(/"/g,'""')}","${c.codeLang||'bash'}"`); download("﻿命令,分类,描述,代码语言\n" + rows.join('\n'), `commands.csv`, 'text/csv'); }
     function exportTxt() { let txt = ''; commands.forEach(c => { txt += `${c.category}\n${c.name}\n${c.description}\n语言:${c.codeLang||'bash'}\n`; (c.codeBlocks || []).forEach((b, i) => { txt += `--- 代码块${i+2} (${b.codeLang||'bash'}) ---\n${b.name}\n`; }); txt += '\n'; }); download(txt, `commands.txt`, 'text/plain'); }
 
+    // ==================== 导出当前笔记（单条） ====================
+    let noteExportCmd = null;
+    function noteExportBaseName(cmd) {
+        const raw = cmd.cardTitle || (cmd.name || '').split('\n')[0].trim().substring(0, 40);
+        return (raw || '笔记').replace(/[\\/:*?"<>|\r\n\s]+/g, '_');
+    }
+    function exportNoteJSON() {
+        const cmd = noteExportCmd || currentFsCommand; if (!cmd) return;
+        download(JSON.stringify(cmd, null, 2), `${noteExportBaseName(cmd)}.json`, 'application/json');
+    }
+    function exportNoteMarkdown() {
+        const cmd = noteExportCmd || currentFsCommand; if (!cmd) return;
+        let md = `# ${cmd.cardTitle || cmd.name.split('\n')[0] || '笔记'}\n\n`;
+        if (cmd.category) md += `> 分类：${cmd.category}${cmd.subCategory ? ' / ' + cmd.subCategory : ''}${cmd.subSubCategory ? ' / ' + cmd.subSubCategory : ''}${cmd.subSubSubCategory ? ' / ' + cmd.subSubSubCategory : ''}\n\n`;
+        if (cmd.codeTitle) md += `### ${cmd.codeTitle}\n`;
+        md += `\`\`\`${cmd.codeLang || 'bash'}\n${cmd.name}\n\`\`\`\n`;
+        (cmd.codeBlocks || []).forEach(b => {
+            if (b.title) md += `\n### ${b.title}\n`;
+            md += `\`\`\`${b.codeLang || 'bash'}\n${b.name}\n\`\`\`\n`;
+        });
+        if (cmd.description) md += `\n## 描述\n\n${cmd.description}\n`;
+        if (cmd.example) md += `\n## 示例\n\n\`\`\`\n${cmd.example}\n\`\`\`\n`;
+        download(md, `${noteExportBaseName(cmd)}.md`, 'text/markdown');
+    }
+    function exportNoteCSV() {
+        const cmd = noteExportCmd || currentFsCommand; if (!cmd) return;
+        const esc = s => `"${(s || '').replace(/"/g, '""')}"`;
+        const rows = [
+            ['卡片标题', cmd.cardTitle || ''],
+            ['分类', cmd.category || ''],
+            ['一级子目录', cmd.subCategory || ''],
+            ['二级子目录', cmd.subSubCategory || ''],
+            ['三级子目录', cmd.subSubSubCategory || ''],
+            ['代码语言', cmd.codeLang || 'bash'],
+            ['代码标题', cmd.codeTitle || ''],
+            ['命令内容', cmd.name || ''],
+            ['描述', cmd.description || ''],
+            ['示例', cmd.example || '']
+        ];
+        (cmd.codeBlocks || []).forEach((b, i) => rows.push([`额外代码块${i + 1} (${b.codeLang || 'bash'})`, b.name || '']));
+        const csv = rows.map(r => `${esc(r[0])},${esc(r[1])}`).join('\n');
+        download('﻿字段,内容\n' + csv, `${noteExportBaseName(cmd)}.csv`, 'text/csv');
+    }
+    function exportNoteTxt() {
+        const cmd = noteExportCmd || currentFsCommand; if (!cmd) return;
+        let txt = '';
+        if (cmd.cardTitle) txt += `标题: ${cmd.cardTitle}\n`;
+        txt += `分类: ${cmd.category || ''}`;
+        if (cmd.subCategory) txt += ` / ${cmd.subCategory}`;
+        if (cmd.subSubCategory) txt += ` / ${cmd.subSubCategory}`;
+        if (cmd.subSubSubCategory) txt += ` / ${cmd.subSubSubCategory}`;
+        txt += `\n语言: ${cmd.codeLang || 'bash'}`;
+        if (cmd.codeTitle) txt += `\n脚本名称: ${cmd.codeTitle}`;
+        txt += `\n\n${cmd.name}\n`;
+        (cmd.codeBlocks || []).forEach((b, i) => { txt += `\n--- 代码块${i + 1} (${b.codeLang || 'bash'})${b.title ? ' · ' + b.title : ''} ---\n${b.name}\n`; });
+        if (cmd.description) txt += `\n描述:\n${cmd.description}\n`;
+        if (cmd.example) txt += `\n示例:\n${cmd.example}\n`;
+        download(txt, `${noteExportBaseName(cmd)}.txt`, 'text/plain');
+    }
+    function openExportNoteModal(cmd) {
+        noteExportCmd = cmd || currentFsCommand;
+        if (!noteExportCmd) return;
+        document.getElementById('exportNoteTitle').innerText = '「' + (noteExportCmd.cardTitle || noteExportCmd.name.split('\n')[0].substring(0, 40) || '笔记') + '」';
+        document.getElementById('exportNoteModal').style.display = 'flex';
+    }
+    function closeExportNoteModal() {
+        document.getElementById('exportNoteModal').style.display = 'none';
+    }
+
     function setupImport() {
         const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json';
-        inp.onchange = async e => { const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = async ev => { try { const p = JSON.parse(ev.target.result); if(Array.isArray(p)) { await bulkImport(p.map(c => ({ id: c.id || Date.now()+Math.random(), name: c.name, category: c.category || '其他', subCategory: c.subCategory || '', subSubCategory: c.subSubCategory || '', description: c.description || '', example: c.example || '', codeLang: c.codeLang || 'bash' }))); await refresh(); alert(`导入成功，共 ${commands.length} 条`); } else throw new Error(); } catch(err) { alert('无效JSON文件'); } }; reader.readAsText(f); };
+        inp.onchange = async e => { const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = async ev => { try { const p = JSON.parse(ev.target.result); if(Array.isArray(p)) { await bulkImport(p.map(c => ({ id: c.id || Date.now()+Math.random(), name: c.name, category: c.category || '其他', subCategory: c.subCategory || '', subSubCategory: c.subSubCategory || '', subSubSubCategory: c.subSubSubCategory || '', description: c.description || '', example: c.example || '', codeLang: c.codeLang || 'bash' }))); await refresh(); alert(`导入成功，共 ${commands.length} 条`); } else throw new Error(); } catch(err) { alert('无效JSON文件'); } }; reader.readAsText(f); };
         document.getElementById('importBtn').addEventListener('click', () => inp.click());
     }
 
@@ -3786,7 +4791,7 @@
         if (icon) saveCatIcon(name, icon);
         allCats.add(name); renderCatFilter(); updateCatSelect();
         if(pendingCatCb) pendingCatCb(name);
-        else { curCat = name; curSub = ''; curSubSub = ''; renderCatFilter(); renderCards(); }
+        else { curCat = name; curSub = ''; curSubSub = ''; curSubSubSub = ''; renderCatFilter(); renderCards(); }
         closeNewCatModal();
     }
 
@@ -3799,10 +4804,19 @@
         'bi-cloud','bi-cloud-fill','bi-globe2','bi-box',
         'bi-gear','bi-gear-fill','bi-wrench','bi-tools',
         'bi-shield-check','bi-shield-lock','bi-key','bi-lock',
-        'bi-git','bi-github','bi-docker','bi-ubuntu',
+        'bi-git','bi-github','bi-docker','bi-ubuntu','centos',
         'bi-cpu','bi-motherboard','bi-memory','bi-ethernet',
         'bi-link-45deg','bi-plugin','bi-puzzle','bi-grid'
     ];
+
+    // CentOS 品牌图标（Bootstrap Icons 无此图标，使用内联 SVG）
+    const CENTOS_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="1em" height="1em" style="vertical-align:-0.125em" aria-hidden="true"><path d="M59.033 64.192l-27.305 26.66-27.302-26.66 27.302-26.651zm0 0" fill="#932279"/><path d="M64.72 58.736L37.824 31.91 64.72 5.084 91.61 31.91zm0 0" fill="#efa724"/><path d="M91.675 96.563l-27.307 26.661-27.3-26.661 27.302-26.65zm0 0" fill="#9ccd2a"/><path d="M97.362 91.108L70.466 64.277l26.895-26.821 26.895 26.821zm0 0" fill="#262577"/><path d="M70.066 69.484h36.461v36.401H70.066zm0 0" fill="#efa724"/><path d="M70.216 22.454h36.577v36.231H70.216zm0 0" fill="#932279"/><path d="M21.1 69.484h38.084v37.753H21.1zm0 0" fill="#262577"/><path d="M21.1 20.928h38.084v37.538H21.1zm0 0" fill="#9ccd2a"/></svg>';
+
+    // 渲染图标：特殊图标（如 centos）用 SVG，其余用 Bootstrap Icons 字体
+    function iconHtml(name) {
+        if (name === 'centos') return CENTOS_ICON_SVG;
+        return `<i class="bi ${escapeHtml(name)}"></i>`;
+    }
 
     function loadCatIcons() {
         try { return JSON.parse(localStorage.getItem('cat_icons') || '{}'); }
@@ -3820,6 +4834,52 @@
         return ICON_LIST[index % ICON_LIST.length];
     }
 
+    // ==================== 子目录图标（按完整路径存储，key 形如 cat||sub||ss||sss） ====================
+    function loadSubdirIcons() {
+        try { return JSON.parse(localStorage.getItem('subdir_icons') || '{}'); }
+        catch(e) { return {}; }
+    }
+    function saveSubdirIcon(key, icon) {
+        const map = loadSubdirIcons();
+        if (icon) map[key] = icon;
+        else delete map[key];
+        localStorage.setItem('subdir_icons', JSON.stringify(map));
+    }
+    function getSubdirIcon(key, fallback) {
+        const map = loadSubdirIcons();
+        return map[key] || fallback;
+    }
+    function subdirKey(parent, sub, subsub, name) {
+        if (subsub) return parent + '||' + sub + '||' + subsub + '||' + name;
+        if (sub) return parent + '||' + sub + '||' + name;
+        return parent + '||' + name;
+    }
+    // 重命名目录时，迁移自身及其下所有子级的图标键
+    function migrateSubdirIconKeys(oldPrefix, newPrefix) {
+        const map = loadSubdirIcons();
+        let changed = false;
+        for (const key in map) {
+            if (key === oldPrefix || key.startsWith(oldPrefix + '||')) {
+                map[newPrefix + key.slice(oldPrefix.length)] = map[key];
+                delete map[key];
+                changed = true;
+            }
+        }
+        if (changed) localStorage.setItem('subdir_icons', JSON.stringify(map));
+    }
+    // 删除目录时，清理该目录及其下所有子级的图标
+    function removeSubdirIconSubtree(prefix) {
+        const map = loadSubdirIcons();
+        let changed = false;
+        for (const key in map) {
+            if (key === prefix || key.startsWith(prefix + '||')) {
+                delete map[key];
+                changed = true;
+            }
+        }
+        if (changed) localStorage.setItem('subdir_icons', JSON.stringify(map));
+    }
+
     function renderIconPicker(containerId, hiddenInputId, selectedIcon) {
         const container = document.getElementById(containerId);
         const hidden = document.getElementById(hiddenInputId);
@@ -3827,7 +4887,7 @@
         let html = '';
         ICON_LIST.forEach(icon => {
             const sel = icon === selectedIcon ? ' selected' : '';
-            html += `<button class="icon-option${sel}" data-icon="${icon}" type="button"><i class="bi ${icon}"></i></button>`;
+            html += `<button class="icon-option${sel}" data-icon="${icon}" type="button">${iconHtml(icon)}</button>`;
         });
         container.innerHTML = html;
         container.querySelectorAll('.icon-option').forEach(btn => {
@@ -3844,13 +4904,15 @@
     let currentCatMenuTarget = null;
     let currentCatMenuSub = '';
     let currentCatMenuSubSub = '';
+    let currentCatMenuSubSubSub = '';
 
-    function showCatMenu(btn, catName, subName = '', subSubName = '') {
+    function showCatMenu(btn, catName, subName = '', subSubName = '', subSubSubName = '') {
         currentCatMenuTarget = catName;
         currentCatMenuSub = subName || '';
         currentCatMenuSubSub = subSubName || '';
+        currentCatMenuSubSubSub = subSubSubName || '';
         const addSubBtn = document.getElementById('catAddSubBtn');
-        if (addSubBtn) addSubBtn.style.display = currentCatMenuSubSub ? 'none' : 'block';
+        if (addSubBtn) addSubBtn.style.display = currentCatMenuSubSubSub ? 'none' : 'block';
         const menu = document.getElementById('catActionMenu');
         const rect = btn.getBoundingClientRect();
         menu.style.top = rect.bottom + 4 + 'px';
@@ -3864,6 +4926,21 @@
         currentCatMenuTarget = null;
         currentCatMenuSub = '';
         currentCatMenuSubSub = '';
+        currentCatMenuSubSubSub = '';
+    }
+
+    // ==================== 确认弹窗（页面内，替代浏览器 confirm） ====================
+    let confirmModalCallback = null;
+    function openConfirmModal(title, message, onConfirm, confirmLabel = '确定删除') {
+        document.getElementById('confirmModalTitle').innerText = title;
+        document.getElementById('confirmModalMessage').innerText = message;
+        document.getElementById('confirmConfirmBtn').innerText = confirmLabel;
+        confirmModalCallback = onConfirm || null;
+        document.getElementById('confirmModal').style.display = 'flex';
+    }
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').style.display = 'none';
+        confirmModalCallback = null;
     }
 
     // ==================== EDIT CATEGORY MODAL ====================
@@ -3882,8 +4959,8 @@
         const oldName = document.getElementById('editCatOldName').value;
         const newName = document.getElementById('editCatName').value.trim();
         const newIcon = document.getElementById('editCatIcon').value;
-        if (!newName) return alert('分类名称不能为空');
-        if (newName !== oldName && allCats.has(newName)) return alert('该分类名称已存在');
+        if (!newName) { showToast('分类名称不能为空', false); return; }
+        if (newName !== oldName && allCats.has(newName)) { showToast('该分类名称已存在', false); return; }
         // Save icon
         saveCatIcon(newName, newIcon);
         if (newName !== oldName) {
@@ -3901,26 +4978,29 @@
         closeEditCatModal();
     }
 
-    async function deleteCategory(catName) {
+    function deleteCategory(catName) {
         const cmdsInCat = commands.filter(c => c.category === catName);
         const msg = cmdsInCat.length > 0
             ? `分类「${catName}」下有 ${cmdsInCat.length} 条命令。\n\n确定要删除此分类吗？\n命令将移至「其他」分类。`
             : `确定要删除分类「${catName}」吗？`;
-        if (!confirm(msg)) return;
-        // Reassign all commands in this category to 其他
-        for (const cmd of cmdsInCat) {
-            cmd.category = '其他';
-            cmd.subCategory = '';
-            cmd.subSubCategory = '';
-            await saveCmd(cmd);
-        }
-        // 移除该分类下的子目录结构
-        const map = loadSubdirs();
-        if (map[catName]) { delete map[catName]; saveSubdirs(map); }
-        // If current filter was on deleted category, reset to all
-        if (curCat === catName) { curCat = '全部'; curSub = ''; curSubSub = ''; }
-        await refresh();
-        hideCatMenu();
+        openConfirmModal('🗑️ 删除分类', msg, async () => {
+            // Reassign all commands in this category to 其他
+            for (const cmd of cmdsInCat) {
+                cmd.category = '其他';
+                cmd.subCategory = '';
+                cmd.subSubCategory = '';
+                cmd.subSubSubCategory = '';
+                await saveCmd(cmd);
+            }
+            // 移除该分类下的子目录结构
+            const map = loadSubdirs();
+            if (map[catName]) { delete map[catName]; saveSubdirs(map); }
+            removeSubdirIconSubtree(catName);
+            // If current filter was on deleted category, reset to all
+            if (curCat === catName) { curCat = '全部'; curSub = ''; curSubSub = ''; curSubSubSub = ''; }
+            await refresh();
+            hideCatMenu();
+        });
     }
 
     // ==================== SIDEBAR MOBILE TOGGLE ====================
@@ -4002,6 +5082,139 @@
         } else {
             openGistDrawer();
         }
+    }
+
+    // ==================== Markdown 可视化编辑器 ====================
+    const MD_TOOLBAR_BUTTONS =
+        '<button type="button" data-md="bold" title="加粗"><b>B</b></button>' +
+        '<button type="button" data-md="italic" title="斜体"><i>I</i></button>' +
+        '<button type="button" data-md="heading" title="二级标题">H2</button>' +
+        '<button type="button" data-md="code" title="行内代码">`code`</button>' +
+        '<button type="button" data-md="codeblock" title="代码块">{ }</button>' +
+        '<button type="button" data-md="list" title="无序列表">• 列表</button>' +
+        '<button type="button" data-md="olist" title="有序列表">1. 列表</button>' +
+        '<button type="button" data-md="quote" title="引用">❝</button>' +
+        '<button type="button" data-md="link" title="链接">🔗</button>' +
+        '<button type="button" data-md="table" title="表格">⊞</button>' +
+        '<button type="button" data-md="hr" title="分隔线">—</button>';
+
+    function insertMdSyntax(textarea, action) {
+        const s = textarea.selectionStart, e = textarea.selectionEnd;
+        const val = textarea.value, sel = val.substring(s, e);
+        let before = '', after = '', placeholder = '';
+        let lineMode = false;
+        switch (action) {
+            case 'bold': before = after = '**'; placeholder = '加粗文字'; break;
+            case 'italic': before = after = '*'; placeholder = '斜体文字'; break;
+            case 'heading': before = '## '; break;
+            case 'code': before = after = '`'; placeholder = '代码'; break;
+            case 'codeblock': before = '```\n'; after = '\n```'; placeholder = '代码'; break;
+            case 'list': before = '- '; lineMode = true; break;
+            case 'olist': before = '1. '; lineMode = true; break;
+            case 'quote': before = '> '; lineMode = true; break;
+            case 'link': before = '['; after = '](https://)'; placeholder = '链接文字'; break;
+            case 'table': before = '| 列1 | 列2 |\n| --- | --- |\n| 内容 | 内容 |'; break;
+            case 'hr': before = '\n---\n'; break;
+            default: return;
+        }
+        if (lineMode) {
+            const ls = val.lastIndexOf('\n', s - 1) + 1;
+            let le = val.indexOf('\n', e); if (le === -1) le = val.length;
+            const block = val.substring(ls, le);
+            const insert = block.split('\n').map(l => before + l).join('\n');
+            textarea.setRangeText(insert, ls, le, 'end');
+        } else {
+            const insert = before + (sel || placeholder) + after;
+            textarea.setRangeText(insert, s, e, 'end');
+        }
+        textarea.focus();
+    }
+
+    function renderMdPreview(textarea, preview) {
+        preview.innerHTML = renderMarkdown(textarea.value, false, 'md-');
+    }
+
+    function toggleMdPreview(textarea, preview, btn) {
+        const showing = preview.style.display !== 'none';
+        if (showing) { preview.style.display = 'none'; }
+        else { renderMdPreview(textarea, preview); preview.style.display = ''; }
+        if (btn) btn.classList.toggle('md-toolbar-btn-active', !showing);
+    }
+
+    let mdFsSourceTextarea = null;
+    function openMdFullscreen(textarea) {
+        mdFsSourceTextarea = textarea;
+        const overlay = document.getElementById('mdEditorFullscreen');
+        const input = document.getElementById('mdEditorFsInput');
+        input.value = textarea.value;
+        const preview = document.getElementById('mdEditorFsPreview');
+        preview.style.display = 'none';
+        const fsPreviewBtn = overlay.querySelector('.md-preview-btn');
+        if (fsPreviewBtn) fsPreviewBtn.classList.remove('md-toolbar-btn-active');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        input.focus();
+    }
+    function closeMdFullscreen(save) {
+        if (save && mdFsSourceTextarea) {
+            mdFsSourceTextarea.value = document.getElementById('mdEditorFsInput').value;
+        }
+        document.getElementById('mdEditorFullscreen').classList.remove('show');
+        document.body.style.overflow = '';
+        mdFsSourceTextarea = null;
+    }
+
+    function wireMdToolbar(toolbar, textarea, preview) {
+        if (!toolbar || !textarea) return;
+        toolbar.querySelectorAll('button').forEach(btn => btn.addEventListener('mousedown', e => e.preventDefault()));
+        toolbar.querySelectorAll('button[data-md]').forEach(btn => {
+            btn.addEventListener('click', () => insertMdSyntax(textarea, btn.dataset.md));
+        });
+        const previewBtn = toolbar.querySelector('.md-preview-btn');
+        if (previewBtn) previewBtn.addEventListener('click', () => toggleMdPreview(textarea, preview, previewBtn));
+        const fsBtn = toolbar.querySelector('.md-fullscreen-btn');
+        if (fsBtn) fsBtn.addEventListener('click', () => openMdFullscreen(textarea));
+    }
+
+    function enhanceTextareaAsMdEditor(textarea) {
+        if (!textarea || textarea._mdEditor) return;
+        textarea._mdEditor = true;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'md-editor';
+        textarea.parentNode.insertBefore(wrapper, textarea);
+        const toolbar = document.createElement('div');
+        toolbar.className = 'md-editor-toolbar';
+        toolbar.innerHTML = MD_TOOLBAR_BUTTONS +
+            '<span class="md-toolbar-spacer"></span>' +
+            '<button type="button" class="md-preview-btn" title="预览 / 编辑切换">👁 预览</button>' +
+            '<button type="button" class="md-fullscreen-btn" title="全屏编辑">⛶ 全屏</button>';
+        wrapper.appendChild(toolbar);
+        wrapper.appendChild(textarea);
+        textarea.classList.add('md-editor-input');
+        const preview = document.createElement('div');
+        preview.className = 'md-editor-preview';
+        preview.style.display = 'none';
+        wrapper.appendChild(preview);
+        textarea.addEventListener('input', () => { if (preview.style.display !== 'none') renderMdPreview(textarea, preview); });
+        wireMdToolbar(toolbar, textarea, preview);
+    }
+
+    function initMdFullscreen() {
+        const overlay = document.getElementById('mdEditorFullscreen');
+        if (!overlay || overlay._mdInit) return;
+        overlay._mdInit = true;
+        const toolbar = document.getElementById('mdEditorFsToolbar');
+        const input = document.getElementById('mdEditorFsInput');
+        const preview = document.getElementById('mdEditorFsPreview');
+        if (toolbar) toolbar.innerHTML = MD_TOOLBAR_BUTTONS +
+            '<span class="md-toolbar-spacer"></span>' +
+            '<button type="button" class="md-preview-btn" title="预览 / 编辑切换">👁 预览</button>';
+        wireMdToolbar(toolbar, input, preview);
+        input.addEventListener('input', () => { if (preview.style.display !== 'none') renderMdPreview(input, preview); });
+        document.getElementById('mdEditorFsOk').addEventListener('click', () => closeMdFullscreen(true));
+        document.getElementById('mdEditorFsCancel').addEventListener('click', () => closeMdFullscreen(false));
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeMdFullscreen(false); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('show')) closeMdFullscreen(false); });
     }
 
     async function init() {
@@ -4102,18 +5315,19 @@
                 if (!searchInputEl.value.trim()) navSearchEl.classList.remove('expanded');
             });
         }
-        document.getElementById('sidebarSearchInput').addEventListener('input', e => { catSearch = e.target.value; renderCatFilter(); });
+        document.getElementById('sidebarSearchInput').addEventListener('input', e => { catSearch = e.target.value; searchCollapsedCats.clear(); searchCollapsedSubs.clear(); searchCollapsedSubSubs.clear(); renderCatFilter(); });
         document.getElementById('openAddBtn').addEventListener('click', () => { resetModal(); document.getElementById('commandModal').style.display = 'flex'; });
         document.getElementById('saveBtn').addEventListener('click', () => { exportJSON(); showToast('备份已保存', true); });
         document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('commandModal').style.display = 'none'; resetModal(); });
         document.getElementById('commandForm').addEventListener('submit', onSave);
-        document.getElementById('cmdCategory').addEventListener('change', e => { updateSubCatSelect(e.target.value, ''); updateSubSubCatSelect(e.target.value, '', ''); });
-        document.getElementById('cmdSubCategory').addEventListener('change', e => updateSubSubCatSelect(document.getElementById('cmdCategory').value, e.target.value, ''));
+        document.getElementById('cmdCategory').addEventListener('change', e => { updateSubCatSelect(e.target.value, ''); updateSubSubCatSelect(e.target.value, '', ''); updateSubSubSubCatSelect(e.target.value, '', '', ''); });
+        document.getElementById('cmdSubCategory').addEventListener('change', e => { updateSubSubCatSelect(document.getElementById('cmdCategory').value, e.target.value, ''); updateSubSubSubCatSelect(document.getElementById('cmdCategory').value, e.target.value, '', ''); });
+        document.getElementById('cmdSubSubCategory').addEventListener('change', e => updateSubSubSubCatSelect(document.getElementById('cmdCategory').value, document.getElementById('cmdSubCategory').value, e.target.value, ''));
         document.getElementById('exportJsonBtn').addEventListener('click', exportJSON);
         document.getElementById('exportMarkdownBtn').addEventListener('click', exportMarkdown);
         document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
         document.getElementById('exportTxtBtn').addEventListener('click', exportTxt);
-        window.addEventListener('click', e => { if(e.target === document.getElementById('commandModal')) document.getElementById('commandModal').style.display = 'none'; if(e.target === document.getElementById('newCategoryModal')) closeNewCatModal(); if(e.target === document.getElementById('editCategoryModal')) closeEditCatModal(); if(e.target === document.getElementById('textInputModal')) closeTextInputModal(); if(e.target === document.getElementById('brandSettingsModal')) closeBrandSettingsModal(); if(e.target === document.getElementById('addSubdirModal')) closeAddSubdirModal(); if(e.target === document.getElementById('fullscreenModal')) closeFullscreen(); if(!e.target.closest('.cat-more-btn') && !e.target.closest('#catActionMenu')) hideCatMenu(); if(!e.target.closest('.bg-settings-wrapper')) closeBgPopover(); });
+        window.addEventListener('click', e => { if(e.target === document.getElementById('commandModal')) document.getElementById('commandModal').style.display = 'none'; if(e.target === document.getElementById('newCategoryModal')) closeNewCatModal(); if(e.target === document.getElementById('editCategoryModal')) closeEditCatModal(); if(e.target === document.getElementById('textInputModal')) closeTextInputModal(); if(e.target === document.getElementById('brandSettingsModal')) closeBrandSettingsModal(); if(e.target === document.getElementById('addSubdirModal')) closeAddSubdirModal(); if(e.target === document.getElementById('renameSubdirModal')) closeRenameSubdirModal(); if(e.target === document.getElementById('confirmModal')) closeConfirmModal(); if(e.target === document.getElementById('exportNoteModal')) closeExportNoteModal(); if(e.target === document.getElementById('fullscreenModal')) closeFullscreen(); if(!e.target.closest('.cat-more-btn') && !e.target.closest('#catActionMenu')) hideCatMenu(); if(!e.target.closest('.bg-settings-wrapper')) closeBgPopover(); });
         // 弹窗打开时：滚轮/触摸只滚动弹窗内容，背景保持不动
         function handleModalScroll(e) {
             const t = e.target;
@@ -4129,7 +5343,17 @@
 
         document.getElementById('fsCloseBtn').addEventListener('click', closeFullscreen);
         document.getElementById('fsCopyBtn').addEventListener('click', async () => { if(currentFsCommand) await copyText(currentFsCommand.name); });
+        document.getElementById('fsExportBtn').addEventListener('click', openExportNoteModal);
         document.getElementById('fsEditBtn').onclick = () => { if(currentFsCommand) openEdit(currentFsCommand); };
+        document.getElementById('cancelExportNoteBtn').addEventListener('click', closeExportNoteModal);
+        document.querySelectorAll('#exportNoteModal .export-format-item').forEach(btn => btn.addEventListener('click', () => {
+            const fmt = btn.dataset.format;
+            closeExportNoteModal();
+            if (fmt === 'markdown') exportNoteMarkdown();
+            else if (fmt === 'csv') exportNoteCSV();
+            else if (fmt === 'txt') exportNoteTxt();
+            else if (fmt === 'json') exportNoteJSON();
+        }));
         setupImport();
         document.getElementById('quickAddCategoryBtn').addEventListener('click', () => openNewCatModal((newCat) => { updateCatSelect(); document.getElementById('cmdCategory').value = newCat; }));
         document.getElementById('addCodeBlockBtn').addEventListener('click', () => {
@@ -4160,24 +5384,40 @@
         // category action menu buttons
         document.getElementById('catRenameBtn').addEventListener('click', () => {
             if (!currentCatMenuTarget) return;
-            if (currentCatMenuSubSub) renameSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub);
+            if (currentCatMenuSubSubSub) renameSubSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub, currentCatMenuSubSubSub);
+            else if (currentCatMenuSubSub) renameSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub);
             else if (currentCatMenuSub) renameSubCategory(currentCatMenuTarget, currentCatMenuSub);
             else openEditCatModal(currentCatMenuTarget);
         });
         document.getElementById('catDeleteBtn').addEventListener('click', () => {
             if (!currentCatMenuTarget) return;
-            if (currentCatMenuSubSub) deleteSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub);
+            if (currentCatMenuSubSubSub) deleteSubSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub, currentCatMenuSubSubSub);
+            else if (currentCatMenuSubSub) deleteSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub);
             else if (currentCatMenuSub) deleteSubCategory(currentCatMenuTarget, currentCatMenuSub);
             else deleteCategory(currentCatMenuTarget);
         });
         document.getElementById('catAddSubBtn').addEventListener('click', () => {
-            if (!currentCatMenuTarget || currentCatMenuSubSub) return;
-            if (currentCatMenuSub) addSubSubCategory(currentCatMenuTarget, currentCatMenuSub);
+            if (!currentCatMenuTarget || currentCatMenuSubSubSub) return;
+            if (currentCatMenuSubSub) addSubSubSubCategory(currentCatMenuTarget, currentCatMenuSub, currentCatMenuSubSub);
+            else if (currentCatMenuSub) addSubSubCategory(currentCatMenuTarget, currentCatMenuSub);
             else addSubCategory(currentCatMenuTarget);
         });
         document.getElementById('confirmAddSubdirBtn').addEventListener('click', confirmAddSubdir);
         document.getElementById('cancelAddSubdirBtn').addEventListener('click', closeAddSubdirModal);
         document.getElementById('addSubdirName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmAddSubdir(); } });
+
+        // 重命名子目录弹窗
+        document.getElementById('confirmRenameSubdirBtn').addEventListener('click', confirmRenameSubdir);
+        document.getElementById('cancelRenameSubdirBtn').addEventListener('click', closeRenameSubdirModal);
+        document.getElementById('renameSubdirName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmRenameSubdir(); } });
+
+        // confirm modal (删除目录等)
+        document.getElementById('confirmConfirmBtn').addEventListener('click', () => {
+            const cb = confirmModalCallback;
+            closeConfirmModal();
+            if (cb) cb();
+        });
+        document.getElementById('cancelConfirmBtn').addEventListener('click', closeConfirmModal);
 
         // edit category modal
         document.getElementById('confirmEditCatBtn').addEventListener('click', saveEditCategory);
@@ -4250,6 +5490,58 @@
         document.getElementById('bgOpacitySlider').addEventListener('input', e => { updateOpacityDisplay(parseInt(e.target.value)); applyBgImageLive(parseInt(e.target.value)); });
         document.getElementById('bgApplyBtn').addEventListener('click', applyBgSettings);
         document.getElementById('bgClearBtn').addEventListener('click', clearBgSettings);
+
+        // ==================== AI 小猫问答 ====================
+        aiSessions = loadAiSessions();
+        document.getElementById('aiChatCloseBtn').addEventListener('click', closeAiChat);
+        document.getElementById('aiChatFullscreenBtn').addEventListener('click', toggleAiFullscreen);
+        document.getElementById('aiChatNewSessionBtn').addEventListener('click', createAiSession);
+        document.getElementById('aiChatSendBtn').addEventListener('click', sendAiMessage);
+        document.getElementById('aiChatInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendAiMessage(); } });
+        document.getElementById('aiChatMessages').addEventListener('click', async e => {
+            const btn = e.target.closest('.copy-btn');
+            if (!btn) return;
+            e.stopPropagation();
+            let raw = btn.dataset.raw;
+            if (raw) { raw = raw.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"'); await copyText(raw); }
+        });
+        document.getElementById('aiChatSaveTokenBtn').addEventListener('click', () => {
+            const t = document.getElementById('aiChatToken').value.trim();
+            saveAiToken(t);
+            showToast('DeepSeek Token 已保存', true);
+        });
+        document.getElementById('aiChatToken').value = loadAiToken();
+        document.getElementById('aiChatRagToggle').checked = loadRagEnabled();
+        document.getElementById('aiChatRagToggle').addEventListener('change', e => { saveRagEnabled(e.target.checked); });
+        document.getElementById('aiEssayGistToken').value = essayGistToken;
+        document.getElementById('aiEssayGistId').value = essayGistId;
+        document.getElementById('aiEssayGistSaveBtn').addEventListener('click', () => {
+            essayGistToken = document.getElementById('aiEssayGistToken').value.trim();
+            essayGistId = document.getElementById('aiEssayGistId').value.trim();
+            if (essayGistToken) localStorage.setItem('essay_gist_token', essayGistToken);
+            else localStorage.removeItem('essay_gist_token');
+            if (essayGistId) localStorage.setItem('essay_gist_id', essayGistId);
+            else localStorage.removeItem('essay_gist_id');
+            showToast('随笔 Gist 配置已保存', true);
+        });
+        document.getElementById('aiEssayGistToggle').checked = loadEssayInclude();
+        document.getElementById('aiEssayGistToggle').addEventListener('change', e => { saveEssayInclude(e.target.checked); });
+        document.getElementById('aiEssayOnlyToggle').checked = loadEssayOnly();
+        document.getElementById('aiEssayOnlyToggle').addEventListener('change', e => { saveEssayOnly(e.target.checked); });
+        document.getElementById('aiKbTopK').value = loadKbTopK();
+        document.getElementById('aiKbTopK').addEventListener('change', e => {
+            let n = parseInt(e.target.value, 10);
+            if (!isFinite(n) || n < 1) n = 6;
+            e.target.value = n;
+            saveKbTopK(n);
+        });
+        document.addEventListener('click', e => {
+            if (e.target && e.target.closest && e.target.closest('#live2d-widget')) toggleAiChat();
+        }, true);
+
+        // ==================== Markdown 可视化编辑器 ====================
+        enhanceTextareaAsMdEditor(document.getElementById('cmdDesc'));
+        initMdFullscreen();
     }
 
     init();
