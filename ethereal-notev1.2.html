@@ -2437,7 +2437,7 @@
                 <label class="ai-rag-toggle" title="与本地库/命令 Gist 一起检索随笔 Gist"><input type="checkbox" id="aiEssayGistToggle" checked>含随笔库</label>
                 <label class="ai-rag-toggle" title="仅检索随笔 Gist，忽略本地库与命令 Gist"><input type="checkbox" id="aiEssayOnlyToggle">仅随笔库</label>
                 <span class="ai-footer-label" title="每次注入给 AI 的知识资料条数">条数</span>
-                <input type="number" id="aiKbTopK" min="1" max="50" value="6">
+                <input type="number" id="aiKbTopK" min="1" max="200" value="60">
             </div>
         </div>
     </div>
@@ -2469,18 +2469,45 @@
     else initLive2DCat();
 
     // ==================== AI 小猫问答（DeepSeek） ====================
-    const DEFAULT_DEEPSEEK_TOKEN = 'sk-9c306cc7dd6b4b18aae8df0bd39c752a';
+    // DeepSeek Token 加密存储（XOR + 十六进制混淆）。纯前端无法真正加密，仅用于避免明文直接暴露在源码与 localStorage 中。
+    const TOKEN_XOR_KEY = 'LINGYAN';
+    const DEFAULT_DEEPSEEK_TOKEN_ENC = '3F22637E3A727E7A2A2D703D25782E7D2C7661202F29712A2169232A7F702D706C732F';
     const DEEPSEEK_API = 'https://api.deepseek.com/chat/completions';
     const DEEPSEEK_MODEL = 'deepseek-chat';
     let aiSessions = [];
     let aiCurrentSessionId = null;
 
+    function xorKey(s) {
+        let out = '';
+        for (let i = 0; i < s.length; i++) out += String.fromCharCode(s.charCodeAt(i) ^ TOKEN_XOR_KEY.charCodeAt(i % TOKEN_XOR_KEY.length));
+        return out;
+    }
+    function encodeToken(plain) {
+        if (!plain) return '';
+        const bytes = xorKey(plain);
+        let hex = '';
+        for (let i = 0; i < bytes.length; i++) hex += ('0' + bytes.charCodeAt(i).toString(16)).slice(-2);
+        return hex;
+    }
+    function decodeToken(enc) {
+        if (!enc) return '';
+        if (!/^[0-9a-fA-F]+$/.test(enc)) return enc; // 兼容旧版明文存储
+        try {
+            let bytes = '';
+            for (let i = 0; i < enc.length; i += 2) bytes += String.fromCharCode(parseInt(enc.substr(i, 2), 16));
+            return xorKey(bytes);
+        } catch (e) { return enc; }
+    }
     function loadAiToken() {
         const t = localStorage.getItem('deepseek_token');
-        return t !== null && t !== '' ? t : DEFAULT_DEEPSEEK_TOKEN;
+        if (t === null || t === '') return decodeToken(DEFAULT_DEEPSEEK_TOKEN_ENC);
+        const plain = decodeToken(t);
+        // 迁移：旧版以明文存储的 Token 首次读取时自动转存为加密形式
+        if (plain === t && /^sk-/.test(plain)) saveAiToken(plain);
+        return plain;
     }
     function saveAiToken(t) {
-        if (t) localStorage.setItem('deepseek_token', t);
+        if (t) localStorage.setItem('deepseek_token', encodeToken(t));
         else localStorage.removeItem('deepseek_token');
     }
     function loadAiSessions() {
@@ -2620,9 +2647,9 @@
     function saveEssayInclude(v) { try { localStorage.setItem('ai_essay_include', v ? '1' : '0'); } catch(e) {} }
     function loadEssayOnly() { try { return localStorage.getItem('ai_essay_only') === '1'; } catch(e) { return false; } }
     function saveEssayOnly(v) { try { localStorage.setItem('ai_essay_only', v ? '1' : '0'); } catch(e) {} }
-    function loadKbTopK() { try { const v = parseInt(localStorage.getItem('ai_kb_topk'), 10); return (isFinite(v) && v >= 1) ? v : 6; } catch(e) { return 6; } }
+    function loadKbTopK() { try { const v = parseInt(localStorage.getItem('ai_kb_topk'), 10); return (isFinite(v) && v >= 1) ? v : 60; } catch(e) { return 60; } }
     function saveKbTopK(v) { try { localStorage.setItem('ai_kb_topk', String(v)); } catch(e) {} }
-    function kbTopK() { const el = document.getElementById('aiKbTopK'); const n = parseInt(el && el.value, 10); return (isFinite(n) && n >= 1) ? n : 6; }
+    function kbTopK() { const el = document.getElementById('aiKbTopK'); const n = parseInt(el && el.value, 10); return (isFinite(n) && n >= 1) ? n : 60; }
     function tokenizeKb(text) {
         if (!text) return [];
         const s = String(text).toLowerCase();
@@ -2764,7 +2791,7 @@
         session.updatedAt = Date.now();
         saveAiSessions();
         renderAiSessionList();
-        const token = document.getElementById('aiChatToken').value.trim() || DEFAULT_DEEPSEEK_TOKEN;
+        const token = document.getElementById('aiChatToken').value.trim() || loadAiToken();
         const sendBtn = document.getElementById('aiChatSendBtn');
         sendBtn.disabled = true;
         sendBtn.textContent = '思考中…';

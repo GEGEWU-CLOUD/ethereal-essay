@@ -68,7 +68,7 @@ vercel
 | **随笔Gist** | 配置独立 Gist（Token + Gist ID）作为随笔检索源，与命令同步 Gist 分离 |
 | **含随笔库** | 将随笔 Gist 与本地库、命令 Gist 一起检索 |
 | **仅随笔库** | 只检索随笔 Gist，忽略本地库与命令 Gist |
-| **条数** | 每次注入给 AI 的知识资料条数（默认 6，可设 1–50） |
+| **条数** | 每次注入给 AI 的知识资料条数（默认 60，可设 1–200） |
 
 > 检索采用本地关键字（BM25-lite）匹配，无需外接向量数据库或 embedding。
 
@@ -154,7 +154,7 @@ vercel
 
 | 键 | 用途 |
 |------|------|
-| `deepseek_token` | DeepSeek API Token |
+| `deepseek_token` | DeepSeek API Token（XOR + 十六进制混淆存储，非明文） |
 | `ai_sessions` | AI 会话历史 |
 | `ai_rag_enabled` / `ai_essay_include` / `ai_essay_only` / `ai_kb_topk` | 知识库检索开关与条数 |
 | `gist_token` / `gist_id` | 命令同步 Gist 配置 |
@@ -177,12 +177,12 @@ vercel
 
 ## 🔒 安全提示
 
-> **请勿将本页面公开部署或分享给他人。** 应用为纯前端实现，以下信息会暴露在浏览器端：
+> **请勿将本页面公开部署或分享给他人。** 应用为纯前端实现，以下信息仍会暴露在浏览器端：
 
-- DeepSeek Token 以内置默认值硬编码在前端代码中，并存储在 `localStorage`；
-- Gist Token（`gist_token`、`essay_gist_token`）同样存储在 `localStorage`。
+- DeepSeek Token 已做混淆存储（XOR + 十六进制），源码与 `localStorage` 中不再出现明文；但解密密钥与算法同样位于前端，仍可被反解；
+- Gist Token（`gist_token`、`essay_gist_token`）仍以明文存储在 `localStorage`。
 
-任何能访问页面的人都可能读取到这些密钥。本项目仅适合**本地个人使用**；如需公开部署，请移除前端硬编码密钥，改为后端代理或由用户自行输入并妥善保管。
+本项目仅适合**本地个人使用**；如需公开部署，请移除前端密钥，改为后端代理或由用户自行输入并妥善保管。
 
 ---
 
